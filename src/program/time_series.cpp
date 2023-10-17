@@ -22,7 +22,7 @@
 #include "vio.hpp"
 #include "vmath.hpp"
 #include "vmpi.hpp"
-
+#include "spinwaves.hpp" // JRH
 namespace program{
 
 //------------------------------------------------------------------------------
@@ -74,6 +74,14 @@ void time_series(){
 
 		// Integrate system
 		sim::integrate(sim::partial_time);
+
+		//calculate spinwaves JRH
+		std::cout << "calling spinwave function." << std::endl;
+		spinwaves::spin_wave(
+		atoms::x_coord_array,
+		atoms::y_coord_array,		
+		atoms::z_coord_array,
+		sim::time);
 
 		// Calculate magnetisation statistics
 		stats::update();
