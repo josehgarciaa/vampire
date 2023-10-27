@@ -14,7 +14,7 @@
 
 // Vampire headers
 #include "spinwaves.hpp"
-
+#include "vmpi.hpp"
 // sw module headers
 #include "internal.hpp"
 #include "iostream"
@@ -50,12 +50,12 @@ namespace spinwaves {
          std::ofstream file_K_time;
 		 // JRH change filename
 		 std::stringstream sstr;
-		 //sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(uca) << ".dat";
-         sstr << "K_vs_time" << 
-			"_kx_" << std::setw(6) << std::to_string(spinwaves::internal::kx_FFT_array[uca]) << 
-			"_ky_" << std::setw(6) << std::to_string(spinwaves::internal::ky_FFT_array[uca]) << 
-			"_kz_" << std::setw(6) << std::to_string(spinwaves::internal::kz_FFT_array[uca]) << 		
-			".dat";
+		 sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(uca) << ".dat";
+        // sstr << "K_vs_time" <<
+		//	"_kx_" << std::setw(6) << std::to_string(spinwaves::internal::kx_FFT_array[uca]) << 
+		//	"_ky_" << std::setw(6) << std::to_string(spinwaves::internal::ky_FFT_array[uca]) << 
+		//	"_kz_" << std::setw(6) << std::to_string(spinwaves::internal::kz_FFT_array[uca]) << 		
+		//	".dat";
 
 	   file_K_time.open(sstr.str(),std::ios_base::app);
        const double kx=spinwaves::internal::kx_FFT_array[uca];
@@ -79,19 +79,26 @@ namespace spinwaves {
            int mat=atoms::type_array[atom];
            if (mat < 9) {
            skx_R += sx; 
-           spinwaves::Skx_FFT_array_R[uca] += sx*cosK;
-           spinwaves::Skx_FFT_array_I[uca] += sx*sinK;
+           Skx_FFT_array_R[uca] += sx*cosK;
+           Skx_FFT_array_I[uca] += sx*sinK;
            }
          //if (uca==0) std::cout<<uca<<"\t"<<atom<<"\t"<<rx<<"\t"<<ry<<"\t"<<rz<<"\t"<<cosK<<"\t"<<std::endl;
  //      if (uca==0) std::cout<<uca<<"\t"<<time<<"\t"<<sx<<"\t"<<skx_R<<"\t"<<Skx_FFT_array_R[uca]<<"\t"<<cosK<<"\t"<<std::endl;
 
        }
-  //     if (uca==0) std::cout<<uca<<"\t"<<time<<"\t"<<"\t"<<skx_R<<"\t"<<Skx_FFT_array_R[uca]<<"\t"<<std::endl;
-       file_K_time << uca<<" "<<  spinwaves::Skx_FFT_array_R[uca]<<" "<<  spinwaves::Skx_FFT_array_I[uca] << "\n";
-       file_K_time.close();
 
+
+      //Add value of kpoints for all cpus JRH
+      #ifdef MPICF
+         MPI_Allreduce(MPI_IN_PLACE, &Skx_FFT_array_R[0], Na, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+      #endif
+      if(vmpi::my_rank == 0){
+		file_K_time << time <<" "<<  spinwaves::Skx_FFT_array_R[uca]<<" "<<  spinwaves::Skx_FFT_array_I[uca] << "\n";
+		file_K_time.close();
+	  }
     } 
-      return;
+    
+	return;
 
    }
 

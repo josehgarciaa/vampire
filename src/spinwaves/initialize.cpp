@@ -94,6 +94,15 @@ namespace spinwaves{
 		//int Nktotal=N_points*N_K_path; JRH
 	
 
+		// Get reciprocal lattice vectors from cubic unit cell JRH 26/10/23
+		// Based on equations through link: http://lampx.tugraz.at/~hadley/ss1/crystaldiffraction/fourier/reciprocal_lattice.php
+		// The assumption is made that the unit cell is cubic
+		double b[3];
+		b[0] = 2.0 * M_PI * (unit_cell_size_y * unit_cell_size_z) / (unit_cell_size_x * (unit_cell_size_y * unit_cell_size_z));
+		b[1] = 2.0 * M_PI * (unit_cell_size_z * unit_cell_size_x) / (unit_cell_size_x * (unit_cell_size_y * unit_cell_size_z));
+		b[2] = 2.0 * M_PI * (unit_cell_size_x * unit_cell_size_y) / (unit_cell_size_x * (unit_cell_size_y * unit_cell_size_z));
+
+
 		// read specific kpoints from file JRH
 		int Nktotal = 0;
 		std::string line;
@@ -102,9 +111,9 @@ namespace spinwaves{
 			Nktotal++;
 			double val01, val02, val1, val2, val3;
 			if (iss >> val01 >> val02 >> val1 >> val2 >> val3) {
-				spinwaves::internal::kx_FFT_array.push_back(val1*2.0*M_PI);
-				spinwaves::internal::ky_FFT_array.push_back(val2*2.0*M_PI);
-				spinwaves::internal::kz_FFT_array.push_back(val3*2.0*M_PI);
+				spinwaves::internal::kx_FFT_array.push_back(val1*b[0]);
+				spinwaves::internal::ky_FFT_array.push_back(val2*b[1]);
+				spinwaves::internal::kz_FFT_array.push_back(val3*b[2]);
 			} 
 			else {
 				std::cerr << "Error reading line: " << line << std::endl;
@@ -183,12 +192,12 @@ namespace spinwaves{
 			std::ofstream file_K_time;
 			std::stringstream sstr;
 			// JRH change name of files
-			//sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(uca) << ".dat";
-			sstr << "K_vs_time" << 
-			"_kx_" << std::setw(6) << std::to_string(spinwaves::internal::kx_FFT_array[uca]) << 
-			"_ky_" << std::setw(6) << std::to_string(spinwaves::internal::ky_FFT_array[uca]) << 
-			"_kz_" << std::setw(6) << std::to_string(spinwaves::internal::kz_FFT_array[uca]) << 		
-			".dat";
+			sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(uca) << ".dat";
+			//sstr << "K_vs_time" << 
+			//"_kx_" << std::setw(6) << std::to_string(spinwaves::internal::kx_FFT_array[uca]) << 
+			//"_ky_" << std::setw(6) << std::to_string(spinwaves::internal::ky_FFT_array[uca]) << 
+			//"_kz_" << std::setw(6) << std::to_string(spinwaves::internal::kz_FFT_array[uca]) << 		
+			//".dat";
 
 			file_K_time.open(sstr.str());
 			file_K_time.close();

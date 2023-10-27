@@ -76,7 +76,7 @@ void time_series(){
 		sim::integrate(sim::partial_time);
 
 		//calculate spinwaves JRH
-		std::cout << "calling spinwave function." << std::endl;
+		// std::cout << "calling spinwave function." << std::endl;
 		spinwaves::spin_wave(
 		atoms::x_coord_array,
 		atoms::y_coord_array,		
