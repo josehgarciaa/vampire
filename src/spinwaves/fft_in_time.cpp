@@ -3,9 +3,9 @@
 //   This file is part of the VAMPIRE open source package under the
 //   Free BSD licence (see licence file for details).
 //
-//   (c) Sergiu Ruta 2022. All rights reserved.
+//   (c) Joel Hirst 2023. All rights reserved.
 //
-//   Email: sergiu.ruta@york.ac.uk
+//   Email: j.r.hirst@shu.ac.uk
 //
 //------------------------------------------------------------------------------
 //
@@ -27,63 +27,40 @@
 #include <cmath>
 #include "fstream"
 #include "atoms.hpp"
+#include <fftw3.h>
+
+
 namespace spinwaves {
 
-   //----------------------------------------------------------------------------
-   // Function to complete time series fourier transform once simulation is complete
-   //----------------------------------------------------------------------------
-   void spin_wave( const std::vector<double>& atom_coords_x,
-                   const std::vector<double>& atom_coords_y,
-                   const std::vector<double>& atom_coords_z,
-                   const int time ){
 
-//    std::cout<< "Test Spin waves part2...."<<std::endl;
-    int Na=spinwaves::internal::kx_FFT_array.size();
- 
 
-    std::fill(Skx_FFT_array_R.begin(), Skx_FFT_array_R.end(), 0.0);
-    std::fill(Skx_FFT_array_I.begin(), Skx_FFT_array_I.end(), 0.0);
-    for(unsigned int uca=0;uca<Na;uca++){
-         std::ofstream file_K_time;
-		 std::stringstream sstr;
-		 sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(uca) << ".dat";
-         file_K_time.open(sstr.str(),std::ios_base::app);
-       const double kx=spinwaves::internal::kx_FFT_array[uca];
-       const double ky=spinwaves::internal::ky_FFT_array[uca];
-       const double kz=spinwaves::internal::kz_FFT_array[uca];
-       double skx_R=0.0;
-       double skx_I=0.0;
-//       spinwaves::Skx_FFT_array_R[uca] = 0.0;
-//       spinwaves::Skx_FFT_array_I[uca] = 0.0;
-      double Skx_FFT_mat1=0;
-      double Skx_FFT_mat2=0;
+   void fft_in_time(){
 
-       for(int atom=0;atom<atoms::num_atoms;atom++){
-           const double rx=atom_coords_x[atom];
-           const double ry=atom_coords_y[atom];
-           const double rz=atom_coords_z[atom];
-           double arg=-kx*rx - ky*ry - kz*rz ;  
-           double cosK= cos(arg);
-           double sinK= sin(arg);
-           double sx=atoms::x_spin_array[atom];
-           int mat=atoms::type_array[atom];
-           if (mat < 9) {
-           skx_R += sx; 
-           spinwaves::Skx_FFT_array_R[uca] += sx*cosK;
-           spinwaves::Skx_FFT_array_I[uca] += sx*sinK;
-           }
-         //if (uca==0) std::cout<<uca<<"\t"<<atom<<"\t"<<rx<<"\t"<<ry<<"\t"<<rz<<"\t"<<cosK<<"\t"<<std::endl;
- //      if (uca==0) std::cout<<uca<<"\t"<<time<<"\t"<<sx<<"\t"<<skx_R<<"\t"<<Skx_FFT_array_R[uca]<<"\t"<<cosK<<"\t"<<std::endl;
+      // const int real = 0;
+      // const int imag = 1;
 
-       }
-  //     if (uca==0) std::cout<<uca<<"\t"<<time<<"\t"<<"\t"<<skx_R<<"\t"<<Skx_FFT_array_R[uca]<<"\t"<<std::endl;
-       file_K_time << uca<<" "<<  spinwaves::Skx_FFT_array_R[uca]<<" "<<  spinwaves::Skx_FFT_array_I[uca] << "\n";
-       file_K_time.close();
+      // int len = Skx_FFT_array_R.size();
 
-    } 
-      return;
+      // std::vector<fftw_complex> combined_real_imag(len);
+      // std::vector<fftw_complex> combined_real_imag_fftd(len);
+      // fftw_plan fft_in_time;
+      // fft_in_time = fftw_plan_dft_1d(len, &combined_real_imag[0], &combined_real_imag_fftd[0], FFTW_FORWARD, FFTW_MEASURE);
 
+      // for (int k = 0; k < len; k++){
+
+         
+
+
+
+
+      // }
+
+
+
+      
    }
 
-} // end of sw namespace
+   
+   
+} 
 

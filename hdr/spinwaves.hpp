@@ -59,6 +59,9 @@ namespace spinwaves{
                    const std::vector<double>& atom_coords_y,
                    const std::vector<double>& atom_coords_z);
 
+   
+   void fft_in_time();
+
    //---------------------------------------------------------------------------
    // Function to process input file parameters for spinwaves module
    //---------------------------------------------------------------------------

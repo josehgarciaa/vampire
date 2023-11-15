@@ -70,6 +70,7 @@ namespace unitcell{
             std::string cs=value;
             cs.erase(std::remove(cs.begin(), cs.end(), '\"'), cs.end());
             uc::internal::crystal_structure=cs;
+            uc::sw_crystal_structure=cs;
             return true;
          }
          //--------------------------------------------------------------------

@@ -20,28 +20,44 @@
 
 namespace spinwaves{
 
+
+   //------------------------------------------------------------------------------
+   // Externally visible variables ------------------------------------------------
+   //------------------------------------------------------------------------------
    std::vector <double> Skx_FFT_array_R;
    std::vector <double> Sky_FFT_array_R;
    std::vector <double> Skz_FFT_array_R;
    std::vector <double> Skx_FFT_array_I;
    std::vector <double> Sky_FFT_array_I;
    std::vector <double> Skz_FFT_array_I;
-   //------------------------------------------------------------------------------
-   // Externally visible variables
-   //------------------------------------------------------------------------------
-  //    std::vector <double> Skx_FFT_array; // 1D list of biquadratic neighbours
+
+
    namespace internal{
 
       //------------------------------------------------------------------------
       // Shared variables inside sw module
       //------------------------------------------------------------------------
-
       bool enabled; // bool to enable module
       std::vector <double> kx_FFT_array; // 1D list of biquadratic neighbours
       std::vector <double> ky_FFT_array; // 1D list of biquadratic neighbours
       std::vector <double> kz_FFT_array; // 1D list of biquadratic neighbours
- 	  std::vector <double> structure_factor_array_R, structure_factor_array_I ;
+ 	   std::vector <double> structure_factor_array_R, structure_factor_array_I;
       std::vector<internal::mp_t> mp; // array of material properties
+
+      // JRH Internally visible path vectors 
+      std::vector<double> pathx;
+      std::vector<double> pathy;
+      std::vector<double> pathz;
+
+      // JRH internally visible filename
+      std::string kpath_filename;
+
+      std::vector <double> cos_k;
+      std::vector <double> sin_k;
+
+      // JRH number of time and kpoints
+      int numkpoints;
+      int numtimepoints;
 
    } // end of internal namespace
 

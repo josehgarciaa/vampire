@@ -11,6 +11,7 @@
 //
 
 // C++ standard library headers
+#include <algorithm>
 #include <string>
 
 // Vampire headers
@@ -31,6 +32,58 @@ namespace spinwaves{
       // Check for valid key, if no match return false
       std::string prefix="spinwaves";
       if(key!=prefix) return false;
+
+      //  ------------------------------------------------------------------
+      // check if file has been specified for k path -----------------------
+      //  ------------------------------------------------------------------
+      std::string test="kfile";
+      if(word==test){
+         std::string kpath_file=value;
+         // strip quotes
+         kpath_file.erase(std::remove(kpath_file.begin(), kpath_file.end(), '\"'), kpath_file.end());
+         test="";
+         // if filename not blank set ucf file name
+         if(kpath_file!=test){
+            spinwaves::internal::kpath_filename=kpath_file;
+            return true;
+         }
+         else{
+            terminaltextcolor(RED);
+            std::cerr << "Error - empty filename in control statement \'spinwaves:" << word << "\' on line " << line << " of input file" << std::endl;
+            terminaltextcolor(WHITE);
+            return false;
+         }
+      }
+      //  ------------------------------------------------------------------
+
+
+      //  ------------------------------------------------------------------
+      // normalise amplitude to largest value for each k-point -------------
+      //  ------------------------------------------------------------------
+      test="normalise";
+      if(word==test){
+         
+      }
+      //  ------------------------------------------------------------------
+      
+      //  ------------------------------------------------------------------
+      // smoothing for each kpoint -----------------------------------------
+      //  ------------------------------------------------------------------
+      test="normalise";
+      if(word==test){
+         
+      }
+      //  ------------------------------------------------------------------
+
+      //  ------------------------------------------------------------------
+      // component of magnetisation to use for fourier transform -----------
+      //  ------------------------------------------------------------------
+      test="normalise";
+      if(word==test){
+         
+      }
+      //  ----------------------------------------------------------------
+
 
       //--------------------------------------------------------------------
       // Keyword not found

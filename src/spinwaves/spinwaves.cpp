@@ -27,6 +27,8 @@
 #include <cmath>
 #include "fstream"
 #include "atoms.hpp"
+
+
 namespace spinwaves {
 
    // Local variables
@@ -51,18 +53,19 @@ namespace spinwaves {
 
       // std::cout<< "Test Spin waves part2...."<<std::endl;
       int Na=spinwaves::internal::kx_FFT_array.size();
+      // std::cout << "========================== " << time << std::endl;
 
-      std::fill(Skx_FFT_array_R.begin(), Skx_FFT_array_R.end(), 0.0);
-      std::fill(Skx_FFT_array_I.begin(), Skx_FFT_array_I.end(), 0.0);
+      // std::fill(Skx_FFT_array_R.begin(), Skx_FFT_array_R.end(), 0.0);
+      // std::fill(Skx_FFT_array_I.begin(), Skx_FFT_array_I.end(), 0.0);
       
       for(unsigned int uca=0;uca<Na;uca++){
          
 
          // JRH change filename
-         std::ofstream file_K_time;
-         std::stringstream sstr;
-         sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(uca) << ".dat";
-         file_K_time.open(sstr.str(),std::ios_base::app);
+         // std::ofstream file_K_time;
+         // std::stringstream sstr;
+         // sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(uca) << ".dat";
+         // file_K_time.open(sstr.str(),std::ios_base::app);
 
          kx=spinwaves::internal::kx_FFT_array[uca];
          ky=spinwaves::internal::ky_FFT_array[uca];
@@ -108,36 +111,38 @@ namespace spinwaves {
             MPI_Allreduce(MPI_IN_PLACE, &Skx_FFT_array_R[0], Na, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
             MPI_Allreduce(MPI_IN_PLACE, &Skx_FFT_array_I[0], Na, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
+
+            if(vmpi::my_rank == 0){
+               file_K_time << time <<" "<<  spinwaves::Skx_FFT_array_R[uca]<<" "<<  spinwaves::Skx_FFT_array_I[uca] << "\n";
+               file_K_time.close();
+            }
+
          #else
 
-            for(int atom=0;atom<vmpi::num_core_atoms+vmpi::num_bdry_atoms;atom++){
-               rx=atom_coords_x[atom];
-               ry=atom_coords_y[atom];
-               rz=atom_coords_z[atom];
-               arg=-kx*rx - ky*ry - kz*rz ;  
-               cosK= cos(arg);
-               sinK= sin(arg);
+            for(int atom=0;atom<atoms::num_atoms;atom++){
+               // rx=atom_coords_x[atom];
+               // ry=atom_coords_y[atom];
+               // rz=atom_coords_z[atom];
+               // arg=-kx*rx - ky*ry - kz*rz ;  
+               // cosK= cos(arg);
+               // sinK= sin(arg);
                sx=atoms::x_spin_array[atom];
-               Skx_FFT_array_R[uca] += sx*cosK;
-               Skx_FFT_array_I[uca] += sx*sinK;
 
-               // file_K_time << vmpi::my_rank << " " << atom << " " << " " << rx << " " << ry << " " << rz << " " << atoms::z_spin_array[atom] << "\n";
-               // int mat=atoms::type_array[atom];
-               
-               // if (mat < 9) {
-               //    // skx_R += sx; 
-               //    Skx_FFT_array_R[uca] += sx*cosK;
-               //    Skx_FFT_array_I[uca] += sx*sinK;
-               // }
+               // testing whether predefing the cos(k) makes much of a difference to speed
+               // Skx_FFT_array_R[uca] += sx*cosK;
+               // Skx_FFT_array_I[uca] += sx*sinK;
+               Skx_FFT_array_R[uca*internal::numtimepoints + time] += sx*spinwaves::internal::cos_k[uca*atoms::num_atoms+atom];
+               Skx_FFT_array_I[uca*internal::numtimepoints + time] += sx*spinwaves::internal::sin_k[uca*atoms::num_atoms+atom];
+
             }
+
+            // file_K_time << time <<" "<<  spinwaves::Skx_FFT_array_R[uca]<<" "<<  spinwaves::Skx_FFT_array_I[uca] << "\n";
+            // file_K_time.close();
 
          #endif
 
 
-         if(vmpi::my_rank == 0){
-            file_K_time << time <<" "<<  spinwaves::Skx_FFT_array_R[uca]<<" "<<  spinwaves::Skx_FFT_array_I[uca] << "\n";
-            file_K_time.close();
-         }
+
       } 
     
 	   return;

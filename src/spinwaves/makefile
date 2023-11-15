@@ -5,6 +5,9 @@
 # List module object filenames
 spinwave_objects =\
 data.o \
+built_in_paths.o \
+fft_in_time.o \
+paths.o \
 initialize.o \
 interface.o \
 spinwaves.o

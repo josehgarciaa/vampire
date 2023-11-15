@@ -195,10 +195,10 @@ all: serial parallel vdc
 
 # Serial Targets
 serial: $(OBJECTS)
-	$(GCC) $(GCC_LDFLAGS)  $(OBJECTS) $(LIBS) -o $(EXECUTABLE)
+	$(GCC) $(GCC_LDFLAGS)  $(OBJECTS) $(LIBS) -o $(EXECUTABLE) -lfftw3
 
 $(OBJECTS): obj/%.o: src/%.cpp
-	$(GCC) -c -o $@ $(GCC_CFLAGS) $(OPTIONS) $<
+	$(GCC) -c -o $@ $(GCC_CFLAGS) $(OPTIONS) $<  -lfftw3
 
 serial-intel: $(ICC_OBJECTS)
 	$(ICC) $(ICC_LDFLAGS) $(LIBS) $(ICC_OBJECTS) -o $(EXECUTABLE)-intel
