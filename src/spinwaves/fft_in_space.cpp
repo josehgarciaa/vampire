@@ -61,15 +61,6 @@ namespace spinwaves {
          spinwaves::Skx_FFT_array_R[k] = 0.0;
          spinwaves::Skx_FFT_array_I[k] = 0.0;
 
-         // double skx_R=0.0;
-         // double skx_I=0.0;
-
-         // double Skx_FFT_mat1=0;
-         // double Skx_FFT_mat2=0;
-
-         // std::cout << "==============================\n";
-
-
          #ifdef MPICF
 
             for(int atom=0;atom<vmpi::num_core_atoms+vmpi::num_bdry_atoms;atom++){
@@ -87,12 +78,6 @@ namespace spinwaves {
                Skx_FFT_array_R[k] += sx*spinwaves::internal::cos_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom];
                Skx_FFT_array_I[k] += sx*spinwaves::internal::sin_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom];
             }
-
-            // // Add value of kpoints for all cpus JRH
-            // MPI_Reduce(MPI_IN_PLACE, &Skx_FFT_array_R[0], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-            // MPI_Reduce(MPI_IN_PLACE, &Skx_FFT_array_I[0], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-            // MPI_Reduce(&Skx_FFT_array_R[0], &Skx_FFT_array_R_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-            // MPI_Reduce(&Skx_FFT_array_I[0], &Skx_FFT_array_I_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
          #else
 
@@ -113,37 +98,16 @@ namespace spinwaves {
 
             }
 
-            // file_K_time << time <<" "<<  spinwaves::Skx_FFT_array_R[uca]<<" "<<  spinwaves::Skx_FFT_array_I[uca] << "\n";
-            // file_K_time.close();
-
          #endif
 
       } 
 
 
       #ifdef MPICF
-         // Add value of kpoints for all cpus JRH
-         if (vmpi::my_rank == 0){
-            std::cout << "Reducing processor array to node array" << std::endl;
-         }
          MPI_Reduce(&Skx_FFT_array_R[0], &Skx_FFT_array_R_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
          MPI_Reduce(&Skx_FFT_array_I[0], &Skx_FFT_array_I_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-         // MPI_Gather(&Skx_FFT_array_R[0], nk, MPI_DOUBLE, &Skx_FFT_array_R_node[time*nk], 100, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-         // MPI_Gather(&Skx_FFT_array_I[0], nk, MPI_DOUBLE, &Skx_FFT_array_I_node[time*nk], 100, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-         if (vmpi::my_rank == 0){
-            std::cout << "Reduction completed." << std::endl;
-         } 
       #endif
-      
-      
-      
-      // if(vmpi::my_rank == 0){
-      //    for (int i = 0; i < nk*internal::numtimepoints; i++){
-      //       file_K_time << i <<" "<<  spinwaves::Skx_FFT_array_R_node[i]<<" "<<  spinwaves::Skx_FFT_array_I_node[i] << "\n";
-      //    }
-      //    file_K_time.close();
-      // }
-    
+          
 	   return;
 
    }
