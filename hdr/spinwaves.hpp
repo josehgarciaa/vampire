@@ -30,14 +30,14 @@ namespace spinwaves{
    // Function to initialise spinwaves module
    //-----------------------------------------------------------------------------
    extern std::vector <double> Skx_FFT_array_R;
-   extern std::vector <double> Sky_FFT_array_R;
-   extern std::vector <double> Skz_FFT_array_R;
    extern std::vector <double> Skx_FFT_array_I;
-   extern std::vector <double> Sky_FFT_array_I;
-   extern std::vector <double> Skz_FFT_array_I;
+   extern std::vector <double> Skx_FFT_array_R_node;
+   extern std::vector <double> Skx_FFT_array_I_node;
+   extern std::vector <double> Skx_FFT_array_R_transposed;
+   extern std::vector <double> Skx_FFT_array_I_transposed;
  
 
-   void spin_wave( const std::vector<double>& atom_coords_x,
+   void fft_in_space( const std::vector<double>& atom_coords_x,
                    const std::vector<double>& atom_coords_y,
                    const std::vector<double>& atom_coords_z,
                    const int time );
@@ -61,6 +61,8 @@ namespace spinwaves{
 
    
    void fft_in_time();
+   void one_sided_spectrum();
+   void normalise_spectrum();
 
    //---------------------------------------------------------------------------
    // Function to process input file parameters for spinwaves module

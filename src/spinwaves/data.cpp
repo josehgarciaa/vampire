@@ -25,12 +25,11 @@ namespace spinwaves{
    // Externally visible variables ------------------------------------------------
    //------------------------------------------------------------------------------
    std::vector <double> Skx_FFT_array_R;
-   std::vector <double> Sky_FFT_array_R;
-   std::vector <double> Skz_FFT_array_R;
    std::vector <double> Skx_FFT_array_I;
-   std::vector <double> Sky_FFT_array_I;
-   std::vector <double> Skz_FFT_array_I;
-
+   std::vector <double> Skx_FFT_array_R_node;
+   std::vector <double> Skx_FFT_array_I_node;  
+   // std::vector <double> Skx_FFT_array_R_transposed;
+   // std::vector <double> Skx_FFT_array_I_transposed;
 
    namespace internal{
 

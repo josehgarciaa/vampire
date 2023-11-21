@@ -199,13 +199,32 @@ namespace spinwaves{
             // const double mem = spinwaves::Skx_FFT_array_R.size()*sizeof(double)*(sim::total_time / sim::partial_time)/ 1.0e6 + 
             //                    spinwaves::Skx_FFT_array_I.size()*sizeof(double)*(sim::total_time / sim::partial_time)/ 1.0e6;
 
+            // The k points have to be calculated for every rank
+            spinwaves::Skx_FFT_array_R.resize(internal::numkpoints,0.0);
+            spinwaves::Skx_FFT_array_I.resize(internal::numkpoints,0.0);	
 
-            spinwaves::Skx_FFT_array_R.resize(internal::numtimepoints*internal::numkpoints,0.0);
-            spinwaves::Skx_FFT_array_I.resize(internal::numtimepoints*internal::numkpoints,0.0);	
-            const double mem = spinwaves::Skx_FFT_array_R.size()*sizeof(double)/ 1.0e6 + spinwaves::Skx_FFT_array_I.size()*sizeof(double)/ 1.0e6;
+            // the array containing the the values of k for every timepoint only needs to be stored on rank0.
+            if (vmpi::my_rank == 0){
+                spinwaves::Skx_FFT_array_R_node.resize(internal::numtimepoints*internal::numkpoints,0.0);
+                spinwaves::Skx_FFT_array_I_node.resize(internal::numtimepoints*internal::numkpoints,0.0);	
 
-            // Calculate memory requirements of k_vs_time arrays and inform user. There's 6 arrays x,y,z with real and imag.
-            std::cout << "Spinwave module using  " << mem << " MB of RAM for k vs time arrays for a simulation time of " << sim::total_time;
+                // calculate memory
+                #ifdef MPICF
+                    // spinwaves::Skx_FFT_array_R_transposed.resize(internal::numtimepoints*internal::numkpoints,0.0);
+                    // spinwaves::Skx_FFT_array_I_transposed.resize(internal::numtimepoints*internal::numkpoints,0.0);	
+                    // const double mem = 4*spinwaves::Skx_FFT_array_R_node.size()*sizeof(double)/ 1.0e6;
+                    // std::cout << "Spinwave module using  " << mem << " MB of RAM per node for k vs time arrays for a simulation time of " << sim::total_time;
+                    // std::cout << " timesteps with the dynamic structure factor calculated every " << sim::partial_time << " timesteps." << std::endl;
+                #else         
+                    const double mem = 2*spinwaves::Skx_FFT_array_R_node.size()*sizeof(double)/ 1.0e6;
+                    std::cout << "Spinwave module using  " << mem << " MB of RAM per node for k vs time arrays for a simulation time of " << sim::total_time;
+                    std::cout << " timesteps with the dynamic structure factor calculated every " << sim::partial_time << " timesteps." << std::endl;
+                #endif
+            }
+
+
+            const double mem = 4*spinwaves::Skx_FFT_array_R_node.size()*sizeof(double)/ 1.0e6;
+            std::cout << "Spinwave module using  " << mem << " MB of RAM per node for k vs time arrays for a simulation time of " << sim::total_time;
             std::cout << " timesteps with the dynamic structure factor calculated every " << sim::partial_time << " timesteps." << std::endl;
         }
 
@@ -214,8 +233,15 @@ namespace spinwaves{
             
             double arg;
             int nk=spinwaves::internal::kx_FFT_array.size();
-            spinwaves::internal::cos_k.resize(nk*atoms::num_atoms,0.0);
-            spinwaves::internal::sin_k.resize(nk*atoms::num_atoms,0.0);
+            
+            
+            #ifdef MPICF
+                spinwaves::internal::cos_k.resize(nk*(vmpi::num_core_atoms+vmpi::num_bdry_atoms),0.0);
+                spinwaves::internal::sin_k.resize(nk*(vmpi::num_core_atoms+vmpi::num_bdry_atoms),0.0);
+            #else
+                spinwaves::internal::cos_k.resize(nk*atoms::num_atoms,0.0);
+                spinwaves::internal::sin_k.resize(nk*atoms::num_atoms,0.0);
+            #endif
 
             for (int k=0; k < nk; k++){
 
@@ -226,21 +252,17 @@ namespace spinwaves{
                 // std::cout << "test2" << std::endl;
            
                 #ifdef MPICF
-
-                for(int atom=0;atom<vmpi::num_core_atoms+vmpi::num_bdry_atoms;atom++){
-                    arg=-kx*rx[atom] - ky*ry[atom] - kz*rz[atom];  
-                    spinwaves::internal::cos_k[k*atoms::num_atoms+atom] = cos(arg);
-                    spinwaves::internal::sin_k[k*atoms::num_atoms+atom] = sin(arg);                    
-                }
-
+                    for(int atom=0;atom<vmpi::num_core_atoms+vmpi::num_bdry_atoms;atom++){
+                        arg=-kx*rx[atom] - ky*ry[atom] - kz*rz[atom];  
+                        spinwaves::internal::cos_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom] = cos(arg);
+                        spinwaves::internal::sin_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom] = sin(arg);                    
+                    }
                 #else 
-
-                for(int atom=0;atom<atoms::num_atoms;atom++){
-                    arg=-kx*rx[atom] - ky*ry[atom] - kz*rz[atom];  
-                    spinwaves::internal::cos_k[k*atoms::num_atoms+atom] = cos(arg);
-                    spinwaves::internal::sin_k[k*atoms::num_atoms+atom] = sin(arg);                      
-                }
-            
+                    for(int atom=0;atom<atoms::num_atoms;atom++){
+                        arg=-kx*rx[atom] - ky*ry[atom] - kz*rz[atom];  
+                        spinwaves::internal::cos_k[k*atoms::num_atoms+atom] = cos(arg);
+                        spinwaves::internal::sin_k[k*atoms::num_atoms+atom] = sin(arg);                      
+                    }
                 #endif
 
             }

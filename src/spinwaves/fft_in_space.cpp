@@ -46,32 +46,20 @@ namespace spinwaves {
    //----------------------------------------------------------------------------
    // Function to initialize sw module
    //----------------------------------------------------------------------------
-   void spin_wave( const std::vector<double>& atom_coords_x,
+   void fft_in_space( const std::vector<double>& atom_coords_x,
                    const std::vector<double>& atom_coords_y,
                    const std::vector<double>& atom_coords_z,
                    const int time ){
 
-      // std::cout<< "Test Spin waves part2...."<<std::endl;
-      int Na=spinwaves::internal::kx_FFT_array.size();
-      // std::cout << "========================== " << time << std::endl;
+      int nk=spinwaves::internal::kx_FFT_array.size();
 
-      // std::fill(Skx_FFT_array_R.begin(), Skx_FFT_array_R.end(), 0.0);
-      // std::fill(Skx_FFT_array_I.begin(), Skx_FFT_array_I.end(), 0.0);
-      
-      for(unsigned int uca=0;uca<Na;uca++){
-         
+      for(int k=0;k<nk;k++){
 
-         // JRH change filename
-         // std::ofstream file_K_time;
-         // std::stringstream sstr;
-         // sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(uca) << ".dat";
-         // file_K_time.open(sstr.str(),std::ios_base::app);
-
-         kx=spinwaves::internal::kx_FFT_array[uca];
-         ky=spinwaves::internal::ky_FFT_array[uca];
-         kz=spinwaves::internal::kz_FFT_array[uca];
-         // spinwaves::Skx_FFT_array_R[uca] = 0.0;
-         // spinwaves::Skx_FFT_array_I[uca] = 0.0;
+         kx=spinwaves::internal::kx_FFT_array[k];
+         ky=spinwaves::internal::ky_FFT_array[k];
+         kz=spinwaves::internal::kz_FFT_array[k];
+         spinwaves::Skx_FFT_array_R[k] = 0.0;
+         spinwaves::Skx_FFT_array_I[k] = 0.0;
 
          // double skx_R=0.0;
          // double skx_I=0.0;
@@ -80,7 +68,6 @@ namespace spinwaves {
          // double Skx_FFT_mat2=0;
 
          // std::cout << "==============================\n";
-
 
 
          #ifdef MPICF
@@ -94,28 +81,18 @@ namespace spinwaves {
                cosK= cos(arg);
                sinK= sin(arg);
                sx=atoms::x_spin_array[atom];
-               Skx_FFT_array_R[uca] += sx*cosK;
-               Skx_FFT_array_I[uca] += sx*sinK;
-               
-               // file_K_time << vmpi::my_rank << " " << atom << " " << " " << rx << " " << ry << " " << rz << " " << atoms::z_spin_array[atom] << "\n";
-               // int mat=atoms::type_array[atom];
 
-               // if (mat < 9) {
-               //    skx_R += sx; 
-               //    Skx_FFT_array_R[uca] += sx*cosK;
-               //    Skx_FFT_array_I[uca] += sx*sinK;
-               // }
+
+               // JRH cos_k and sin_k I dont think works for mpi
+               Skx_FFT_array_R[k] += sx*spinwaves::internal::cos_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom];
+               Skx_FFT_array_I[k] += sx*spinwaves::internal::sin_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom];
             }
 
-            // Add value of kpoints for all cpus JRH
-            MPI_Allreduce(MPI_IN_PLACE, &Skx_FFT_array_R[0], Na, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-            MPI_Allreduce(MPI_IN_PLACE, &Skx_FFT_array_I[0], Na, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-
-
-            if(vmpi::my_rank == 0){
-               file_K_time << time <<" "<<  spinwaves::Skx_FFT_array_R[uca]<<" "<<  spinwaves::Skx_FFT_array_I[uca] << "\n";
-               file_K_time.close();
-            }
+            // // Add value of kpoints for all cpus JRH
+            // MPI_Reduce(MPI_IN_PLACE, &Skx_FFT_array_R[0], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+            // MPI_Reduce(MPI_IN_PLACE, &Skx_FFT_array_I[0], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+            // MPI_Reduce(&Skx_FFT_array_R[0], &Skx_FFT_array_R_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+            // MPI_Reduce(&Skx_FFT_array_I[0], &Skx_FFT_array_I_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
          #else
 
@@ -131,8 +108,8 @@ namespace spinwaves {
                // testing whether predefing the cos(k) makes much of a difference to speed
                // Skx_FFT_array_R[uca] += sx*cosK;
                // Skx_FFT_array_I[uca] += sx*sinK;
-               Skx_FFT_array_R[uca*internal::numtimepoints + time] += sx*spinwaves::internal::cos_k[uca*atoms::num_atoms+atom];
-               Skx_FFT_array_I[uca*internal::numtimepoints + time] += sx*spinwaves::internal::sin_k[uca*atoms::num_atoms+atom];
+               Skx_FFT_array_R_node[time*nk + k] += sx*spinwaves::internal::cos_k[k*atoms::num_atoms+atom];
+               Skx_FFT_array_I_node[time*nk + k] += sx*spinwaves::internal::sin_k[k*atoms::num_atoms+atom];
 
             }
 
@@ -141,9 +118,31 @@ namespace spinwaves {
 
          #endif
 
-
-
       } 
+
+
+      #ifdef MPICF
+         // Add value of kpoints for all cpus JRH
+         if (vmpi::my_rank == 0){
+            std::cout << "Reducing processor array to node array" << std::endl;
+         }
+         MPI_Reduce(&Skx_FFT_array_R[0], &Skx_FFT_array_R_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+         MPI_Reduce(&Skx_FFT_array_I[0], &Skx_FFT_array_I_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+         // MPI_Gather(&Skx_FFT_array_R[0], nk, MPI_DOUBLE, &Skx_FFT_array_R_node[time*nk], 100, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+         // MPI_Gather(&Skx_FFT_array_I[0], nk, MPI_DOUBLE, &Skx_FFT_array_I_node[time*nk], 100, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+         if (vmpi::my_rank == 0){
+            std::cout << "Reduction completed." << std::endl;
+         } 
+      #endif
+      
+      
+      
+      // if(vmpi::my_rank == 0){
+      //    for (int i = 0; i < nk*internal::numtimepoints; i++){
+      //       file_K_time << i <<" "<<  spinwaves::Skx_FFT_array_R_node[i]<<" "<<  spinwaves::Skx_FFT_array_I_node[i] << "\n";
+      //    }
+      //    file_K_time.close();
+      // }
     
 	   return;
 

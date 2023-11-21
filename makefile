@@ -198,7 +198,7 @@ serial: $(OBJECTS)
 	$(GCC) $(GCC_LDFLAGS)  $(OBJECTS) $(LIBS) -o $(EXECUTABLE) -lfftw3
 
 $(OBJECTS): obj/%.o: src/%.cpp
-	$(GCC) -c -o $@ $(GCC_CFLAGS) $(OPTIONS) $<  -lfftw3
+	$(GCC) -c -o $@ $(GCC_CFLAGS) $(OPTIONS) $< 
 
 serial-intel: $(ICC_OBJECTS)
 	$(ICC) $(ICC_LDFLAGS) $(LIBS) $(ICC_OBJECTS) -o $(EXECUTABLE)-intel
@@ -251,7 +251,7 @@ $(PCCDB_OBJECTS): obj/%_pdb.o: src/%.cpp
 # MPI Targets
 
 parallel: $(MPI_OBJECTS)
-	$(MPICC) $(GCC_LDFLAGS) $(MPI_OBJECTS) $(LIBS) -o $(PEXECUTABLE)
+	$(MPICC) $(GCC_LDFLAGS) $(MPI_OBJECTS) $(LIBS) -o $(PEXECUTABLE) -lfftw3
 
 $(MPI_OBJECTS): obj/%_mpi.o: src/%.cpp
 	$(MPICC) -c -o $@ $(GCC_CFLAGS) $(OPTIONS) $<

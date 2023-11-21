@@ -81,7 +81,7 @@ void spin_waves(){
 
 		//calculate spinwaves JRH
 		// std::cout << "calling spinwave function." << std::endl;
-		spinwaves::spin_wave(
+		spinwaves::fft_in_space(
 		atoms::x_coord_array,
 		atoms::y_coord_array,		
 		atoms::z_coord_array,
