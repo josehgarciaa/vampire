@@ -26,6 +26,7 @@
 
 // sw module headers
 #include "internal.hpp"
+#include <fftw3.h>
 #include "vector"
 
 namespace spinwaves{
@@ -93,17 +94,7 @@ namespace spinwaves{
       extern void path_bcc();
       extern void path_fcc();
       extern void path_hcp();
-      // extern void path_heusler();
-      // extern void path_honeycomb();
-      // extern void path_honeycomb_alpha();
-      // extern void path_honeycomb_beta();
-      // extern void path_kagome();
       extern void path_mn2au();
-      // extern void path_NdFeB();
-      // extern void path_rock_salt();
-      // extern void path_spinel();
-      // extern void path_spinel_layered();
-      // extern void path_SmFeN();
       extern void determine_path();
       extern void determine_kpoints(
                      const double system_dimensions_x, 
@@ -113,7 +104,14 @@ namespace spinwaves{
                      const double unit_cell_size_y, 
                      const double unit_cell_size_z);
       extern void calculate_fourier_prefactor(const std::vector<double>& rx, const std::vector<double>& ry, const std::vector<double>& rz);
+      extern void normalise_spectrum(std::vector<double>& os);
+      extern void write_to_file(std::vector<double>& os, int k, int nk_per_rank);
+      extern void one_sided_spectrum(std::vector<double>& os, std::vector<fftw_complex>& combined_real_imag_fftd);
       extern int gcd(int a, int b);
+
+      // Peak finding at some point?????/
+      // extern void write_peaks_to_file();
+      // extern void calculate_spectrum_peaks();
       
 
    } // end of internal namespace

@@ -39,17 +39,21 @@ namespace spinwaves {
 
    void fft_in_time(){
 
-      std::cout     << "Starting calculation of time series Discrete Fourier Transform." << std::endl;
-      zlog << zTs() << "Starting calculation of time series Discrete Fourier Transform." << std::endl;
+
 
       // Start time for time series fourier transform
       // Set timer for runtime
+      std::cout     << "Starting calculation of time series Discrete Fourier Transform." << std::endl;
+      zlog << zTs() << "Starting calculation of time series Discrete Fourier Transform." << std::endl;
       stopwatch_t fft_stopwatch;
       fft_stopwatch.start();
-      
+   
       const int real = 0;
       const int imag = 1;
 
+      std::vector<double> os;
+      os.resize(internal::numtimepoints/2,0.0);
+      
       std::vector <double> Skx_FFT_array_R_transposed;
       std::vector <double> Skx_FFT_array_I_transposed;
       if (vmpi::my_rank == 0){
@@ -57,11 +61,13 @@ namespace spinwaves {
          Skx_FFT_array_I_transposed.resize(internal::numtimepoints*internal::numkpoints);	
       }
 
+
       std::vector<fftw_complex> combined_real_imag(internal::numtimepoints);
       std::vector<fftw_complex> combined_real_imag_fftd(internal::numtimepoints);
       fftw_plan fft_in_time;
       fft_in_time = fftw_plan_dft_1d(internal::numtimepoints, &combined_real_imag[0], &combined_real_imag_fftd[0], FFTW_FORWARD, FFTW_MEASURE);
       
+
       // the loop below transposes from:
       //
       // |    t0         t1      t2     |   ..... 
@@ -128,7 +134,6 @@ namespace spinwaves {
 
 
          // make a mask that determines which kpoints will be dft'd. This prevents dft of lots of 0s on last rank
-
          std::vector<int> kmask;
          kmask.resize(nk_per_rank * vmpi::num_processors,0);
          for (int i = 0; i < internal::numkpoints; i++){
@@ -143,13 +148,15 @@ namespace spinwaves {
          std::cout     << "Scattered points to each rank." << std::endl;
          zlog << zTs() << "Scattered points to each rank." << std::endl;
 
+
+
          // loop over the k-points on each rank
          for (int k = 0; k < nk_per_rank; k++){
 
             // if the mask is 1, the calculate the dft.
             if (kmask[k+vmpi::my_rank*nk_per_rank] == 1){
 
-               // populate fftw_complex std::array
+               // populate fftw_complex vector
                for (int time=0; time < internal::numtimepoints; time++){
                   combined_real_imag[time][real] = Skx_FFT_array_R_scatter[k*internal::numtimepoints + time];
                   combined_real_imag[time][imag] = Skx_FFT_array_R_scatter[k*internal::numtimepoints + time];
@@ -158,142 +165,40 @@ namespace spinwaves {
                // exexcute the fft
                fftw_execute(fft_in_time);
 
-               // =============================================================================================================================================
-               // Calculate one sided spectrum ================================================================================================================
-               // =============================================================================================================================================
-               int j2;
-               double os1, os2, os[internal::numtimepoints/2];
+               // calculate one sided spectrum
+               spinwaves::internal::one_sided_spectrum(os, combined_real_imag_fftd);
 
-               for (int j1 = 0; j1 < internal::numtimepoints/2; j1++){
-                  j2 = internal::numtimepoints-j1-1;     
-                  os1 = combined_real_imag_fftd[j1][real] * combined_real_imag_fftd[j1][real] + combined_real_imag_fftd[j1][imag] * combined_real_imag_fftd[j1][imag];
-                  os2 = combined_real_imag_fftd[j2][real] * combined_real_imag_fftd[j2][real] + combined_real_imag_fftd[j2][imag] * combined_real_imag_fftd[j2][imag];
+               // normalise to largest amplitude for each k-value
+               spinwaves::internal::normalise_spectrum(os);
 
-                  os[j1] = os1 + os2;
-               }
-               // =============================================================================================================================================
-               // =============================================================================================================================================
-               // =============================================================================================================================================
-
-
-               // =============================================================================================================================================
-               // normalise the amplitudes to the largest value for each kpoint ===============================================================================
-               // =============================================================================================================================================
-               double largest = os[0];
-               double index;
-
-               // Find largest value in k_z array
-               for (int j1 = 1; j1 < internal::numtimepoints/2; j1++){
-                  if (largest < os[j1]){
-                     largest = os[j1];
-                     index = j1;
-                  }
-               }
-               // normlise each value
-               for (int j1 = 0; j1 < internal::numtimepoints/2; j1++){
-                  os[j1] /= largest;
-               }
-               // =============================================================================================================================================
-               // =============================================================================================================================================
-               // =============================================================================================================================================
-
-
-               // =============================================================================================================================================
-               // Output values to file =======================================================================================================================
-               // =============================================================================================================================================
-               std::ofstream file_K_time;
-               std::stringstream sstr;
-               sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*nk_per_rank) << ".dat";
-               file_K_time.open(sstr.str(),std::ios_base::app);
-               for (int time=0; time < internal::numtimepoints/2; time++){
-                  // file_K_time <<  combined_real_imag_fftd[time][real] << " " <<  combined_real_imag_fftd[time][imag] << "\n";
-                  file_K_time << os[time] << "\n";
-               }
-               // file_K_time.close();
-               // =============================================================================================================================================
-               // =============================================================================================================================================
-               // =============================================================================================================================================
-
+               // write each k-value to file
+               spinwaves::internal::write_to_file(os, k, nk_per_rank);
             }
          }
          
       #else
 
-      for (int k = 0; k < internal::numkpoints; k++){
-         for (int time=0; time < internal::numtimepoints; time++){
+         for (int k = 0; k < internal::numkpoints; k++){
+            for (int time=0; time < internal::numtimepoints; time++){
 
-            // Fill FFTW arrays with values from spacial FFT.
-            combined_real_imag[time][real] = Skx_FFT_array_R_transposed[k*internal::numtimepoints + time];
-            combined_real_imag[time][imag] = Skx_FFT_array_R_transposed[k*internal::numtimepoints + time];
-            std::cout << k << " " << combined_real_imag[time][real] << " " << combined_real_imag[time][imag] << " ";
-            std::cout << Skx_FFT_array_R[k*internal::numtimepoints + time] << " " <<  Skx_FFT_array_I[k*internal::numtimepoints + time] << std::endl;
+               // Fill FFTW arrays with values from spacial FFT.
+               combined_real_imag[time][real] = Skx_FFT_array_R_transposed[k*internal::numtimepoints + time];
+               combined_real_imag[time][imag] = Skx_FFT_array_R_transposed[k*internal::numtimepoints + time];
 
-         }
-
-         // execute fftw in time
-         fftw_execute(fft_in_time);
-
-
-         // =============================================================================================================================================
-         // Calculate one sided spectrum ================================================================================================================
-         // =============================================================================================================================================
-         int j2;
-         double os1, os2, os[internal::numtimepoints/2];
-
-         for (int j1 = 0; j1 < internal::numtimepoints/2; j1++){
-            j2 = internal::numtimepoints-j1-1;     
-            os1 = combined_real_imag_fftd[j1][real] * combined_real_imag_fftd[j1][real] + combined_real_imag_fftd[j1][imag] * combined_real_imag_fftd[j1][imag];
-            os2 = combined_real_imag_fftd[j2][real] * combined_real_imag_fftd[j2][real] + combined_real_imag_fftd[j2][imag] * combined_real_imag_fftd[j2][imag];
-
-            os[j1] = os1 + os2;
-         }
-         // =============================================================================================================================================
-         // =============================================================================================================================================
-         // =============================================================================================================================================
-
-
-         // =============================================================================================================================================
-         // normalise the amplitudes to the largest value for each kpoint ===============================================================================
-         // =============================================================================================================================================
-         double largest = os[0];
-         double index;
-
-         // Find largest value in k_z array
-         for (int j1 = 1; j1 < internal::numtimepoints/2; j1++){
-            if (largest < os[j1]){
-               largest = os[j1];
-               index = j1;
             }
+
+            // exexcute the fft
+            fftw_execute(fft_in_time);
+
+            // calculate one sided spectrum
+            spinwaves::internal::one_sided_spectrum(os, combined_real_imag_fftd);            
+
+            // normalise to largest amplitude for each k-value
+            spinwaves::internal::normalise_spectrum(os);
+
+            // write each k-value to file
+            spinwaves::internal::write_to_file(os, k, 0);
          }
-         // normlise each value
-         for (int j1 = 0; j1 < internal::numtimepoints/2; j1++){
-            os[j1] /= largest;
-         }
-         // =============================================================================================================================================
-         // =============================================================================================================================================
-         // =============================================================================================================================================
-
-
-         // =============================================================================================================================================
-         // Output values to file =======================================================================================================================
-         // =============================================================================================================================================
-         std::ofstream file_K_time;
-         std::stringstream sstr;
-         sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
-         file_K_time.open(sstr.str(),std::ios_base::app);
-         for (int time=0; time < internal::numtimepoints/2; time++){
-            // file_K_time <<  combined_real_imag_fftd[time][real] << " " <<  combined_real_imag_fftd[time][imag] << "\n";
-            file_K_time << os[time] << "\n";
-         }
-         file_K_time.close();
-         // =============================================================================================================================================
-         // =============================================================================================================================================
-         // =============================================================================================================================================
-
-      }
-
-      // destroy fftw3 plan
-      fftw_destroy_plan(fft_in_time);
 
       #endif
 
@@ -301,14 +206,10 @@ namespace spinwaves {
       // Set timer for runtime
       std::cout     << "Total duration of time series discrete fourier transform [s]: " << fft_stopwatch.elapsed_seconds() << std::endl;
       zlog << zTs() << "Total duration of time series discrete fourier transform [s]: " << fft_stopwatch.elapsed_seconds() << std::endl;
+
+      // destroy fftw3 plan
+      fftw_destroy_plan(fft_in_time);
       
    }
-
-   
-   
-
-
-
-
 } 
 

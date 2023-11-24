@@ -33,44 +33,71 @@
 
 namespace spinwaves {
 
-    
-    // =============================================================================================================================================
-    // Calculate one sided spectrum ================================================================================================================
-    // =============================================================================================================================================
-    
-    int j2;
-    double os1, os2, os[internal::numtimepoints/2];
+    namespace internal {
 
-    for (int j1 = 0; j1 < internal::numtimepoints/2; j1++){
-        j2 = internal::numtimepoints-j1-1;     
-        os1 = combined_real_imag_fftd[j1][real] * combined_real_imag_fftd[j1][real] + combined_real_imag_fftd[j1][imag] * combined_real_imag_fftd[j1][imag];
-        os2 = combined_real_imag_fftd[j2][real] * combined_real_imag_fftd[j2][real] + combined_real_imag_fftd[j2][imag] * combined_real_imag_fftd[j2][imag];
+        std::ofstream file_K_time;
+        int j2;
+        double os1, os2;
+        std::vector<double> os;
+        const int real = 0;
+        const int imag = 1;
 
-        os[j1] = os1 + os2;
-    }
-    // =============================================================================================================================================
-    // =============================================================================================================================================
-    // =============================================================================================================================================
+        // =============================================================================================================================================
+        // Calculate one sided spectrum ================================================================================================================
+        // =============================================================================================================================================
+        void one_sided_spectrum(std::vector<double>& os, 
+                                std::vector<fftw_complex>& combined_real_imag_fftd){
 
-    // =============================================================================================================================================
-    // normalise the amplitudes to the largest value for each kpoint ===============================================================================
-    // =============================================================================================================================================
-    double largest = os[0];
-    double index;
+            for (int j1 = 0; j1 < internal::numtimepoints/2; j1++){
+                j2 = internal::numtimepoints-j1-1;     
+                os1 = combined_real_imag_fftd[j1][real] * combined_real_imag_fftd[j1][real] + combined_real_imag_fftd[j1][imag] * combined_real_imag_fftd[j1][imag];
+                os2 = combined_real_imag_fftd[j2][real] * combined_real_imag_fftd[j2][real] + combined_real_imag_fftd[j2][imag] * combined_real_imag_fftd[j2][imag];
 
-    // Find largest value in k_z array
-    for (int j1 = 1; j1 < internal::numtimepoints/2; j1++){
-        if (largest < os[j1]){
-            largest = os[j1];
-            index = j1;
+                os[j1] = os1 + os2;
+            }
         }
+        
+
+        void normalise_spectrum(std::vector<double>& os){
+
+            double largest = os[0];
+            double index;
+
+
+            // Find largest value in k_z array
+            for (int j1 = 1; j1 < internal::numtimepoints/2; j1++){
+                if (largest < os[j1]){
+                    largest = os[j1];
+                    index = j1;
+                }
+                }
+                // normlise each value
+                for (int j1 = 0; j1 < internal::numtimepoints/2; j1++){
+                os[j1] /= largest;
+            }
+
         }
-        // normlise each value
-        for (int j1 = 0; j1 < internal::numtimepoints/2; j1++){
-        os[j1] /= largest;
+
+        void write_to_file(std::vector<double>& os, int k, int nk_per_rank){
+
+            std::stringstream sstr;
+            
+            #ifdef MPICF
+                sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*nk_per_rank) << ".dat";
+            #else 
+                sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
+            #endif
+
+
+            file_K_time.open(sstr.str(),std::ios_base::app);
+            for (int time=0; time < internal::numtimepoints/2; time++){
+            // file_K_time <<  combined_real_imag_fftd[time][real] << " " <<  combined_real_imag_fftd[time][imag] << "\n";
+            file_K_time << os[time] << "\n";
+            }
+            file_K_time.close();
+
+        }
+
     }
-    // =============================================================================================================================================
-    // =============================================================================================================================================
-    // =============================================================================================================================================
 
 }

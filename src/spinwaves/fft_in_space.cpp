@@ -55,9 +55,9 @@ namespace spinwaves {
 
       for(int k=0;k<nk;k++){
 
-         kx=spinwaves::internal::kx_FFT_array[k];
-         ky=spinwaves::internal::ky_FFT_array[k];
-         kz=spinwaves::internal::kz_FFT_array[k];
+         // kx=spinwaves::internal::kx_FFT_array[k];
+         // ky=spinwaves::internal::ky_FFT_array[k];
+         // kz=spinwaves::internal::kz_FFT_array[k];
          spinwaves::Skx_FFT_array_R[k] = 0.0;
          spinwaves::Skx_FFT_array_I[k] = 0.0;
 
@@ -65,12 +65,12 @@ namespace spinwaves {
 
             for(int atom=0;atom<vmpi::num_core_atoms+vmpi::num_bdry_atoms;atom++){
                
-               rx=atom_coords_x[atom];
-               ry=atom_coords_y[atom];
-               rz=atom_coords_z[atom];
-               arg=-kx*rx - ky*ry - kz*rz ;  
-               cosK= cos(arg);
-               sinK= sin(arg);
+               // rx=atom_coords_x[atom];
+               // ry=atom_coords_y[atom];
+               // rz=atom_coords_z[atom];
+               // arg=-kx*rx - ky*ry - kz*rz ;  
+               // cosK= cos(arg);
+               // sinK= sin(arg);
                sx=atoms::x_spin_array[atom];
 
 
@@ -101,7 +101,6 @@ namespace spinwaves {
          #endif
 
       } 
-
 
       #ifdef MPICF
          MPI_Reduce(&Skx_FFT_array_R[0], &Skx_FFT_array_R_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);

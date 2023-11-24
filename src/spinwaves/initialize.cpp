@@ -58,29 +58,10 @@ namespace spinwaves{
 
 		std::cout<< "Test Spin waves...."<<std::endl;
 		int Na=atom.size();
-		const double twopi_over_a=2.0*M_PI/unit_cell_size_x;
-		const double twopi_over_b=2.0*M_PI/unit_cell_size_y;
-		const double twopi_over_c=2.0*M_PI/unit_cell_size_z;
 		const double toll_Fikj=1e-5; // tollerance for the structure factor values smaller than tollerance are considered 0
 
 		// number of steps for sw calculations
 		int numsteps = (sim::total_time / sim::partial_time);
-
-		
-		// std::ofstream file_Reciprocal_lattice;
-		// file_Reciprocal_lattice.open("K_space.dat");
-
-		std::cout << " "<<std::endl;
-		std::cout << "System dimensions: "<<system_dimensions_x<<"\t"<<system_dimensions_y<<"\t"<<system_dimensions_z<<std::endl;
-		std::cout << "Total number of unit cells: "<<total_num_unit_cells_x<<"\t"<<total_num_unit_cells_y<<"\t"<<total_num_unit_cells_z<<std::endl;
-		std::cout << "Unit cell size: "<<unit_cell_size_x<<"\t"<<unit_cell_size_y<<"\t"<<unit_cell_size_z<<"\n"<<std::endl;
-		std::cout << "atoms in one unit cell: "<<Na<<std::endl;
-
-		for(unsigned int uca=0; uca<atom.size(); uca++){
-			std::cout<< "atom index, x,y,z: "<<atom[uca].x<<"\t"<<atom[uca].y<<"\t"<<atom[uca].z<<std::endl;
-		}
-		std::cout<<" "<<std::endl;
-
 
 		// JRH determine whether to use path for a predefined crystal or whether path has been specified by user.
 		spinwaves::internal::determine_path();
@@ -113,31 +94,10 @@ namespace spinwaves{
 				spinwaves::internal::structure_factor_array_R[uca] += sx*cosK;
 				spinwaves::internal::structure_factor_array_I[uca] += sx*sinK;
 			}
-			// std::cout<<uca<<"\t"<<"\t"<<spinwaves::internal::structure_factor_array_R[uca]<<"\t"<<spinwaves::internal::structure_factor_array_I[uca]<<"\t"<<std::endl;
 		}
-		//#######################################################################################################################
 
-		// for(unsigned int uca=0;uca<spinwaves::Skx_FFT_array_R.size();uca++){
-		// 	std::ofstream file_K_time;
-		// 	std::stringstream sstr;
-		// 	// JRH change name of files
-		// 	sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(uca) << ".dat";
-		// 	//sstr << "K_vs_time" << 
-		// 	//"_kx_" << std::setw(6) << std::to_string(spinwaves::internal::kx_FFT_array[uca]) << 
-		// 	//"_ky_" << std::setw(6) << std::to_string(spinwaves::internal::ky_FFT_array[uca]) << 
-		// 	//"_kz_" << std::setw(6) << std::to_string(spinwaves::internal::kz_FFT_array[uca]) << 		
-		// 	//".dat";
-
-		// 	file_K_time.open(sstr.str());
-		// 	file_K_time.close();
-		// 	double Fijk=sqrt(spinwaves::internal::structure_factor_array_I[uca]*spinwaves::internal::structure_factor_array_I[uca] + spinwaves::internal::structure_factor_array_R[uca]*spinwaves::internal::structure_factor_array_R[uca]);
-		// 	file_Reciprocal_lattice << uca<<"\t"<<spinwaves::internal::kx_FFT_array[uca]<<"\t"<< spinwaves::internal::ky_FFT_array[uca]<<"\t"<< spinwaves::internal::kz_FFT_array[uca]<<"\t"<< Fijk<<"\t"<< spinwaves::internal::structure_factor_array_R[uca]<<"\t"<< spinwaves::internal::structure_factor_array_I[uca] <<std::endl;
-		// }
-
-		// std::cout<< "There are  " << Nktotal << " k-points in total for "<<N_K_path <<" K-paths" << std::endl;
 		std::cout<< "SW initialisation completed."<<std::endl;
 		std::cout<<" "<<std::endl;
-		// file_Reciprocal_lattice.close();
 
 
 		return;

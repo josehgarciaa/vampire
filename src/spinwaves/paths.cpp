@@ -245,11 +245,9 @@ namespace spinwaves{
 
             for (int k=0; k < nk; k++){
 
-                // std::cout << "test1" << std::endl;
                 double kx = spinwaves::internal::kx_FFT_array[k];
                 double ky = spinwaves::internal::ky_FFT_array[k];
                 double kz = spinwaves::internal::kz_FFT_array[k];
-                // std::cout << "test2" << std::endl;
            
                 #ifdef MPICF
                     for(int atom=0;atom<vmpi::num_core_atoms+vmpi::num_bdry_atoms;atom++){
