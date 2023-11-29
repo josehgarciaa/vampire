@@ -67,9 +67,9 @@ namespace spinwaves{
       extern bool enabled; // bool to enable module
 
       extern std::vector<internal::mp_t> mp; // array of material properties
-      extern std::vector <double> kx_FFT_array;
-      extern std::vector <double> ky_FFT_array;
-      extern std::vector <double> kz_FFT_array;
+      extern std::vector <double> kx_list;
+      extern std::vector <double> ky_list;
+      extern std::vector <double> kz_list;
       extern std::vector <double> structure_factor_array_R, structure_factor_array_I;
       extern std::string kpath_filename;
 
@@ -83,8 +83,8 @@ namespace spinwaves{
       extern std::vector<double> sin_k;
 
       //JRH time variabls
-      extern int numtimepoints;
-      extern int numkpoints;
+      extern int nt;
+      extern int nk;
 
       //-------------------------------------------------------------------------
       // Internal function declarations

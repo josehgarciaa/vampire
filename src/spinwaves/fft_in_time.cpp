@@ -52,20 +52,20 @@ namespace spinwaves {
       const int imag = 1;
 
       std::vector<double> os;
-      os.resize(internal::numtimepoints/2,0.0);
+      os.resize(internal::nt/2,0.0);
       
-      std::vector <double> Skx_FFT_array_R_transposed;
-      std::vector <double> Skx_FFT_array_I_transposed;
+      std::vector <double> skx_r_node_transposed;
+      std::vector <double> skx_i_node_transposed;
       if (vmpi::my_rank == 0){
-         Skx_FFT_array_R_transposed.resize(internal::numtimepoints*internal::numkpoints);
-         Skx_FFT_array_I_transposed.resize(internal::numtimepoints*internal::numkpoints);	
+         skx_r_node_transposed.resize(internal::nt*internal::nk);
+         skx_i_node_transposed.resize(internal::nt*internal::nk);	
       }
 
 
-      std::vector<fftw_complex> combined_real_imag(internal::numtimepoints);
-      std::vector<fftw_complex> combined_real_imag_fftd(internal::numtimepoints);
+      std::vector<fftw_complex> combined_real_imag(internal::nt);
+      std::vector<fftw_complex> combined_real_imag_fftd(internal::nt);
       fftw_plan fft_in_time;
-      fft_in_time = fftw_plan_dft_1d(internal::numtimepoints, &combined_real_imag[0], &combined_real_imag_fftd[0], FFTW_FORWARD, FFTW_MEASURE);
+      fft_in_time = fftw_plan_dft_1d(internal::nt, &combined_real_imag[0], &combined_real_imag_fftd[0], FFTW_FORWARD, FFTW_MEASURE);
       
 
       // the loop below transposes from:
@@ -91,29 +91,43 @@ namespace spinwaves {
       // Not always the case that Nkpoints/nranks will be an integer. Need to round up and zero pad the array.
       // For example. 100 timesteps, 50 kpoints ran on 4 ranks will mean there is (100*50) / 4 data points per rank.
       // WIll have to round up and zero-pad.
-
-
+      //
+      //
+      // Is it possible using scatterv to send to correct node in a single process....
+      // To be memory efficient we need to have a
+      
       // rearrange array for scatter - I think this bit needs to be done for serial and parallel
-      if (vmpi::my_rank == 0){
-         for (int k = 0; k < internal::numkpoints; k++){
-            for (int time=0; time < internal::numtimepoints; time++){   
-               // Fill FFTW arrays with values from spacial FFT.
-               Skx_FFT_array_R_transposed[k*internal::numtimepoints + time] = Skx_FFT_array_R_node[time*internal::numkpoints + k];
-               Skx_FFT_array_I_transposed[k*internal::numtimepoints + time] = Skx_FFT_array_I_node[time*internal::numkpoints + k];
-            }     
-         }
+      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
+      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
+      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
+      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
+      // if (vmpi::my_rank == 0){
+      //    for (int k = 0; k < internal::nk; k++){
+      //       for (int time=0; time < internal::nt; time++){   
+      //          // Fill FFTW arrays with values from spacial FFT.
+      //          skx_r_node_transposed[k*internal::nt + time] = skx_r_node[time*internal::nk + k];
+      //          skx_i_node_transposed[k*internal::nt + time] = skx_i_node[time*internal::nk + k];
+      //       }     
+      //    }
 
 
-      }
+      // }
+      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
+      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
+      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
+      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
+
+      
+
 
       #ifdef MPICF
 
-         int nk_per_rank = std::ceil(static_cast<double>(internal::numkpoints) / static_cast<double>(vmpi::num_processors));
-         int scatterlength = nk_per_rank * internal::numtimepoints;
-         std::vector<double> Skx_FFT_array_R_scatter;
-         std::vector<double> Skx_FFT_array_I_scatter;
-         Skx_FFT_array_R_scatter.resize(scatterlength,0.0);
-         Skx_FFT_array_I_scatter.resize(scatterlength,0.0);
+         // int nk_per_rank = std::ceil(static_cast<double>(internal::nk) / static_cast<double>(vmpi::num_processors));
+         // int scatterlength = nk_per_rank * internal::nt;
+         // std::vector<double> skx_r_scatter;
+         // std::vector<double> skx_i_scatter;
+         // skx_r_scatter.resize(scatterlength,0.0);
+         // skx_i_scatter.resize(scatterlength,0.0);
 
 
 
@@ -127,8 +141,8 @@ namespace spinwaves {
             zlog << zTs() << "Number of k-points allocated to each rank: " << nk_per_rank << std::endl;
 
             // zero pad the array
-            Skx_FFT_array_R_transposed.resize(nk_per_rank * vmpi::num_processors * internal::numtimepoints,0.0);
-            Skx_FFT_array_I_transposed.resize(nk_per_rank * vmpi::num_processors * internal::numtimepoints,0.0);
+            skx_r_node_transposed.resize(nk_per_rank * vmpi::num_processors * internal::nt,0.0);
+            skx_i_node_transposed.resize(nk_per_rank * vmpi::num_processors * internal::nt,0.0);
          }
 
 
@@ -136,17 +150,17 @@ namespace spinwaves {
          // make a mask that determines which kpoints will be dft'd. This prevents dft of lots of 0s on last rank
          std::vector<int> kmask;
          kmask.resize(nk_per_rank * vmpi::num_processors,0);
-         for (int i = 0; i < internal::numkpoints; i++){
+         for (int i = 0; i < internal::nk; i++){
             kmask[i] = 1;
          }
          std::cout     << "Created mask for k-points." << std::endl;
          zlog << zTs() << "Created mask for k-points." << std::endl;
 
-         // scatter array to every processor
-         MPI_Scatter(&Skx_FFT_array_R_transposed[0], scatterlength, MPI_DOUBLE, &Skx_FFT_array_R_scatter[0], scatterlength, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-         MPI_Scatter(&Skx_FFT_array_I_transposed[0], scatterlength, MPI_DOUBLE, &Skx_FFT_array_I_scatter[0], scatterlength, MPI_DOUBLE, 0, MPI_COMM_WORLD); 
-         std::cout     << "Scattered points to each rank." << std::endl;
-         zlog << zTs() << "Scattered points to each rank." << std::endl;
+         // // // scatter array to every processor
+         // MPI_Scatter(&skx_r_node_transposed[0], scatterlength, MPI_DOUBLE, &skx_r_scatter[0], scatterlength, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+         // MPI_Scatter(&skx_i_node_transposed[0], scatterlength, MPI_DOUBLE, &skx_i_scatter[0], scatterlength, MPI_DOUBLE, 0, MPI_COMM_WORLD); 
+         // std::cout     << "Scattered points to each rank." << std::endl;
+         // zlog << zTs() << "Scattered points to each rank." << std::endl;
 
 
 
@@ -157,9 +171,9 @@ namespace spinwaves {
             if (kmask[k+vmpi::my_rank*nk_per_rank] == 1){
 
                // populate fftw_complex vector
-               for (int time=0; time < internal::numtimepoints; time++){
-                  combined_real_imag[time][real] = Skx_FFT_array_R_scatter[k*internal::numtimepoints + time];
-                  combined_real_imag[time][imag] = Skx_FFT_array_R_scatter[k*internal::numtimepoints + time];
+               for (int time=0; time < internal::nt; time++){
+                  combined_real_imag[time][real] = skx_r_scatter[k*internal::nt + time];
+                  combined_real_imag[time][imag] = skx_r_scatter[k*internal::nt + time];
                }
 
                // exexcute the fft
@@ -178,12 +192,12 @@ namespace spinwaves {
          
       #else
 
-         for (int k = 0; k < internal::numkpoints; k++){
-            for (int time=0; time < internal::numtimepoints; time++){
+         for (int k = 0; k < internal::nk; k++){
+            for (int time=0; time < internal::nt; time++){
 
                // Fill FFTW arrays with values from spacial FFT.
-               combined_real_imag[time][real] = Skx_FFT_array_R_transposed[k*internal::numtimepoints + time];
-               combined_real_imag[time][imag] = Skx_FFT_array_R_transposed[k*internal::numtimepoints + time];
+               combined_real_imag[time][real] = skx_r_node_transposed[k*internal::nt + time];
+               combined_real_imag[time][imag] = skx_r_node_transposed[k*internal::nt + time];
 
             }
 

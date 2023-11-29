@@ -29,12 +29,19 @@ namespace spinwaves{
    //-----------------------------------------------------------------------------
    // Function to initialise spinwaves module
    //-----------------------------------------------------------------------------
-   extern std::vector <double> Skx_FFT_array_R;
-   extern std::vector <double> Skx_FFT_array_I;
-   extern std::vector <double> Skx_FFT_array_R_node;
-   extern std::vector <double> Skx_FFT_array_I_node;
-   extern std::vector <double> Skx_FFT_array_R_transposed;
-   extern std::vector <double> Skx_FFT_array_I_transposed;
+   extern std::vector <double> skx_r;
+   extern std::vector <double> skx_i;
+   extern std::vector <double> skx_r_node;
+   extern std::vector <double> skx_i_node;
+   extern std::vector <double> skx_r_node_transposed;
+   extern std::vector <double> skx_i_node_transposed;
+
+
+   // THIS IS TEMPORARY
+   extern int nk_per_rank;
+   extern int scatterlength;
+   extern std::vector<double> skx_r_scatter;
+   extern std::vector<double> skx_i_scatter;
  
 
    void fft_in_space( const std::vector<double>& atom_coords_x,

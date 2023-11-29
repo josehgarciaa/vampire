@@ -21,6 +21,7 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
+#include "vmpi.hpp"
 
 //sergiu for SW
 #include "unitcell.hpp"
@@ -65,24 +66,30 @@ namespace spinwaves{
 
 		// JRH determine whether to use path for a predefined crystal or whether path has been specified by user.
 		spinwaves::internal::determine_path();
-		std::cout << "PATH DETERMINED " << std::endl;
+		// std::cout << "PATH DETERMINED " << std::endl;
 
 		// JRH calculate the values of $k$ at which to calculate the DSF for the user specified system dimensions.
 		spinwaves::internal::determine_kpoints(system_dimensions_x, system_dimensions_y, system_dimensions_z, unit_cell_size_x, unit_cell_size_y, unit_cell_size_z);
-		std::cout << "KPOINT DETERMINED " << std::endl;
+		// std::cout << "KPOINT DETERMINED " << std::endl;
 
 		// determine prefactor that will be used in fourier transform. sin(k_x*r_x) etc.
 		spinwaves::internal::calculate_fourier_prefactor(atom_coords_x, atom_coords_y, atom_coords_x);
-		std::cout << "FOURIER PREFACTOR DETERMINED " << std::endl;
+		// std::cout << "FOURIER PREFACTOR DETERMINED " << std::endl;
 
-		// err::vexit();
+		#ifdef MPICF
+			nk_per_rank = std::ceil(static_cast<double>(internal::nk) / static_cast<double>(vmpi::num_processors));
+			scatterlength = nk_per_rank * internal::nt;
+			skx_r_scatter.resize(scatterlength,0.0);
+			skx_i_scatter.resize(scatterlength,0.0);
+		#endif
+
 
 		//##################################################################################################
 		//#### Compute the structure factor
-		for(unsigned int uca=0;uca<spinwaves::internal::kx_FFT_array.size();uca++){
-			const double kx=spinwaves::internal::kx_FFT_array[uca];
-			const double ky=spinwaves::internal::ky_FFT_array[uca];
-			const double kz=spinwaves::internal::kz_FFT_array[uca];
+		for(unsigned int k=0;k<spinwaves::internal::kx_list.size();k++){
+			const double kx=spinwaves::internal::kx_list[k];
+			const double ky=spinwaves::internal::ky_list[k];
+			const double kz=spinwaves::internal::kz_list[k];
 			for(int atom=0;atom<atoms::num_atoms;atom++){
 				const double rx=atom_coords_x[atom];
 				const double ry=atom_coords_y[atom];
@@ -91,8 +98,8 @@ namespace spinwaves{
 				double cosK= cos(arg);
 				double sinK= sin(arg);
 				double sx=1;
-				spinwaves::internal::structure_factor_array_R[uca] += sx*cosK;
-				spinwaves::internal::structure_factor_array_I[uca] += sx*sinK;
+				spinwaves::internal::structure_factor_array_R[k] += sx*cosK;
+				spinwaves::internal::structure_factor_array_I[k] += sx*sinK;
 			}
 		}
 

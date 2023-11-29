@@ -48,8 +48,8 @@ namespace spinwaves {
         void one_sided_spectrum(std::vector<double>& os, 
                                 std::vector<fftw_complex>& combined_real_imag_fftd){
 
-            for (int j1 = 0; j1 < internal::numtimepoints/2; j1++){
-                j2 = internal::numtimepoints-j1-1;     
+            for (int j1 = 0; j1 < internal::nt/2; j1++){
+                j2 = internal::nt-j1-1;     
                 os1 = combined_real_imag_fftd[j1][real] * combined_real_imag_fftd[j1][real] + combined_real_imag_fftd[j1][imag] * combined_real_imag_fftd[j1][imag];
                 os2 = combined_real_imag_fftd[j2][real] * combined_real_imag_fftd[j2][real] + combined_real_imag_fftd[j2][imag] * combined_real_imag_fftd[j2][imag];
 
@@ -65,14 +65,14 @@ namespace spinwaves {
 
 
             // Find largest value in k_z array
-            for (int j1 = 1; j1 < internal::numtimepoints/2; j1++){
+            for (int j1 = 1; j1 < internal::nt/2; j1++){
                 if (largest < os[j1]){
                     largest = os[j1];
                     index = j1;
                 }
                 }
                 // normlise each value
-                for (int j1 = 0; j1 < internal::numtimepoints/2; j1++){
+                for (int j1 = 0; j1 < internal::nt/2; j1++){
                 os[j1] /= largest;
             }
 
@@ -83,14 +83,14 @@ namespace spinwaves {
             std::stringstream sstr;
             
             #ifdef MPICF
-                sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*nk_per_rank) << ".dat";
+                sstr << "k" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*nk_per_rank) << ".dat";
             #else 
-                sstr << "K_vs_time_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
+                sstr << "k" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
             #endif
 
 
             file_K_time.open(sstr.str(),std::ios_base::app);
-            for (int time=0; time < internal::numtimepoints/2; time++){
+            for (int time=0; time < internal::nt/2; time++){
             // file_K_time <<  combined_real_imag_fftd[time][real] << " " <<  combined_real_imag_fftd[time][imag] << "\n";
             file_K_time << os[time] << "\n";
             }

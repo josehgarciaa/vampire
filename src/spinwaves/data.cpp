@@ -24,12 +24,18 @@ namespace spinwaves{
    //------------------------------------------------------------------------------
    // Externally visible variables ------------------------------------------------
    //------------------------------------------------------------------------------
-   std::vector <double> Skx_FFT_array_R;
-   std::vector <double> Skx_FFT_array_I;
-   std::vector <double> Skx_FFT_array_R_node;
-   std::vector <double> Skx_FFT_array_I_node;  
-   // std::vector <double> Skx_FFT_array_R_transposed;
-   // std::vector <double> Skx_FFT_array_I_transposed;
+   std::vector <double> skx_r;
+   std::vector <double> skx_i;
+   std::vector <double> skx_r_node;
+   std::vector <double> skx_i_node;  
+   std::vector <double> skx_r_node_transposed;
+   std::vector <double> skx_i_node_transposed;
+
+   // THIS IS TEMPORARY
+   int nk_per_rank;
+   int scatterlength;
+   std::vector<double> skx_r_scatter;
+   std::vector<double> skx_i_scatter;
 
    namespace internal{
 
@@ -37,9 +43,9 @@ namespace spinwaves{
       // Shared variables inside sw module
       //------------------------------------------------------------------------
       bool enabled; // bool to enable module
-      std::vector <double> kx_FFT_array; // 1D list of biquadratic neighbours
-      std::vector <double> ky_FFT_array; // 1D list of biquadratic neighbours
-      std::vector <double> kz_FFT_array; // 1D list of biquadratic neighbours
+      std::vector <double> kx_list;
+      std::vector <double> ky_list;
+      std::vector <double> kz_list;
  	   std::vector <double> structure_factor_array_R, structure_factor_array_I;
       std::vector<internal::mp_t> mp; // array of material properties
 
@@ -51,12 +57,14 @@ namespace spinwaves{
       // JRH internally visible filename
       std::string kpath_filename;
 
-      std::vector <double> cos_k;
-      std::vector <double> sin_k;
+      std::vector<double> cos_k;
+      std::vector<double> sin_k;
 
       // JRH number of time and kpoints
-      int numkpoints;
-      int numtimepoints;
+      int nk;
+      int nt;
+
+
 
    } // end of internal namespace
 

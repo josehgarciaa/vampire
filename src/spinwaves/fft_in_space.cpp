@@ -51,15 +51,15 @@ namespace spinwaves {
                    const std::vector<double>& atom_coords_z,
                    const int time ){
 
-      int nk=spinwaves::internal::kx_FFT_array.size();
+      int nk=spinwaves::internal::kx_list.size();
 
       for(int k=0;k<nk;k++){
 
-         // kx=spinwaves::internal::kx_FFT_array[k];
-         // ky=spinwaves::internal::ky_FFT_array[k];
-         // kz=spinwaves::internal::kz_FFT_array[k];
-         spinwaves::Skx_FFT_array_R[k] = 0.0;
-         spinwaves::Skx_FFT_array_I[k] = 0.0;
+         // kx=spinwaves::internal::kx_list[k];
+         // ky=spinwaves::internal::ky_list[k];
+         // kz=spinwaves::internal::kz_list[k];
+         spinwaves::skx_r[k] = 0.0;
+         spinwaves::skx_i[k] = 0.0;
 
          #ifdef MPICF
 
@@ -75,9 +75,18 @@ namespace spinwaves {
 
 
                // JRH cos_k and sin_k I dont think works for mpi
-               Skx_FFT_array_R[k] += sx*spinwaves::internal::cos_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom];
-               Skx_FFT_array_I[k] += sx*spinwaves::internal::sin_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom];
+               skx_r[k] += sx*spinwaves::internal::cos_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom];
+               skx_i[k] += sx*spinwaves::internal::sin_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom];
             }
+
+
+
+
+            // trying different approach where the transpose isnt needed
+            // std::cout << k  << " " << nk_per_rank << " " << k % nk_per_rank << std::endl;
+            // MPI_Reduce(&skx_r[k], &skx_r_scatter[(k % nk_per_rank)*internal::nt+time], 1, MPI_DOUBLE, MPI_SUM, k / nk_per_rank, MPI_COMM_WORLD);
+            // MPI_Reduce(&skx_i[k], &skx_i_scatter[(k % nk_per_rank)*internal::nt+time], 1, MPI_DOUBLE, MPI_SUM, k / nk_per_rank, MPI_COMM_WORLD);
+
 
          #else
 
@@ -91,10 +100,10 @@ namespace spinwaves {
                sx=atoms::x_spin_array[atom];
 
                // testing whether predefing the cos(k) makes much of a difference to speed
-               // Skx_FFT_array_R[uca] += sx*cosK;
-               // Skx_FFT_array_I[uca] += sx*sinK;
-               Skx_FFT_array_R_node[time*nk + k] += sx*spinwaves::internal::cos_k[k*atoms::num_atoms+atom];
-               Skx_FFT_array_I_node[time*nk + k] += sx*spinwaves::internal::sin_k[k*atoms::num_atoms+atom];
+               // skx_r[uca] += sx*cosK;
+               // skx_i[uca] += sx*sinK;
+               skx_r_node[time*nk + k] += sx*spinwaves::internal::cos_k[k*atoms::num_atoms+atom];
+               skx_i_node[time*nk + k] += sx*spinwaves::internal::sin_k[k*atoms::num_atoms+atom];
 
             }
 
@@ -103,8 +112,8 @@ namespace spinwaves {
       } 
 
       #ifdef MPICF
-         MPI_Reduce(&Skx_FFT_array_R[0], &Skx_FFT_array_R_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-         MPI_Reduce(&Skx_FFT_array_I[0], &Skx_FFT_array_I_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+         MPI_Reduce(&skx_r[0], &skx_r_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+         MPI_Reduce(&skx_i[0], &skx_i_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
       #endif
           
 	   return;
