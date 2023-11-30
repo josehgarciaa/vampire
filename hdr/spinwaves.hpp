@@ -49,6 +49,8 @@ namespace spinwaves{
                    const std::vector<double>& atom_coords_z,
                    const int time );
 
+   void fft_in_time();
+
    //-----------------------------------------------------------------------------
    // Function to initialise spinwaves module
    //-----------------------------------------------------------------------------
