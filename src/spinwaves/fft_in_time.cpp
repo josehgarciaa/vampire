@@ -101,17 +101,17 @@ namespace spinwaves {
       // rearrange array for scatter - I think this bit needs to be done for serial and parallel
       // rearrange array for scatter - I think this bit needs to be done for serial and parallel
       // rearrange array for scatter - I think this bit needs to be done for serial and parallel
-      // if (vmpi::my_rank == 0){
-      //    for (int k = 0; k < internal::nk; k++){
-      //       for (int time=0; time < internal::nt; time++){   
-      //          // Fill FFTW arrays with values from spacial FFT.
-      //          skx_r_node_transposed[k*internal::nt + time] = skx_r_node[time*internal::nk + k];
-      //          skx_i_node_transposed[k*internal::nt + time] = skx_i_node[time*internal::nk + k];
-      //       }     
-      //    }
+      if (vmpi::my_rank == 0){
+         for (int k = 0; k < internal::nk; k++){
+            for (int time=0; time < internal::nt; time++){   
+               // Fill FFTW arrays with values from spacial FFT.
+               skx_r_node_transposed[k*internal::nt + time] = skx_r_node[time*internal::nk + k];
+               skx_i_node_transposed[k*internal::nt + time] = skx_i_node[time*internal::nk + k];
+            }     
+         }
 
 
-      // }
+      }
       // rearrange array for scatter - I think this bit needs to be done for serial and parallel
       // rearrange array for scatter - I think this bit needs to be done for serial and parallel
       // rearrange array for scatter - I think this bit needs to be done for serial and parallel
@@ -157,10 +157,10 @@ namespace spinwaves {
          zlog << zTs() << "Created mask for k-points." << std::endl;
 
          // // // scatter array to every processor
-         // MPI_Scatter(&skx_r_node_transposed[0], scatterlength, MPI_DOUBLE, &skx_r_scatter[0], scatterlength, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-         // MPI_Scatter(&skx_i_node_transposed[0], scatterlength, MPI_DOUBLE, &skx_i_scatter[0], scatterlength, MPI_DOUBLE, 0, MPI_COMM_WORLD); 
-         // std::cout     << "Scattered points to each rank." << std::endl;
-         // zlog << zTs() << "Scattered points to each rank." << std::endl;
+         MPI_Scatter(&skx_r_node_transposed[0], scatterlength, MPI_DOUBLE, &skx_r_scatter[0], scatterlength, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+         MPI_Scatter(&skx_i_node_transposed[0], scatterlength, MPI_DOUBLE, &skx_i_scatter[0], scatterlength, MPI_DOUBLE, 0, MPI_COMM_WORLD); 
+         std::cout     << "Scattered points to each rank." << std::endl;
+         zlog << zTs() << "Scattered points to each rank." << std::endl;
 
 
 

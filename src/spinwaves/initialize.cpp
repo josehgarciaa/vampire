@@ -73,7 +73,7 @@ namespace spinwaves{
 		// std::cout << "KPOINT DETERMINED " << std::endl;
 
 		// determine prefactor that will be used in fourier transform. sin(k_x*r_x) etc.
-		spinwaves::internal::calculate_fourier_prefactor(atom_coords_x, atom_coords_y, atom_coords_x);
+		spinwaves::internal::calculate_fourier_prefactor(atom_coords_x, atom_coords_y, atom_coords_z);
 		// std::cout << "FOURIER PREFACTOR DETERMINED " << std::endl;
 
 		#ifdef MPICF
