@@ -58,32 +58,93 @@ namespace spinwaves{
 
 
       //  ------------------------------------------------------------------
-      // normalise amplitude to largest value for each k-point -------------
-      //  ------------------------------------------------------------------
-      test="normalise";
-      if(word==test){
-         
-      }
-      //  ------------------------------------------------------------------
-      
-      //  ------------------------------------------------------------------
       // smoothing for each kpoint -----------------------------------------
       //  ------------------------------------------------------------------
-      test="normalise";
+      test="one-sided";
       if(word==test){
-         
+
+         std::cout << value << std::endl;
+         if (value == "false"){
+            internal::oss = false;
+            return true;
+         }
+         else if (value == "true"){
+            internal::oss = true;
+            return true;
+         }
+         else {
+            terminaltextcolor(RED);
+            std::cerr << "Error - Unknown value in control statement \'spinwaves:" << word << " = " << value << "\' on line " << line << " of input file" << std::endl;
+            terminaltextcolor(WHITE);
+            return false;
+         }
       }
       //  ------------------------------------------------------------------
 
       //  ------------------------------------------------------------------
       // component of magnetisation to use for fourier transform -----------
       //  ------------------------------------------------------------------
-      test="normalise";
+      test="complex-magnitude";
       if(word==test){
-         
+         if (value == "false"){
+            internal::cm = false;
+            return true;
+         }
+         else if (value == "true"){
+            internal::cm = true;
+            return true;
+         }
+         else {
+            terminaltextcolor(RED);
+            std::cerr << "Error - Unknown value in control statement \'spinwaves:" << word << " = " << value << "\' on line " << line << " of input file" << std::endl;
+            terminaltextcolor(WHITE);
+            return false;
+         }
       }
       //  ----------------------------------------------------------------
 
+      //  ------------------------------------------------------------------
+      // component of magnetisation to use for fourier transform -----------
+      //  ------------------------------------------------------------------
+      test="normalise-each-k";
+      if(word==test){
+         if (value == "false"){
+            internal::normk = false;
+            return true;
+         }
+         else if (value == "true"){
+            internal::normk = true;
+            return true;
+         }
+         else {
+            terminaltextcolor(RED);
+            std::cerr << "Error - Unknown value in control statement \'spinwaves:" << word << " = " << value << "\' on line " << line << " of input file" << std::endl;
+            terminaltextcolor(WHITE);
+            return false;
+         }
+      }
+      //  ------------------------------------------------------------------
+      
+      //  ------------------------------------------------------------------
+      // component of magnetisation to use for fourier transform -----------
+      //  ------------------------------------------------------------------
+      test="reduction-method";
+      if(word==test){
+         std::string reduc_string=value;
+         reduc_string.erase(std::remove(reduc_string.begin(), reduc_string.end(), '\"'), reduc_string.end());
+         internal::reduc_ver=reduc_string;
+
+         if (internal::reduc_ver == "rank0" || internal::reduc_ver == "direct_scatter"){
+            return true;
+         }
+         else {
+            terminaltextcolor(RED);
+            std::cerr << "Error - Unexpected method for MPI reduction in spinwave model. \'spinwaves:" << word << " = " << value << "\' on line " << line << " of input file" << std::endl;
+            terminaltextcolor(WHITE);
+            return false;
+         }
+      }
+      //  -----
 
       //--------------------------------------------------------------------
       // Keyword not found

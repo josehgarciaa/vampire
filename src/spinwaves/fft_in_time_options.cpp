@@ -35,67 +35,134 @@ namespace spinwaves {
 
     namespace internal {
 
-        std::ofstream file_K_time;
+        std::ofstream file_K_time_real;
+        std::ofstream file_K_time_imag;
         int j2;
-        double os1, os2;
-        std::vector<double> os;
         const int real = 0;
         const int imag = 1;
 
         // =============================================================================================================================================
         // Calculate one sided spectrum ================================================================================================================
         // =============================================================================================================================================
-        void one_sided_spectrum(std::vector<double>& os, 
-                                std::vector<fftw_complex>& combined_real_imag_fftd){
+        void one_sided_spectrum(std::vector<fftw_complex>& in){
 
             for (int j1 = 0; j1 < internal::nt/2; j1++){
                 j2 = internal::nt-j1-1;     
-                os1 = combined_real_imag_fftd[j1][real] * combined_real_imag_fftd[j1][real] + combined_real_imag_fftd[j1][imag] * combined_real_imag_fftd[j1][imag];
-                os2 = combined_real_imag_fftd[j2][real] * combined_real_imag_fftd[j2][real] + combined_real_imag_fftd[j2][imag] * combined_real_imag_fftd[j2][imag];
+                in[j1][real] = in[j1][real] + in[j2][real];
+                in[j1][imag] = in[j1][imag] + in[j2][imag];
 
-                os[j1] = os1 + os2;
             }
+        }
+
+        void complex_magnitude(std::vector<fftw_complex>& os){
+
+            for (int j1 = 0; j1 < internal::nt; j1++){
+                os[j1][real] = os[j1][real] * os[j1][real] + os[j1][imag] * os[j1][imag];
+                os[j1][imag] = 0.0;
+                
+            }
+
         }
         
 
-        void normalise_spectrum(std::vector<double>& os){
+        void normalise_each_kpoint(std::vector<fftw_complex>& os){
 
-            double largest = os[0];
+            double largest = std::abs(os[0][real]);
             double index;
 
+            // Find largest value in k_z array - REAL
+            for (int j1 = 1; j1 < internal::nt; j1++){
 
-            // Find largest value in k_z array
-            for (int j1 = 1; j1 < internal::nt/2; j1++){
-                if (largest < os[j1]){
-                    largest = os[j1];
+                if (largest < std::abs(os[j1][real])){
+                    largest = std::abs(os[j1][real]);
                     index = j1;
                 }
                 }
                 // normlise each value
-                for (int j1 = 0; j1 < internal::nt/2; j1++){
-                os[j1] /= largest;
+                for (int j1 = 0; j1 < internal::nt; j1++){
+                os[j1][real] /= largest;
             }
+
+            largest = std::abs(os[0][imag]);
+
+            // Find largest value in k_z array - COMPLEX
+            for (int j1 = 1; j1 < internal::nt; j1++){
+                if (largest < std::abs(os[j1][imag])){
+                    largest = std::abs(os[j1][imag]);
+                    index = j1;
+                }
+                }
+                // normlise each value
+                for (int j1 = 0; j1 < internal::nt; j1++){
+                os[j1][imag] /= largest;
+            }
+
 
         }
 
-        void write_to_file(std::vector<double>& os, int k, int nk_per_rank){
+        void write_to_file(std::vector<fftw_complex>& os, int k){
 
-            std::stringstream sstr;
+            std::stringstream sstr_real;
+            std::stringstream sstr_imag;
             
-            #ifdef MPICF
-                sstr << "k" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*nk_per_rank) << ".dat";
-            #else 
-                sstr << "k" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
-            #endif
+            if (cm == true){
 
+                // output filename
+                #ifdef MPICF
+                    sstr_real << "k_real_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
+                #else 
+                    sstr_real << "k_real_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
+                #endif
 
-            file_K_time.open(sstr.str(),std::ios_base::app);
-            for (int time=0; time < internal::nt/2; time++){
-            // file_K_time <<  combined_real_imag_fftd[time][real] << " " <<  combined_real_imag_fftd[time][imag] << "\n";
-            file_K_time << os[time] << "\n";
+                // open file
+                file_K_time_real.open(sstr_real.str(),std::ios_base::app);
+
+                 if (oss == true){
+                    for (int time=0; time < internal::nt/2; time++){
+                        file_K_time_real << os[time][real] << "\n";
+                    }
+                }
+                else if (oss == false){
+                    for (int time=0; time < internal::nt; time++){
+                    file_K_time_real << os[time][real] << "\n";
+                    }
+                }
+
+                // close file
+                file_K_time_real.close();
+
             }
-            file_K_time.close();
+            else if (cm == false){
 
+                // output filenames
+                #ifdef MPICF
+                    sstr_real << "k_real_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
+                    sstr_imag << "k_imag_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
+                #else 
+                    sstr_real << "k_real_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
+                    sstr_imag << "k_imag_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
+                #endif
+
+                // open files
+                file_K_time_real.open(sstr_real.str(),std::ios_base::app);
+                file_K_time_imag.open(sstr_imag.str(),std::ios_base::app);
+
+                if (oss == true){
+                    for (int time=0; time < internal::nt/2; time++){
+                        file_K_time_real << os[time][real] << "\n";
+                        file_K_time_imag << os[time][imag] << "\n";
+                    }
+                }
+                else if (oss == false){
+                    for (int time=0; time < internal::nt; time++){
+                        file_K_time_real << os[time][real] << "\n";
+                        file_K_time_imag << os[time][imag] << "\n";
+                    }
+                }
+            }
+
+            file_K_time_real.close();
+            file_K_time_imag.close();
         }
 
     }

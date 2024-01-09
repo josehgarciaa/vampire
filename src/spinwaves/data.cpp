@@ -57,6 +57,12 @@ namespace spinwaves{
       // JRH internally visible filename
       std::string kpath_filename;
 
+      // fft-in-time options;
+      std::string reduc_ver;
+      bool oss = true;
+      bool cm = true;
+      bool normk = true;
+
       std::vector<double> cos_k;
       std::vector<double> sin_k;
 

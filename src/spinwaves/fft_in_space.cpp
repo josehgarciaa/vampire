@@ -81,12 +81,11 @@ namespace spinwaves {
 
 
 
-
-            // trying different approach where the transpose isnt needed
-            // std::cout << k  << " " << nk_per_rank << " " << k % nk_per_rank << std::endl;
-            // MPI_Reduce(&skx_r[k], &skx_r_scatter[(k % nk_per_rank)*internal::nt+time], 1, MPI_DOUBLE, MPI_SUM, k / nk_per_rank, MPI_COMM_WORLD);
-            // MPI_Reduce(&skx_i[k], &skx_i_scatter[(k % nk_per_rank)*internal::nt+time], 1, MPI_DOUBLE, MPI_SUM, k / nk_per_rank, MPI_COMM_WORLD);
-
+            if (internal::reduc_ver == "direct_scatter"){
+               // trying different approach where the transpose isnt needed
+               MPI_Reduce(&skx_r[k], &skx_r_scatter[(k % nk_per_rank)*internal::nt+time], 1, MPI_DOUBLE, MPI_SUM, k / nk_per_rank, MPI_COMM_WORLD);
+               MPI_Reduce(&skx_i[k], &skx_i_scatter[(k % nk_per_rank)*internal::nt+time], 1, MPI_DOUBLE, MPI_SUM, k / nk_per_rank, MPI_COMM_WORLD);
+            }
 
          #else
 
@@ -111,10 +110,13 @@ namespace spinwaves {
 
       } 
 
-      #ifdef MPICF
-         MPI_Reduce(&skx_r[0], &skx_r_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-         MPI_Reduce(&skx_i[0], &skx_i_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-      #endif
+      if (internal::reduc_ver == "rank0"){
+         std::cout << "TEST" << std::endl;
+         #ifdef MPICF
+            MPI_Reduce(&skx_r[0], &skx_r_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+            MPI_Reduce(&skx_i[0], &skx_i_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+         #endif  
+      }
           
 	   return;
 

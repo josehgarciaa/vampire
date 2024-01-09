@@ -48,18 +48,27 @@ namespace spinwaves {
       stopwatch_t fft_stopwatch;
       fft_stopwatch.start();
    
+      // real and imag indexing
       const int real = 0;
       const int imag = 1;
-
-      std::vector<double> os;
-      os.resize(internal::nt/2,0.0);
       
+      // for transposing 
       std::vector <double> skx_r_node_transposed;
       std::vector <double> skx_i_node_transposed;
       if (vmpi::my_rank == 0){
          skx_r_node_transposed.resize(internal::nt*internal::nk);
          skx_i_node_transposed.resize(internal::nt*internal::nk);	
       }
+      
+      // make a mask that determines which kpoints will be dft'd. This prevents dft of lots of 0s on last rank
+      std::vector<int> kmask;
+      kmask.resize(nk_per_rank * vmpi::num_processors,0);
+
+      for (int i = 0; i < internal::nk; i++){
+         kmask[i] = 1;
+      }
+      std::cout     << "Created mask for k-points." << std::endl;
+      zlog << zTs() << "Created mask for k-points." << std::endl;
 
 
       std::vector<fftw_complex> combined_real_imag(internal::nt);
@@ -96,73 +105,43 @@ namespace spinwaves {
       // Is it possible using scatterv to send to correct node in a single process....
       // To be memory efficient we need to have a
       
-      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
-      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
-      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
-      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
-      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
-      if (vmpi::my_rank == 0){
-         for (int k = 0; k < internal::nk; k++){
-            for (int time=0; time < internal::nt; time++){   
-               // Fill FFTW arrays with values from spacial FFT.
-               skx_r_node_transposed[k*internal::nt + time] = skx_r_node[time*internal::nk + k];
-               skx_i_node_transposed[k*internal::nt + time] = skx_i_node[time*internal::nk + k];
-            }     
-         }
-
-
-      }
-      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
-      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
-      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
-      // rearrange array for scatter - I think this bit needs to be done for serial and parallel
-
-      
-
-
       #ifdef MPICF
 
-         // int nk_per_rank = std::ceil(static_cast<double>(internal::nk) / static_cast<double>(vmpi::num_processors));
-         // int scatterlength = nk_per_rank * internal::nt;
-         // std::vector<double> skx_r_scatter;
-         // std::vector<double> skx_i_scatter;
-         // skx_r_scatter.resize(scatterlength,0.0);
-         // skx_i_scatter.resize(scatterlength,0.0);
+         if (internal::reduc_ver == "rank0"){
+
+            // rearrange array for scatter - I think this bit needs to be done for serial and parallel
+            if (vmpi::my_rank == 0){
+               for (int k = 0; k < internal::nk; k++){
+                  for (int time=0; time < internal::nt; time++){   
+                     // Fill FFTW arrays with values from spacial FFT.
+                     skx_r_node_transposed[k*internal::nt + time] = skx_r_node[time*internal::nk + k];
+                     skx_i_node_transposed[k*internal::nt + time] = skx_i_node[time*internal::nk + k];
+                  }     
+               }
 
 
+            }
 
-         if (vmpi::my_rank == 0){
+            if (vmpi::my_rank == 0){
 
-            // Not always the case that Nkpoints/nranks will be an integer. Need to round up and zero pad the array.
-            // For example. 100 timesteps, 50 kpoints ran on 4 ranks will mean there is (100*50) / 4 data points per rank.
-            // WIll have to round up and zero-pad.
+               // Not always the case that Nkpoints/nranks will be an integer. Need to round up and zero pad the array.
+               // For example. 100 timesteps, 50 kpoints ran on 4 ranks will mean there is (100*50) / 4 data points per rank.
+               // WIll have to round up and zero-pad.
 
-            std::cout     << "Number of k-points allocated to each rank: " << nk_per_rank << std::endl;
-            zlog << zTs() << "Number of k-points allocated to each rank: " << nk_per_rank << std::endl;
+               std::cout     << "Number of k-points allocated to each rank: " << nk_per_rank << std::endl;
+               zlog << zTs() << "Number of k-points allocated to each rank: " << nk_per_rank << std::endl;
 
-            // zero pad the array
-            skx_r_node_transposed.resize(nk_per_rank * vmpi::num_processors * internal::nt,0.0);
-            skx_i_node_transposed.resize(nk_per_rank * vmpi::num_processors * internal::nt,0.0);
+               // zero pad the array
+               skx_r_node_transposed.resize(nk_per_rank * vmpi::num_processors * internal::nt,0.0);
+               skx_i_node_transposed.resize(nk_per_rank * vmpi::num_processors * internal::nt,0.0);
+            }
+
+            // scatter array to every processor
+            MPI_Scatter(&skx_r_node_transposed[0], scatterlength, MPI_DOUBLE, &skx_r_scatter[0], scatterlength, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            MPI_Scatter(&skx_i_node_transposed[0], scatterlength, MPI_DOUBLE, &skx_i_scatter[0], scatterlength, MPI_DOUBLE, 0, MPI_COMM_WORLD); 
+            std::cout     << "Scattered points to each rank." << std::endl;
+            zlog << zTs() << "Scattered points to each rank." << std::endl;
          }
-
-
-
-         // make a mask that determines which kpoints will be dft'd. This prevents dft of lots of 0s on last rank
-         std::vector<int> kmask;
-         kmask.resize(nk_per_rank * vmpi::num_processors,0);
-         for (int i = 0; i < internal::nk; i++){
-            kmask[i] = 1;
-         }
-         std::cout     << "Created mask for k-points." << std::endl;
-         zlog << zTs() << "Created mask for k-points." << std::endl;
-
-         // // // scatter array to every processor
-         MPI_Scatter(&skx_r_node_transposed[0], scatterlength, MPI_DOUBLE, &skx_r_scatter[0], scatterlength, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-         MPI_Scatter(&skx_i_node_transposed[0], scatterlength, MPI_DOUBLE, &skx_i_scatter[0], scatterlength, MPI_DOUBLE, 0, MPI_COMM_WORLD); 
-         std::cout     << "Scattered points to each rank." << std::endl;
-         zlog << zTs() << "Scattered points to each rank." << std::endl;
-
-
 
          // loop over the k-points on each rank
          for (int k = 0; k < nk_per_rank; k++){
@@ -180,17 +159,32 @@ namespace spinwaves {
                fftw_execute(fft_in_time);
 
                // calculate one sided spectrum
-               spinwaves::internal::one_sided_spectrum(os, combined_real_imag_fftd);
+               if (internal::oss == true) spinwaves::internal::one_sided_spectrum(combined_real_imag_fftd);
 
                // normalise to largest amplitude for each k-value
-               spinwaves::internal::normalise_spectrum(os);
+               if (internal::cm == true) spinwaves::internal::complex_magnitude(combined_real_imag_fftd);
+
+               // normalise to largest amplitude for each k-value
+               if (internal::normk == true) spinwaves::internal::normalise_each_kpoint(combined_real_imag_fftd);
 
                // write each k-value to file
-               spinwaves::internal::write_to_file(os, k, nk_per_rank);
+               spinwaves::internal::write_to_file(combined_real_imag_fftd, k);
             }
          }
          
+         
       #else
+
+         // rearrange array for scatter - I think this bit needs to be done for serial and parallel
+         if (vmpi::my_rank == 0){
+            for (int k = 0; k < internal::nk; k++){
+               for (int time=0; time < internal::nt; time++){   
+                  // Fill FFTW arrays with values from spacial FFT.
+                  skx_r_node_transposed[k*internal::nt + time] = skx_r_node[time*internal::nk + k];
+                  skx_i_node_transposed[k*internal::nt + time] = skx_i_node[time*internal::nk + k];
+               }     
+            }
+         }
 
          for (int k = 0; k < internal::nk; k++){
             for (int time=0; time < internal::nt; time++){
@@ -205,13 +199,16 @@ namespace spinwaves {
             fftw_execute(fft_in_time);
 
             // calculate one sided spectrum
-            spinwaves::internal::one_sided_spectrum(os, combined_real_imag_fftd);            
+            if (internal::oss == true) spinwaves::internal::one_sided_spectrum(combined_real_imag_fftd);
 
             // normalise to largest amplitude for each k-value
-            spinwaves::internal::normalise_spectrum(os);
+            if (internal::cm == true) spinwaves::internal::complex_magnitude(combined_real_imag_fftd);
+
+            // normalise to largest amplitude for each k-value
+            if (internal::normk == true) spinwaves::internal::normalise_each_kpoint(combined_real_imag_fftd);
 
             // write each k-value to file
-            spinwaves::internal::write_to_file(os, k, 0);
+            spinwaves::internal::write_to_file(combined_real_imag_fftd, k);
          }
 
       #endif
