@@ -55,7 +55,8 @@ namespace spinwaves {
       // for transposing 
       std::vector <double> skx_r_node_transposed;
       std::vector <double> skx_i_node_transposed;
-      if (vmpi::my_rank == 0){
+
+      if (internal::reduc_ver == "rank0" && vmpi::my_rank == 0){
          skx_r_node_transposed.resize(internal::nt*internal::nk);
          skx_i_node_transposed.resize(internal::nt*internal::nk);	
       }

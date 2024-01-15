@@ -290,5 +290,25 @@ namespace spinwaves{
             #endif
             
         }
+    
+    
+        void determine_spin_component(){
+
+
+            // Set spin_array based on the component we want to calculate spinwave from
+            if (internal::component == "sx") {
+                internal::sw_array = &atoms::x_spin_array;
+            } else if (internal::component == "sy") {
+                internal::sw_array = &atoms::y_spin_array;
+            } else if (internal::component == "sz") {
+                internal::sw_array = &atoms::z_spin_array;
+            }
+
+
+        }
+    
+    
+    
+    
     } 
 } 

@@ -31,6 +31,7 @@
 #include <cmath>
 #include "fstream"
 #include "atoms.hpp"
+#include "program.hpp"
 
 
 
@@ -56,6 +57,11 @@ namespace spinwaves{
 					const std::vector<double>& atom_coords_y,
 					const std::vector<double>& atom_coords_z){
 
+		//-------------------------------------------------------------------------------------
+		// Check if spinwave calculation enabled, if not do nothing
+		//-------------------------------------------------------------------------------------
+		if(program::program!=74) return;
+
 
 		std::cout<< "Test Spin waves...."<<std::endl;
 		int Na=atom.size();
@@ -75,6 +81,9 @@ namespace spinwaves{
 		// determine prefactor that will be used in fourier transform. sin(k_x*r_x) etc.
 		spinwaves::internal::calculate_fourier_prefactor(atom_coords_x, atom_coords_y, atom_coords_z);
 		// std::cout << "FOURIER PREFACTOR DETERMINED " << std::endl;
+
+		// determine which component of spin to calculate spinwave dispersion from
+		spinwaves::internal::determine_spin_component();
 
 		#ifdef MPICF
 			nk_per_rank = std::ceil(static_cast<double>(internal::nk) / static_cast<double>(vmpi::num_processors));

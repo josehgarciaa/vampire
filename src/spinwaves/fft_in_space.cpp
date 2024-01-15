@@ -71,7 +71,7 @@ namespace spinwaves {
                // arg=-kx*rx - ky*ry - kz*rz ;  
                // cosK= cos(arg);
                // sinK= sin(arg);
-               sx=atoms::x_spin_array[atom];
+               sx = (*internal::sw_array)[atom];
 
 
                // JRH cos_k and sin_k I dont think works for mpi
@@ -96,7 +96,7 @@ namespace spinwaves {
                // arg=-kx*rx - ky*ry - kz*rz ;  
                // cosK= cos(arg);
                // sinK= sin(arg);
-               sx=atoms::x_spin_array[atom];
+               sx = (*internal::sw_array)[atom];
 
                // testing whether predefing the cos(k) makes much of a difference to speed
                // skx_r[uca] += sx*cosK;

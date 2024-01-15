@@ -88,6 +88,8 @@ namespace spinwaves{
 
       // JRH fft-in-time variables
       extern std::string reduc_ver;
+      extern std::string component;
+      extern const std::vector<double>* sw_array;
       extern bool oss, cm, normk;
 
       //-------------------------------------------------------------------------
@@ -108,6 +110,7 @@ namespace spinwaves{
                      const double unit_cell_size_y, 
                      const double unit_cell_size_z);
       extern void calculate_fourier_prefactor(const std::vector<double>& rx, const std::vector<double>& ry, const std::vector<double>& rz);
+      extern void determine_spin_component();
 
       // post analysis functions
       extern void normalise_each_kpoint(std::vector<fftw_complex>& os);

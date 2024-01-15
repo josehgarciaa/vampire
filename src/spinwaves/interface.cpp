@@ -144,7 +144,24 @@ namespace spinwaves{
             return false;
          }
       }
-      //  -----
+
+      test="component";
+      if(word==test){
+         std::string component_temp=value;
+         component_temp.erase(std::remove(component_temp.begin(), component_temp.end(), '\"'), component_temp.end());
+         internal::component=component_temp;
+
+         if (internal::component == "sx" || internal::component== "sy" || internal::component== "sz"){
+            return true;
+         }
+         else {
+            terminaltextcolor(RED);
+            std::cerr << "Error - Unexpected method for MPI reduction in spinwave model. \'spinwaves:" << word << " = " << value << "\' on line " << line << " of input file" << std::endl;
+            terminaltextcolor(WHITE);
+            return false;
+         }
+      }
+
 
       //--------------------------------------------------------------------
       // Keyword not found
