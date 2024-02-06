@@ -182,6 +182,20 @@ namespace spinwaves{
                 }
 
             }
+
+            // for (int k = 0; k < 100; k++){
+
+            //    double kx = k/200.0;
+            //    double ky = 0.0;
+            //    double kz = 0.0;
+
+            //    // make sure to convert to units of 2pi/latconst
+            //    spinwaves::internal::kx_list.push_back(b[0] * kx);
+            //    spinwaves::internal::ky_list.push_back(b[1] * ky);
+            //    spinwaves::internal::kz_list.push_back(b[2] * kz);
+            //    // std::cout << b[0] * kx  << " " << b[1] * ky << " " << b[2] * kz << std::endl;
+            //    // std::cout << kx  << " " << ky << " " << kz << std::endl;
+            //}
             
             
             // define number of time and kpoitns 
@@ -247,8 +261,8 @@ namespace spinwaves{
 
                 }
                 // initialise array size for prefactor
-                spinwaves::internal::cos_k.resize(nk*(vmpi::num_core_atoms+vmpi::num_bdry_atoms),0.0);
-                spinwaves::internal::sin_k.resize(nk*(vmpi::num_core_atoms+vmpi::num_bdry_atoms),0.0);
+                spinwaves::internal::cos_k.resize(nk*(internal::mask.size()),0.0);
+                spinwaves::internal::sin_k.resize(nk*(internal::mask.size()),0.0);
                 std::cout << "test" << std::endl;
                 for (int k=0; k < nk; k++){
 
@@ -256,10 +270,10 @@ namespace spinwaves{
                     double ky = spinwaves::internal::ky_list[k];
                     double kz = spinwaves::internal::kz_list[k];
             
-                    for(int atom=0;atom<vmpi::num_core_atoms+vmpi::num_bdry_atoms;atom++){
+                    for(int atom=0;atom<internal::mask.size();atom++){
                         arg=kx*rx[atom] + ky*ry[atom] + kz*rz[atom];  
-                        spinwaves::internal::cos_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom] = cos(arg);
-                        spinwaves::internal::sin_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom] = sin(arg);                    
+                        spinwaves::internal::cos_k[k*(internal::mask.size())+atom] = cos(arg);
+                        spinwaves::internal::sin_k[k*(internal::mask.size())+atom] = sin(arg);                    
                     }
                 }
 
@@ -280,10 +294,10 @@ namespace spinwaves{
                 double ky = spinwaves::internal::ky_list[k];
                 double kz = spinwaves::internal::kz_list[k];
 
-                    for(int atom=0;atom<atoms::num_atoms;atom++){
+                    for(int atom=0;atom<internal::mask.size();atom++){
                         arg=kx*rx[atom] + ky*ry[atom] + kz*rz[atom];  
-                        spinwaves::internal::cos_k[k*atoms::num_atoms+atom] = cos(arg);
-                        spinwaves::internal::sin_k[k*atoms::num_atoms+atom] = sin(arg);    
+                        spinwaves::internal::cos_k[k*internal::mask.size()+atom] = cos(arg);
+                        spinwaves::internal::sin_k[k*internal::mask.size()+atom] = sin(arg);    
                     }
                 }
 
@@ -292,8 +306,7 @@ namespace spinwaves{
         }
     
     
-        void determine_spin_component(){
-
+      void determine_spin_component(){
 
             // Set spin_array based on the component we want to calculate spinwave from
             if (internal::component == "sx") {
@@ -303,12 +316,34 @@ namespace spinwaves{
             } else if (internal::component == "sz") {
                 internal::sw_array = &atoms::z_spin_array;
             }
+      }
 
+      void calculate_material_mask(){
 
-        }
-    
-    
-    
-    
-    } 
+         #ifdef MPICF
+            for(int atom=0;atom<vmpi::num_core_atoms+vmpi::num_bdry_atoms;atom++){
+               
+               // if mat=0 (every material) then just add every atom to the mask
+               if (internal::mat != 0){
+                  // assign mask. (internal::mat-1 changes indexing starting at 1 to indexing at 0)
+                  if (atoms::type_array[atom] == internal::mat-1) mask.push_back(atom);
+               }
+               else {
+                  mask.push_back(atom);
+               }
+            }
+         #else
+            for(int atom=0;atom<atoms::num_atoms;atom++){
+               // if mat=0 (every material) then just add every atom to the mask
+               if (internal::mat != 0){
+                  // assign mask. (internal::mat-1 changes indexing starting at 1 to indexing at 0)
+                  if (atoms::type_array[atom] == internal::mat-1) mask.push_back(atom);
+               }
+               else {
+                  mask.push_back(atom);
+               }
+            }
+         #endif // DEBUG
+      }
+   }
 } 

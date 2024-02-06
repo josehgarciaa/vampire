@@ -70,6 +70,9 @@ namespace spinwaves{
 		// number of steps for sw calculations
 		int numsteps = (sim::total_time / sim::partial_time);
 
+      // if caclulating spinwaves for a specific material, we need to apply a mask
+      spinwaves::internal::calculate_material_mask();
+
 		// JRH determine whether to use path for a predefined crystal or whether path has been specified by user.
 		spinwaves::internal::determine_path();
 		// std::cout << "PATH DETERMINED " << std::endl;

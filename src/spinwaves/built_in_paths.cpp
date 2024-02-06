@@ -64,9 +64,9 @@ namespace spinwaves {
         }
 
         void path_hcp(){ 
-            std::vector<double> dummy_x = {0.0, 0.5, 0.5, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 1.0, 1.0, 0.0, 0.5, 0.5, 1.0, 1.0};
+            std::vector<double> dummy_x = {0.0, 0.5, 0.5, 1.0     , 1.0     , 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 1.0     , 1.0     , 0.0, 0.5, 0.5, 1.0     , 1.0};
             std::vector<double> dummy_y = {0.0, 0.5, 0.5, 0.333333, 0.333333, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.333333, 0.333333, 0.0, 0.5, 0.5, 0.333333, 0.333333};
-            std::vector<double> dummy_z = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, 0.5, 0.0};
+            std::vector<double> dummy_z = {0.0, 0.0, 0.0, 0.0     , 0.0     , 0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5     , 0.5     , 0.5, 0.5, 0.0, 0.5     , 0.0};
             spinwaves::internal::pathx.swap(dummy_x);
             spinwaves::internal::pathy.swap(dummy_y);
             spinwaves::internal::pathz.swap(dummy_z);
@@ -74,8 +74,8 @@ namespace spinwaves {
         
         void path_mn2au(){ 
             std::vector<double> dummy_x = {0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.44444444, 0.55555555, 0.0, 0.5, 0.55555555, 0.44444444, 0.0};
-            std::vector<double> dummy_y = {0.0, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.44444444, 0.44444444, 0.0};
-            std::vector<double> dummy_z = {0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0};
+            std::vector<double> dummy_y = {0.0, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0       , 0.0       , 0.0, 0.5, 0.44444444, 0.44444444, 0.0};
+            std::vector<double> dummy_z = {0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 1.0, 1.0, 1.0       , 0.0       , 0.0, 0.0, 0.0       , 1.0       , 1.0};
             spinwaves::internal::pathx.swap(dummy_x);
             spinwaves::internal::pathy.swap(dummy_y);
             spinwaves::internal::pathz.swap(dummy_z);

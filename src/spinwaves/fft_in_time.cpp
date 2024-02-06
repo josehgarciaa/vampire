@@ -61,15 +61,17 @@ namespace spinwaves {
          skx_i_node_transposed.resize(internal::nt*internal::nk);	
       }
       
-      // make a mask that determines which kpoints will be dft'd. This prevents dft of lots of 0s on last rank
-      std::vector<int> kmask;
-      kmask.resize(nk_per_rank * vmpi::num_processors,0);
+      // make a mask that determines which kpoints will be dft'd. This prevents dft of lots of 0s on last rank for parallel implementation
+      #ifdef MPICF
+         std::vector<int> kmask;
+         kmask.resize(nk_per_rank * vmpi::num_processors,0);
 
-      for (int i = 0; i < internal::nk; i++){
-         kmask[i] = 1;
-      }
-      std::cout     << "Created mask for k-points." << std::endl;
-      zlog << zTs() << "Created mask for k-points." << std::endl;
+         for (int i = 0; i < internal::nk; i++){
+            kmask[i] = 1;
+         }
+         std::cout     << "Created mask for k-points." << std::endl;
+         zlog << zTs() << "Created mask for k-points." << std::endl;
+      #endif
 
 
       std::vector<fftw_complex> combined_real_imag(internal::nt);
@@ -119,8 +121,6 @@ namespace spinwaves {
                      skx_i_node_transposed[k*internal::nt + time] = skx_i_node[time*internal::nk + k];
                   }     
                }
-
-
             }
 
             if (vmpi::my_rank == 0){
@@ -153,8 +153,11 @@ namespace spinwaves {
                // populate fftw_complex vector
                for (int time=0; time < internal::nt; time++){
                   combined_real_imag[time][real] = skx_r_scatter[k*internal::nt + time];
-                  combined_real_imag[time][imag] = skx_r_scatter[k*internal::nt + time];
+                  combined_real_imag[time][imag] = skx_i_scatter[k*internal::nt + time];
                }
+
+               // write each k-value to file
+               //spinwaves::internal::write_intermediate_to_file(combined_real_imag, k);
 
                // exexcute the fft
                fftw_execute(fft_in_time);

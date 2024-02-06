@@ -64,9 +64,13 @@ namespace spinwaves{
       bool oss = true;
       bool cm = true;
       bool normk = true;
+      int mat = 0;
+
+
 
       std::vector<double> cos_k;
       std::vector<double> sin_k;
+      std::vector<int> mask;
 
       // JRH number of time and kpoints
       int nk;

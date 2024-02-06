@@ -82,6 +82,9 @@ namespace spinwaves{
       extern std::vector<double> cos_k;
       extern std::vector<double> sin_k;
 
+      // JRH mask for calculations of spinwave for specific material type
+      extern std::vector<int> mask;
+
       //JRH time variabls
       extern int nt;
       extern int nk;
@@ -91,6 +94,7 @@ namespace spinwaves{
       extern std::string component;
       extern const std::vector<double>* sw_array;
       extern bool oss, cm, normk;
+      extern int mat;
 
       //-------------------------------------------------------------------------
       // Internal function declarations
@@ -111,8 +115,10 @@ namespace spinwaves{
                      const double unit_cell_size_z);
       extern void calculate_fourier_prefactor(const std::vector<double>& rx, const std::vector<double>& ry, const std::vector<double>& rz);
       extern void determine_spin_component();
+      extern void calculate_material_mask();
 
       // post analysis functions
+      extern void write_intermediate_to_file(std::vector<fftw_complex>& os, int k);
       extern void normalise_each_kpoint(std::vector<fftw_complex>& os);
       extern void write_to_file(std::vector<fftw_complex>& os, int k);
       extern void one_sided_spectrum(std::vector<fftw_complex>& os);

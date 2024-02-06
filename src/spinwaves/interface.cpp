@@ -15,6 +15,7 @@
 #include <string>
 
 // Vampire headers
+#include "material.hpp"
 #include "spinwaves.hpp"
 #include "errors.hpp"
 #include "vio.hpp"
@@ -63,7 +64,6 @@ namespace spinwaves{
       test="one-sided";
       if(word==test){
 
-         std::cout << value << std::endl;
          if (value == "false"){
             internal::oss = false;
             return true;
@@ -80,6 +80,37 @@ namespace spinwaves{
          }
       }
       //  ------------------------------------------------------------------
+
+      //  ------------------------------------------------------------------
+      // smoothing for each kpoint -----------------------------------------
+      //  ------------------------------------------------------------------
+      test="material";
+      if(word==test){
+        
+         // check if the value specified in input file is equal to a material type
+         for (int i = 0; i < mp::num_materials; i++){
+            
+            // reserve instance of spinwaves:material=0 for SW calculation over entire system
+            if (value == std::to_string(0)){
+               internal::mat=0;
+               return true;
+            }
+            // set material for creating mask
+            else if (value == std::to_string(i+1)){
+               internal::mat=i+1;
+               return true;
+            }
+         }
+         // if spinwaves:material is not valid then error.
+         if (internal::mat != mp::num_materials){
+            terminaltextcolor(RED);
+            std::cerr << "Error - Unknown material number in control statement \'spinwaves:" << word << " = " << value << "\' on line " << line << " of input file" << std::endl;
+            terminaltextcolor(WHITE);
+            return false;
+         }
+      }
+      //  ------------------------------------------------------------------
+
 
       //  ------------------------------------------------------------------
       // component of magnetisation to use for fourier transform -----------

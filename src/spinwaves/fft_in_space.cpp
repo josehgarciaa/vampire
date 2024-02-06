@@ -42,6 +42,7 @@ namespace spinwaves {
    double cosK; 
    double sinK;
    double sx;
+   int atom;
 
    //----------------------------------------------------------------------------
    // Function to initialize sw module
@@ -63,8 +64,9 @@ namespace spinwaves {
 
          #ifdef MPICF
 
-            for(int atom=0;atom<vmpi::num_core_atoms+vmpi::num_bdry_atoms;atom++){
+            for(int j=0;j<internal::mask.size();j++){
                
+               atom=internal::mask[j];
                // rx=atom_coords_x[atom];
                // ry=atom_coords_y[atom];
                // rz=atom_coords_z[atom];
@@ -73,10 +75,9 @@ namespace spinwaves {
                // sinK= sin(arg);
                sx = (*internal::sw_array)[atom];
 
-
                // JRH cos_k and sin_k I dont think works for mpi
-               skx_r[k] += sx*spinwaves::internal::cos_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom];
-               skx_i[k] += sx*spinwaves::internal::sin_k[k*(vmpi::num_core_atoms+vmpi::num_bdry_atoms)+atom];
+               skx_r[k] += sx*spinwaves::internal::cos_k[k*(internal::mask.size())+atom];
+               skx_i[k] += sx*spinwaves::internal::sin_k[k*(internal::mask.size())+atom];
             }
 
 
@@ -89,7 +90,9 @@ namespace spinwaves {
 
          #else
 
-            for(int atom=0;atom<atoms::num_atoms;atom++){
+            for(int j=0;j<internal::mask.size();j++){
+               
+               atom=internal::mask[j];
                // rx=atom_coords_x[atom];
                // ry=atom_coords_y[atom];
                // rz=atom_coords_z[atom];
@@ -101,8 +104,8 @@ namespace spinwaves {
                // testing whether predefing the cos(k) makes much of a difference to speed
                // skx_r[uca] += sx*cosK;
                // skx_i[uca] += sx*sinK;
-               skx_r_node[time*nk + k] += sx*spinwaves::internal::cos_k[k*atoms::num_atoms+atom];
-               skx_i_node[time*nk + k] += sx*spinwaves::internal::sin_k[k*atoms::num_atoms+atom];
+               skx_r_node[time*nk + k] += sx*spinwaves::internal::cos_k[k*internal::mask.size()+atom];
+               skx_i_node[time*nk + k] += sx*spinwaves::internal::sin_k[k*internal::mask.size()+atom];
 
             }
 
@@ -110,13 +113,13 @@ namespace spinwaves {
 
       } 
 
-      if (internal::reduc_ver == "rank0"){
-         std::cout << "TEST" << std::endl;
-         #ifdef MPICF
-            MPI_Reduce(&skx_r[0], &skx_r_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-            MPI_Reduce(&skx_i[0], &skx_i_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-         #endif  
-      }
+      #ifdef MPICF
+         if (internal::reduc_ver == "rank0"){
+            std::cout << "TEST" << std::endl;
+               MPI_Reduce(&skx_r[0], &skx_r_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+               MPI_Reduce(&skx_i[0], &skx_i_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+         }
+      #endif  
           
 	   return;
 
