@@ -88,6 +88,10 @@ namespace spinwaves{
 		// determine which component of spin to calculate spinwave dispersion from
 		spinwaves::internal::determine_spin_component();
 
+
+      // output a file containing frequencies
+      if (vmpi::my_rank==0) spinwaves::internal::save_frequencies();
+
 		#ifdef MPICF
 			nk_per_rank = std::ceil(static_cast<double>(internal::nk) / static_cast<double>(vmpi::num_processors));
 			scatterlength = nk_per_rank * internal::nt;

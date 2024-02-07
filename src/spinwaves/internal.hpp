@@ -116,6 +116,7 @@ namespace spinwaves{
       extern void calculate_fourier_prefactor(const std::vector<double>& rx, const std::vector<double>& ry, const std::vector<double>& rz);
       extern void determine_spin_component();
       extern void calculate_material_mask();
+      extern void save_frequencies();
 
       // post analysis functions
       extern void write_intermediate_to_file(std::vector<fftw_complex>& os, int k);

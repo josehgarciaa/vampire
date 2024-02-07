@@ -318,6 +318,8 @@ namespace spinwaves{
             }
       }
 
+
+      // Determine the mask for calculations of SW spectrum for specific materials
       void calculate_material_mask(){
 
          #ifdef MPICF
@@ -345,5 +347,27 @@ namespace spinwaves{
             }
          #endif // DEBUG
       }
+
+      
+      void save_frequencies(){
+
+         std::ofstream freq_file;
+         std::stringstream sstr;
+         
+         // output filenames
+         sstr << "frequencies.dat";
+
+         // open files
+         freq_file.open(sstr.str(),std::ios_base::app);
+         std::cout << mp::dt << std::endl;
+         std::cout << internal::nt << std::endl;
+         for (int i=0; i < internal::nt; i++){
+            freq_file << i/(sim::partial_time*mp::dt/1.76e11)/internal::nt << "\n";
+         }
+
+         freq_file.close();
+      }
+
+
    }
 } 
