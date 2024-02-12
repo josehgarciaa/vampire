@@ -44,7 +44,7 @@ namespace spinwaves {
         // =============================================================================================================================================
         // Calculate one sided spectrum ================================================================================================================
         // =============================================================================================================================================
-        void one_sided_spectrum(std::vector<fftw_complex>& in){
+        void one_sided_spectrum(fftw_complex *in){
 
             for (int j1 = 0; j1 < internal::nt/2; j1++){
                 j2 = internal::nt-j1-1;     
@@ -54,7 +54,7 @@ namespace spinwaves {
             }
         }
 
-        void complex_magnitude(std::vector<fftw_complex>& os){
+        void complex_magnitude(fftw_complex *os){
 
             for (int j1 = 0; j1 < internal::nt; j1++){
                 os[j1][real] = os[j1][real] * os[j1][real] + os[j1][imag] * os[j1][imag];
@@ -65,7 +65,7 @@ namespace spinwaves {
         }
         
 
-        void normalise_each_kpoint(std::vector<fftw_complex>& os){
+        void normalise_each_kpoint(fftw_complex *os){
 
             double largest = std::abs(os[0][real]);
             double index;
@@ -100,7 +100,7 @@ namespace spinwaves {
 
         }
 
-        void write_to_file(std::vector<fftw_complex>& os, int k){
+        void write_to_file(fftw_complex *os, int k){
 
             std::stringstream sstr_real;
             std::stringstream sstr_imag;
@@ -165,7 +165,7 @@ namespace spinwaves {
             file_K_time_imag.close();
         }
 
-        void write_intermediate_to_file(std::vector<fftw_complex>& os, int k){
+        void write_intermediate_to_file(fftw_complex *os, int k){
 
             std::stringstream sstr_real;
             std::stringstream sstr_imag;

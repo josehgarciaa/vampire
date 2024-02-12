@@ -74,10 +74,9 @@ namespace spinwaves {
       #endif
 
 
-      std::vector<fftw_complex> combined_real_imag(internal::nt);
-      std::vector<fftw_complex> combined_real_imag_fftd(internal::nt);
-      fftw_plan fft_in_time;
-      fft_in_time = fftw_plan_dft_1d(internal::nt, &combined_real_imag[0], &combined_real_imag_fftd[0], FFTW_FORWARD, FFTW_MEASURE);
+      fftw_complex combined_real_imag[internal::nt];
+      fftw_complex combined_real_imag_fftd[internal::nt];
+      fftw_plan fft_in_time = fftw_plan_dft_1d(internal::nt, &combined_real_imag[0], &combined_real_imag_fftd[0], FFTW_FORWARD, FFTW_MEASURE);
       
 
       // the loop below transposes from:

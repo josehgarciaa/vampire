@@ -119,11 +119,11 @@ namespace spinwaves{
       extern void save_frequencies();
 
       // post analysis functions
-      extern void write_intermediate_to_file(std::vector<fftw_complex>& os, int k);
-      extern void normalise_each_kpoint(std::vector<fftw_complex>& os);
-      extern void write_to_file(std::vector<fftw_complex>& os, int k);
-      extern void one_sided_spectrum(std::vector<fftw_complex>& os);
-      extern void complex_magnitude(std::vector<fftw_complex>& os);
+      extern void write_intermediate_to_file(fftw_complex *os, int k);
+      extern void normalise_each_kpoint(fftw_complex *os);
+      extern void write_to_file(fftw_complex *os, int k);
+      extern void one_sided_spectrum(fftw_complex *os);
+      extern void complex_magnitude(fftw_complex *os);
 
 
       extern int gcd(int a, int b);
