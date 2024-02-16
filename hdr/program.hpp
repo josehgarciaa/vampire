@@ -72,6 +72,7 @@ namespace program
    extern void exchange_stiffness();
 	extern void electrical_pulse();
 	extern void spin_waves(); // JRH
+	extern void field_pulse();
 
 	// Sundry programs and diagnostics not under general release
 	extern int LLB_Boltzmann();
