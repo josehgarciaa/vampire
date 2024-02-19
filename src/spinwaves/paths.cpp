@@ -41,8 +41,44 @@ namespace spinwaves{
 
         void determine_path(){
 
+            std::ifstream file_read_K_path;
+            file_read_K_path.open(spinwaves::internal::kpath_filename);
+
+
+            // else read the path from the file specified in interface.cpp
+            if (file_read_K_path.is_open()){
+               
+                std::cout << "Spinwaves path file " << spinwaves::internal::kpath_filename << " succesfully opened." << std::endl;
+                zlog << zTs()  << "Spinwaves path file " << spinwaves::internal::kpath_filename << " succesfully opened." << std::endl;
+
+                // read contents of path file
+                int linecount = 0;
+                std::string line;
+                while (std::getline(file_read_K_path, line)) {
+                    std::istringstream iss(line);
+                    linecount++;
+                    double val1, val2, val3;
+                    if (iss >> val1 >> val2 >> val3) {
+                        spinwaves::internal::pathx.push_back(val1);
+                        spinwaves::internal::pathy.push_back(val2);
+                        spinwaves::internal::pathz.push_back(val3);
+                    } 
+                    else {
+                        std::cerr << "Error reading line: " << line << std::endl;
+                    }
+                }
+
+                std::cout << "Spinwaves path file " << spinwaves::internal::kpath_filename << " contains " << linecount << " lines." << std::endl;
+                zlog << zTs()  << "Spinwaves path file" << spinwaves::internal::kpath_filename << " contains " << linecount << " lines." << std::endl;
+
+                // close file and check
+                file_read_K_path.close();
+                std::cout << "Spinwaves path file " << spinwaves::internal::kpath_filename << " has been closed." << std::endl;
+                zlog << zTs()  << "Spinwaves path file " << spinwaves::internal::kpath_filename << " has been closed." << std::endl;
+
+            }
             // if kpath_filename has not been found in spiwnaves/interface.cpp use a built in path
-            if (spinwaves::internal::kpath_filename==""){
+            else if (!file_read_K_path.is_open() && uc::sw_crystal_structure!=""){
                 std::cout << "sw_crystal_structure = " << uc::sw_crystal_structure<< std::endl;
                 
                 // Determine which path to take depending on crystal structure
@@ -71,50 +107,17 @@ namespace spinwaves{
                     err::vexit();
                 }
             }
-            // else read the path from the file specified in interface.cpp
             else {
-
-                // check file exists
-                std::ifstream file_read_K_path;
-                file_read_K_path.open(spinwaves::internal::kpath_filename);
-
-                if (file_read_K_path.is_open()) {
-                    std::cout << "Spinwaves path file " << spinwaves::internal::kpath_filename << " succesfully opened." << std::endl;
-                    zlog << zTs()  << "Spinwaves path file " << spinwaves::internal::kpath_filename << " succesfully opened." << std::endl;
-                } 
-                else {
-                    terminaltextcolor(RED);
-                    std::cerr << "Error: Cannot find spinwaves path file " << spinwaves::internal::kpath_filename << ". Exiting." << std::endl;
-                    terminaltextcolor(WHITE);
-                    zlog << zTs() << "Error: Cannot find spinwaves path file "<< spinwaves::internal::kpath_filename << ". Exiting." << std::endl;
-                    err::vexit();
-                }
-
-                // read contents of path file
-                int linecount = 0;
-                std::string line;
-                while (std::getline(file_read_K_path, line)) {
-                    std::istringstream iss(line);
-                    linecount++;
-                    double val1, val2, val3;
-                    if (iss >> val1 >> val2 >> val3) {
-                        spinwaves::internal::pathx.push_back(val1);
-                        spinwaves::internal::pathy.push_back(val2);
-                        spinwaves::internal::pathz.push_back(val3);
-                    } 
-                    else {
-                        std::cerr << "Error reading line: " << line << std::endl;
-                    }
-                }
-
-                std::cout << "Spinwaves path file " << spinwaves::internal::kpath_filename << " contains " << linecount << " lines." << std::endl;
-                zlog << zTs()  << "Spinwaves path file" << spinwaves::internal::kpath_filename << " contains " << linecount << " lines." << std::endl;
-
-                // close file and check
-                file_read_K_path.close();
-                std::cout << "Spinwaves path file " << spinwaves::internal::kpath_filename << " has been closed." << std::endl;
-                zlog << zTs()  << "Spinwaves path file " << spinwaves::internal::kpath_filename << " has been closed." << std::endl;
-
+                terminaltextcolor(RED);
+                std::cerr << "Error: Cannot find spinwaves path file or crystal structure. Exiting." << std::endl;
+                std::cerr << "filename for kpath has been specified as: \"" << spinwaves::internal::kpath_filename << std::endl;
+                std::cerr << "Crystal structure has been defined as: \"" << uc::sw_crystal_structure << std::endl;
+                terminaltextcolor(WHITE);
+                zlog << zTs() << "Error: Cannot find spinwaves path file \""<< spinwaves::internal::kpath_filename << "\". Exiting." << std::endl;
+                zlog << zTs() << "Error: Cannot find spinwaves path file or crystal structure. Exiting." << std::endl;
+                zlog << zTs() << "filename for kpath has been specified as: \"" << spinwaves::internal::kpath_filename << std::endl;
+                zlog << zTs() << "Crystal structure has been defined as: \"" << uc::sw_crystal_structure << std::endl;
+                err::vexit();
             }
         }
 
@@ -358,7 +361,7 @@ namespace spinwaves{
          sstr << "frequencies.dat";
 
          // open files
-         freq_file.open(sstr.str(),std::ios_base::app);
+         freq_file.open(sstr.str());
          std::cout << mp::dt << std::endl;
          std::cout << internal::nt << std::endl;
          for (int i=0; i < internal::nt; i++){

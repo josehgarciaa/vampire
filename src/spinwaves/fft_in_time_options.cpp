@@ -115,7 +115,7 @@ namespace spinwaves {
                 #endif
 
                 // open file
-                file_K_time_real.open(sstr_real.str(),std::ios_base::app);
+                file_K_time_real.open(sstr_real.str());
 
                  if (oss == true){
                     for (int time=0; time < internal::nt/2; time++){
@@ -144,8 +144,8 @@ namespace spinwaves {
                 #endif
 
                 // open files
-                file_K_time_real.open(sstr_real.str(),std::ios_base::app);
-                file_K_time_imag.open(sstr_imag.str(),std::ios_base::app);
+                file_K_time_real.open(sstr_real.str());
+                file_K_time_imag.open(sstr_imag.str());
 
                 if (oss == true){
                     for (int time=0; time < internal::nt/2; time++){
@@ -180,8 +180,8 @@ namespace spinwaves {
                 #endif
 
                 // open files
-                file_K_time_real.open(sstr_real.str(),std::ios_base::app);
-                file_K_time_imag.open(sstr_imag.str(),std::ios_base::app);
+                file_K_time_real.open(sstr_real.str());
+                file_K_time_imag.open(sstr_imag.str());
 
                 for (int time=0; time < internal::nt; time++){
                     file_K_time_real << os[time][real] << "\n";
