@@ -45,7 +45,7 @@ namespace spinwaves{
          test="";
          // if filename not blank set ucf file name
          if(kpath_file!=test){
-            spinwaves::internal::kpath_filename=kpath_file;
+            spinwaves::internal::filename=kpath_file;
             return true;
          }
          else{
@@ -188,6 +188,23 @@ namespace spinwaves{
          else {
             terminaltextcolor(RED);
             std::cerr << "Error - Unexpected method for MPI reduction in spinwave model. \'spinwaves:" << word << " = " << value << "\' on line " << line << " of input file" << std::endl;
+            terminaltextcolor(WHITE);
+            return false;
+         }
+      }
+
+      test="filetype";
+      if(word==test){
+         std::string filetype_temp=value;
+         filetype_temp.erase(std::remove(filetype_temp.begin(), filetype_temp.end(), '\"'), filetype_temp.end());
+         internal::filetype=filetype_temp;
+
+         if (internal::filetype == "path" || internal::filetype== "specific-k"){
+            return true;
+         }
+         else {
+            terminaltextcolor(RED);
+            std::cerr << "Error - Unexpected filetype for spinwave module. \'spinwaves:" << word << " = " << value << "\' on line " << line << " of input file" << std::endl;
             terminaltextcolor(WHITE);
             return false;
          }

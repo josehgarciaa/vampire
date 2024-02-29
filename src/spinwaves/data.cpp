@@ -55,8 +55,9 @@ namespace spinwaves{
       std::vector<double> pathz;
 
       // JRH internally visible filename
-      std::string kpath_filename;
-
+      std::string filename;
+      std::string filetype = "path";
+      
       // fft-in-time options;
       std::string reduc_ver = "direct_scatter";
       std::string component = "sx";

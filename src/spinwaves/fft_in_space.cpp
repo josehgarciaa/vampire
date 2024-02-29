@@ -52,9 +52,7 @@ namespace spinwaves {
                    const std::vector<double>& atom_coords_z,
                    const int time ){
 
-      int nk=spinwaves::internal::kx_list.size();
-
-      for(int k=0;k<nk;k++){
+      for(int k=0;k<internal::nk;k++){
 
          // kx=spinwaves::internal::kx_list[k];
          // ky=spinwaves::internal::ky_list[k];
@@ -104,8 +102,8 @@ namespace spinwaves {
                // testing whether predefing the cos(k) makes much of a difference to speed
                // skx_r[uca] += sx*cosK;
                // skx_i[uca] += sx*sinK;
-               skx_r_node[time*nk + k] += sx*spinwaves::internal::cos_k[k*internal::mask.size()+atom];
-               skx_i_node[time*nk + k] += sx*spinwaves::internal::sin_k[k*internal::mask.size()+atom];
+               skx_r_node[time*internal::nk + k] += sx*spinwaves::internal::cos_k[k*internal::mask.size()+atom];
+               skx_i_node[time*internal::nk + k] += sx*spinwaves::internal::sin_k[k*internal::mask.size()+atom];
 
             }
 
@@ -116,8 +114,8 @@ namespace spinwaves {
       #ifdef MPICF
          if (internal::reduc_ver == "rank0"){
             std::cout << "TEST" << std::endl;
-               MPI_Reduce(&skx_r[0], &skx_r_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-               MPI_Reduce(&skx_i[0], &skx_i_node[time*nk], nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+               MPI_Reduce(&skx_r[0], &skx_r_node[time*internal::nk], internal::nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+               MPI_Reduce(&skx_i[0], &skx_i_node[time*internal::nk], internal::nk, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
          }
       #endif  
           

@@ -42,14 +42,14 @@ namespace spinwaves{
         void determine_path(){
 
             std::ifstream file_read_K_path;
-            file_read_K_path.open(spinwaves::internal::kpath_filename);
+            file_read_K_path.open(spinwaves::internal::filename);
 
 
             // else read the path from the file specified in interface.cpp
             if (file_read_K_path.is_open()){
                
-                std::cout << "Spinwaves path file " << spinwaves::internal::kpath_filename << " succesfully opened." << std::endl;
-                zlog << zTs()  << "Spinwaves path file " << spinwaves::internal::kpath_filename << " succesfully opened." << std::endl;
+                std::cout << "Spinwaves path file " << spinwaves::internal::filename << " succesfully opened." << std::endl;
+                zlog << zTs()  << "Spinwaves path file " << spinwaves::internal::filename << " succesfully opened." << std::endl;
 
                 // read contents of path file
                 int linecount = 0;
@@ -68,16 +68,16 @@ namespace spinwaves{
                     }
                 }
 
-                std::cout << "Spinwaves path file " << spinwaves::internal::kpath_filename << " contains " << linecount << " lines." << std::endl;
-                zlog << zTs()  << "Spinwaves path file" << spinwaves::internal::kpath_filename << " contains " << linecount << " lines." << std::endl;
+                std::cout << "Spinwaves path file " << spinwaves::internal::filename << " contains " << linecount << " lines." << std::endl;
+                zlog << zTs()  << "Spinwaves path file" << spinwaves::internal::filename << " contains " << linecount << " lines." << std::endl;
 
                 // close file and check
                 file_read_K_path.close();
-                std::cout << "Spinwaves path file " << spinwaves::internal::kpath_filename << " has been closed." << std::endl;
-                zlog << zTs()  << "Spinwaves path file " << spinwaves::internal::kpath_filename << " has been closed." << std::endl;
+                std::cout << "Spinwaves path file " << spinwaves::internal::filename << " has been closed." << std::endl;
+                zlog << zTs()  << "Spinwaves path file " << spinwaves::internal::filename << " has been closed." << std::endl;
 
             }
-            // if kpath_filename has not been found in spiwnaves/interface.cpp use a built in path
+            // if filename has not been found in spiwnaves/interface.cpp use a built in path
             else if (!file_read_K_path.is_open() && uc::sw_crystal_structure!=""){
                 std::cout << "sw_crystal_structure = " << uc::sw_crystal_structure<< std::endl;
                 
@@ -110,25 +110,69 @@ namespace spinwaves{
             else {
                 terminaltextcolor(RED);
                 std::cerr << "Error: Cannot find spinwaves path file or crystal structure. Exiting." << std::endl;
-                std::cerr << "filename for kpath has been specified as: \"" << spinwaves::internal::kpath_filename << std::endl;
-                std::cerr << "Crystal structure has been defined as: \"" << uc::sw_crystal_structure << std::endl;
+                std::cerr << "filename for kpath has been specified as: \"" << spinwaves::internal::filename << "\"." << std::endl;
+                std::cerr << "Crystal structure has been defined as: \"" << uc::sw_crystal_structure << "\"." << std::endl;
                 terminaltextcolor(WHITE);
-                zlog << zTs() << "Error: Cannot find spinwaves path file \""<< spinwaves::internal::kpath_filename << "\". Exiting." << std::endl;
+                zlog << zTs() << "Error: Cannot find spinwaves path file \""<< spinwaves::internal::filename << "\"." << std::endl;
                 zlog << zTs() << "Error: Cannot find spinwaves path file or crystal structure. Exiting." << std::endl;
-                zlog << zTs() << "filename for kpath has been specified as: \"" << spinwaves::internal::kpath_filename << std::endl;
-                zlog << zTs() << "Crystal structure has been defined as: \"" << uc::sw_crystal_structure << std::endl;
+                zlog << zTs() << "filename for kpath has been specified as: \"" << spinwaves::internal::filename << std::endl;
+                zlog << zTs() << "Crystal structure has been defined as: \"" << uc::sw_crystal_structure << "\"." << std::endl;
                 err::vexit();
             }
         }
 
-        void determine_kpoints(const double system_dimensions_x,
+
+
+         void determine_kpoints_from_user_specific_k(const double system_dimensions_x,
+                    const double system_dimensions_y,
+                    const double system_dimensions_z,
+					const double unit_cell_size_x,
+					const double unit_cell_size_y,
+					const double unit_cell_size_z){
+
+            // number of kpoints
+            int len=spinwaves::internal::pathx.size();  
+            
+            // reciprocal lattice vectors
+            double b[3];
+            b[0] = 2.0 * M_PI * (unit_cell_size_y * unit_cell_size_z) / (unit_cell_size_x * (unit_cell_size_y * unit_cell_size_z));
+            b[1] = 2.0 * M_PI * (unit_cell_size_z * unit_cell_size_x) / (unit_cell_size_x * (unit_cell_size_y * unit_cell_size_z));
+            b[2] = 2.0 * M_PI * (unit_cell_size_x * unit_cell_size_y) / (unit_cell_size_x * (unit_cell_size_y * unit_cell_size_z));
+            
+            std::cout << "Determining k-points..." << std::endl;
+
+            // loop over number of kpoints
+            for (int k = 0; k < len; k++){
+                
+                std::cout << pathx[k] << std::endl;
+               
+               // convert from user defined values in units of 2pi/a to m^{-1} and push back to array 
+               spinwaves::internal::kx_list.push_back(b[0] * pathx[k]);
+               spinwaves::internal::ky_list.push_back(b[1] * pathy[k]);
+               spinwaves::internal::kz_list.push_back(b[2] * pathz[k]);
+
+            }
+
+        }
+      
+        void determine_kpoints_from_user_high_sym_path(const double system_dimensions_x,
                     const double system_dimensions_y,
                     const double system_dimensions_z,
 					const double unit_cell_size_x,
 					const double unit_cell_size_y,
 					const double unit_cell_size_z){
             
-            int len=spinwaves::internal::pathx.size();
+            int len=spinwaves::internal::pathx.size();  
+
+            // check path file contains an even number of high symm points.
+            if ( len % 2 != 0){
+                terminaltextcolor(RED);
+                std::cerr <<     "Error: k-path file contains an odd number of high symmetry points." << std::endl;
+                terminaltextcolor(WHITE);
+                zlog << zTs() << "Error: k-path file contains an odd number of high symmetry points." << std::endl;
+                err::vexit();
+            }
+
 
             // Get reciprocal lattice vectors from cubic unit cell JRH 26/10/23
             // Based on equations through link: http://lampx.tugraz.at/~hadley/ss1/crystaldiffraction/fourier/reciprocal_lattice.php
@@ -185,21 +229,9 @@ namespace spinwaves{
                 }
 
             }
+        }
 
-            // for (int k = 0; k < 100; k++){
-
-            //    double kx = k/200.0;
-            //    double ky = 0.0;
-            //    double kz = 0.0;
-
-            //    // make sure to convert to units of 2pi/latconst
-            //    spinwaves::internal::kx_list.push_back(b[0] * kx);
-            //    spinwaves::internal::ky_list.push_back(b[1] * ky);
-            //    spinwaves::internal::kz_list.push_back(b[2] * kz);
-            //    // std::cout << b[0] * kx  << " " << b[1] * ky << " " << b[2] * kz << std::endl;
-            //    // std::cout << kx  << " " << ky << " " << kz << std::endl;
-            //}
-            
+        void initialise_arrays(){
             
             // define number of time and kpoitns 
             internal::nk = spinwaves::internal::kx_list.size();

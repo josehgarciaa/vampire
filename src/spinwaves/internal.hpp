@@ -71,7 +71,10 @@ namespace spinwaves{
       extern std::vector <double> ky_list;
       extern std::vector <double> kz_list;
       extern std::vector <double> structure_factor_array_R, structure_factor_array_I;
-      extern std::string kpath_filename;
+
+      // JRH extern file variables
+      extern std::string filename;
+      extern std::string filetype;
 
       // JRH path vectors 
       extern std::vector<double> pathx;
@@ -106,17 +109,14 @@ namespace spinwaves{
       extern void path_hcp();
       extern void path_mn2au();
       extern void determine_path();
-      extern void determine_kpoints(
-                     const double system_dimensions_x, 
-                     const double system_dimensions_y, 
-                     const double system_dimensions_z,	
-                     const double unit_cell_size_x, 
-                     const double unit_cell_size_y, 
-                     const double unit_cell_size_z);
-      extern void calculate_fourier_prefactor(const std::vector<double>& rx, const std::vector<double>& ry, const std::vector<double>& rz);
-      extern void determine_spin_component();
-      extern void calculate_material_mask();
       extern void save_frequencies();
+      extern void initialise_arrays();
+      extern void calculate_material_mask();
+      extern void determine_spin_component();
+      extern void calculate_fourier_prefactor(const std::vector<double>& rx, const std::vector<double>& ry, const std::vector<double>& rz);
+      extern void determine_kpoints_from_user_specific_k(const double dimx, const double dimy, const double dimz,	const double uc_x, const double uc_y, const double uc_z);
+      extern void determine_kpoints_from_user_high_sym_path(const double dimx, const double dimy, const double dimz,	const double uc_x, const double uc_y, const double uc_z);
+
 
       // post analysis functions
       extern void write_intermediate_to_file(fftw_complex *os, int k);
