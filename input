@@ -4,9 +4,9 @@
 #
 #------------------------------------------
 create:crystal-structure=bcc
-#create:periodic-boundaries-x
-#create:periodic-boundaries-y
-#create:periodic-boundaries-z
+create:periodic-boundaries-x
+create:periodic-boundaries-y
+create:periodic-boundaries-z
 
 
 #------------------------------------------
@@ -15,7 +15,7 @@ create:crystal-structure=bcc
 dimensions:unit-cell-size = 2.87 !A
 dimensions:system-size-x = 2.87 !nm
 dimensions:system-size-y = 2.87 !nm
-dimensions:system-size-z = 5.74 !nm
+dimensions:system-size-z = 2.87 !nm
 
 
 
@@ -27,9 +27,9 @@ material:file = fe.mat
 #------------------------------------------
 # Simulation attributes:
 #------------------------------------------
-sim:temperature = 300.0
+sim:temperature = 0.0
 sim:time-steps-increment = 1
-sim:total-time-steps = 10000
+sim:total-time-steps = 1
 sim:time-step = 0.5 !fs
 sim:equilibration-temperature=0
 sim:equilibration-time-steps=0
@@ -45,7 +45,7 @@ sim:integrator = spin-lattice
 spin-lattice:potential-cutoff-range=7.8 !A
 spin-lattice:fields-cutoff-range=3.75!A
 spin-lattice:coupling=pseudodipolar
-spin-lattice:potential=morse
+spin-lattice:potential=harmonic
 
 
 #spin-lattice:initial-random-displacement=0.1
@@ -55,7 +55,7 @@ spin-lattice:potential=morse
 exchange:interaction-range = 3
 
 config:atoms
-config:atoms-output-rate=1000
+config:atoms-output-rate=1
 config:sld
 
 output:real-time

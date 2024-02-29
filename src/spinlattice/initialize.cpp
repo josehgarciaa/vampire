@@ -68,7 +68,7 @@ namespace sld{
      sld::internal::morse_factor=-2.0 *sld::internal::morse_D * sld::internal::alpha_m;
      
      
-     sld::internal::thermal_velocity(atoms::x_velo_array, atoms::y_velo_array,atoms::z_velo_array);
+     //sld::internal::thermal_velocity(atoms::x_velo_array, atoms::y_velo_array,atoms::z_velo_array);
      
      
      //initialise for Parallel simulations
@@ -139,7 +139,6 @@ namespace sld{
         
     }*/
     
-           std::cout<<"pos after"<<x_coord_array[0]<<"\t"<<z_coord_array[10]<<std::endl;
 
    return;
    

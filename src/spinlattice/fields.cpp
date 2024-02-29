@@ -156,7 +156,7 @@ namespace internal{
           const unsigned int imat = atoms::type_array[i];
           double exch_J0 = sld::internal::mp[imat].J0_ms.get(); //7034.8836847351113; //
           double exch_J0_prime = sld::internal::mp[imat].J0_prime.get()/1.602176634e-19;
-          
+          int count_int=0;
 
           fx = 0.0;
           fy = 0.0;
@@ -195,7 +195,7 @@ namespace internal{
              rji_sqr = dx*dx + dy*dy + dz*dz;
 
              if( rji_sqr < r_sqr_cut)
-             {
+             {   count_int++;
 
                  rji = sqrt(rji_sqr);
                  inv_rji = 1.0/ rji;
@@ -258,6 +258,7 @@ namespace internal{
        std::cout<<i<<"\t"<<hx<<"\t"<<hy<<"\t"<<hz<<"\t"<<fx<<"\t"<<fy<<"\t"<<fz<<std::endl;*/
        sld::internal::sumJ[i]=sumJ;
        sld::internal::exch_eng[i]=-0.5*energy;
+       //std::cout<<"exchange int"<<count_int<<std::endl;
        
        /*if(abs(x_coord_array[i]-20.09)<1e-3 &&abs(y_coord_array[i]-20.09)<1e-3  && abs(z_coord_array[i]-20.09)<1e-3 ){
        std::cout<<std::setprecision(15)<<std::endl;
@@ -367,6 +368,8 @@ namespace internal{
                             sjy = y_spin_array[j];
                             sjz = z_spin_array[j];
 
+
+                            //std::cout<<"spin "<<sx<<"\t"<<sy<<"\t"<<sz<<"\t"<<sjx<<"\t"<<sjy<<"\t"<<sjz<<std::endl;
                             si_dot_sj = sx * sjx + sy * sjy + sz * sjz;
 
                             sj_dot_rji = (dx * sjx + dy * sjy + dz * sjz);
@@ -414,6 +417,10 @@ namespace internal{
 
 
             }
+            
+           // if (i==1110) {std::cout<<"position "<<rx<<"\t"<<ry<<"\t"<<rz<<std::endl;
+           // std::cout<<i<<"energ "<<"\t"<<energy_c<<"\t"<<fact_ms<<"\t"<<-0.5*energy_c<<std::endl;
+           // }
 
 
             forces_array_x[i] += fc_x;
