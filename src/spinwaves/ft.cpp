@@ -27,6 +27,7 @@
 #include <cmath>
 #include "fstream"
 #include "atoms.hpp"
+#include <fftw3-mpi.h>
 
 
 namespace spinwaves {
@@ -34,6 +35,11 @@ namespace spinwaves {
    // Local variables
    double sx;
    int atom;
+
+
+   fftw_plan plan;
+   fftw_complex *data;
+   ptrdiff_t local_no, local_o_start, local_ni, local_i_start;
 
    //----------------------------------------------------------------------------
    // Function to initialize sw module
@@ -61,6 +67,22 @@ namespace spinwaves {
                   skx_i[k] += sx*sin(rx[atom]*internal::kx[k] + ry[atom]*internal::ky[k] + rz[atom]*internal::ky[k]);
                }
             }
+
+            for(int j=0;j<internal::mask.size();j++){
+               
+               atom=internal::mask2[j];
+               sx = (*internal::sw_array)[atom];
+
+               if (internal::prefactor == true){
+                  skx_r[k] *= sx*spinwaves::internal::cos_k2[k*(internal::mask2.size())+atom];
+                  skx_i[k] *= sx*spinwaves::internal::sin_k2[k*(internal::mask2.size())+atom];
+               }
+               else if (internal::prefactor == false){
+                  skx_r[k] *= sx*cos(rx[atom]*internal::kx[k] + ry[atom]*internal::kx[k] + rz[atom]*internal::kx[k]);
+                  skx_i[k] *= sx*sin(rx[atom]*internal::kx[k] + ry[atom]*internal::ky[k] + rz[atom]*internal::ky[k]);
+               }
+            }
+
 
 
 

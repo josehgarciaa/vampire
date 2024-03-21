@@ -103,10 +103,10 @@ namespace spinwaves{
 
 		//##################################################################################################
 		//#### Compute the structure factor
-		for(unsigned int k=0;k<spinwaves::internal::kx_list.size();k++){
-			const double kx=spinwaves::internal::kx_list[k];
-			const double ky=spinwaves::internal::ky_list[k];
-			const double kz=spinwaves::internal::kz_list[k];
+		for(unsigned int k=0;k<spinwaves::internal::kx.size();k++){
+			const double kx=spinwaves::internal::kx[k];
+			const double ky=spinwaves::internal::ky[k];
+			const double kz=spinwaves::internal::kz[k];
 			for(int atom=0;atom<atoms::num_atoms;atom++){
 				const double rx=atom_coords_x[atom];
 				const double ry=atom_coords_y[atom];

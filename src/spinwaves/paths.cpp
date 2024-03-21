@@ -143,13 +143,11 @@ namespace spinwaves{
 
             // loop over number of kpoints
             for (int k = 0; k < len; k++){
-                
-                std::cout << pathx[k] << std::endl;
-               
+                               
                // convert from user defined values in units of 2pi/a to m^{-1} and push back to array 
-               spinwaves::internal::kx_list.push_back(b[0] * pathx[k]);
-               spinwaves::internal::ky_list.push_back(b[1] * pathy[k]);
-               spinwaves::internal::kz_list.push_back(b[2] * pathz[k]);
+               spinwaves::internal::kx.push_back(b[0] * pathx[k]);
+               spinwaves::internal::ky.push_back(b[1] * pathy[k]);
+               spinwaves::internal::kz.push_back(b[2] * pathz[k]);
 
             }
 
@@ -221,9 +219,9 @@ namespace spinwaves{
                     kz = kz + distancez/static_cast<double>(common_denom)/cellz;
 
                     // make sure to convert to units of 2pi/latconst
-                    spinwaves::internal::kx_list.push_back(b[0] * kx);
-                    spinwaves::internal::ky_list.push_back(b[1] * ky);
-                    spinwaves::internal::kz_list.push_back(b[2] * kz);
+                    spinwaves::internal::kx.push_back(b[0] * kx);
+                    spinwaves::internal::ky.push_back(b[1] * ky);
+                    spinwaves::internal::kz.push_back(b[2] * kz);
                     // std::cout << b[0] * kx  << " " << b[1] * ky << " " << b[2] * kz << std::endl;
                     // std::cout << kx  << " " << ky << " " << kz << std::endl;
                 }
@@ -234,7 +232,7 @@ namespace spinwaves{
         void initialise_arrays(){
             
             // define number of time and kpoitns 
-            internal::nk = spinwaves::internal::kx_list.size();
+            internal::nk = spinwaves::internal::kx.size();
             internal::nt = (sim::total_time / sim::partial_time);
             std::cout << "total number of spinwave kpoints "    << internal::nk << std::endl;
             std::cout << "total number of spinwave timepoints " << internal::nt << std::endl;
@@ -283,7 +281,7 @@ namespace spinwaves{
         void calculate_fourier_prefactor(const std::vector<double>& rx, const std::vector<double>& ry, const std::vector<double>& rz){
             
             double arg;
-            int nk=spinwaves::internal::kx_list.size();
+            int nk=spinwaves::internal::kx.size();
             
             
             #ifdef MPICF
@@ -301,9 +299,9 @@ namespace spinwaves{
                 std::cout << "test" << std::endl;
                 for (int k=0; k < nk; k++){
 
-                    double kx = spinwaves::internal::kx_list[k];
-                    double ky = spinwaves::internal::ky_list[k];
-                    double kz = spinwaves::internal::kz_list[k];
+                    double kx = spinwaves::internal::kx[k];
+                    double ky = spinwaves::internal::ky[k];
+                    double kz = spinwaves::internal::kz[k];
             
                     for(int atom=0;atom<internal::mask.size();atom++){
                         arg=kx*rx[atom] + ky*ry[atom] + kz*rz[atom];  
@@ -325,9 +323,9 @@ namespace spinwaves{
 
                 for (int k=0; k < nk; k++){
 
-                double kx = spinwaves::internal::kx_list[k];
-                double ky = spinwaves::internal::ky_list[k];
-                double kz = spinwaves::internal::kz_list[k];
+                double kx = spinwaves::internal::kx[k];
+                double ky = spinwaves::internal::ky[k];
+                double kz = spinwaves::internal::kz[k];
 
                     for(int atom=0;atom<internal::mask.size();atom++){
                         arg=kx*rx[atom] + ky*ry[atom] + kz*rz[atom];  

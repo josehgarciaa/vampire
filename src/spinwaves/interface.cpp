@@ -210,6 +210,25 @@ namespace spinwaves{
          }
       }
 
+      test="prefactor";
+      if(word==test){
+
+         if (value == "false"){
+            internal::prefactor = false;
+            return true;
+         }
+         else if (value == "true"){
+            internal::prefactor = true;
+            return true;
+         }
+         else {
+            terminaltextcolor(RED);
+            std::cerr << "Error - Unknown value in control statement \'spinwaves:" << word << " = " << value << "\' on line " << line << " of input file" << std::endl;
+            terminaltextcolor(WHITE);
+            return false;
+         }
+      }
+
 
       //--------------------------------------------------------------------
       // Keyword not found

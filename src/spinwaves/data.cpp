@@ -43,9 +43,9 @@ namespace spinwaves{
       // Shared variables inside sw module
       //------------------------------------------------------------------------
       bool enabled; // bool to enable module
-      std::vector <double> kx_list;
-      std::vector <double> ky_list;
-      std::vector <double> kz_list;
+      std::vector <double> kx;
+      std::vector <double> ky;
+      std::vector <double> kz;
  	   std::vector <double> structure_factor_array_R, structure_factor_array_I;
       std::vector<internal::mp_t> mp; // array of material properties
 
@@ -67,6 +67,7 @@ namespace spinwaves{
       bool normk = true;
       int mat = 0;
 
+      bool prefactor = true;
 
 
       std::vector<double> cos_k;

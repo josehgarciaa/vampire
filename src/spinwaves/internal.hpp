@@ -67,9 +67,9 @@ namespace spinwaves{
       extern bool enabled; // bool to enable module
 
       extern std::vector<internal::mp_t> mp; // array of material properties
-      extern std::vector <double> kx_list;
-      extern std::vector <double> ky_list;
-      extern std::vector <double> kz_list;
+      extern std::vector <double> kx;
+      extern std::vector <double> ky;
+      extern std::vector <double> kz;
       extern std::vector <double> structure_factor_array_R, structure_factor_array_I;
 
       // JRH extern file variables
@@ -98,6 +98,7 @@ namespace spinwaves{
       extern const std::vector<double>* sw_array;
       extern bool oss, cm, normk;
       extern int mat;
+      extern bool prefactor;
 
       //-------------------------------------------------------------------------
       // Internal function declarations
