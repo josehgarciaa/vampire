@@ -228,7 +228,27 @@ namespace spinwaves{
             return false;
          }
       }
-
+      //  ------------------------------------------------------------------
+      // intermediate structure factor -------------------------------------
+      //  ------------------------------------------------------------------
+      test="intermediate-structure-factor";
+      if(word==test){
+         if (value == "false"){
+            internal::isf = false;
+            return true;
+         }
+         else if (value == "true"){
+            internal::isf = true;
+            return true;
+         }
+         else {
+            terminaltextcolor(RED);
+            std::cerr << "Error - Unknown value in control statement \'spinwaves:" << word << " = " << value << "\' on line " << line << " of input file" << std::endl;
+            terminaltextcolor(WHITE);
+            return false;
+         }
+      }
+      //  ------------------------------------------------------------------
 
       //--------------------------------------------------------------------
       // Keyword not found

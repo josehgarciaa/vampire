@@ -161,6 +161,14 @@ namespace spinwaves {
                // exexcute the fft
                fftw_execute(fft_in_time);
 
+   
+            // write intermediate structure factor to file
+            if (internal::isf == true) {
+               spinwaves::internal::complex_magnitude(combined_real_imag);
+               spinwaves::internal::normalise_each_kpoint(combined_real_imag);
+               spinwaves::internal::write_intermediate_to_file(combined_real_imag, k);
+            }
+
                // calculate one sided spectrum
                if (internal::oss == true) spinwaves::internal::one_sided_spectrum(combined_real_imag_fftd);
 
@@ -200,6 +208,16 @@ namespace spinwaves {
 
             // exexcute the fft
             fftw_execute(fft_in_time);
+
+           
+           
+           
+            // write intermediate structure factor to file
+            if (internal::isf == true) {
+               spinwaves::internal::complex_magnitude(combined_real_imag);
+               spinwaves::internal::normalise_each_kpoint(combined_real_imag);
+               spinwaves::internal::write_intermediate_to_file(combined_real_imag, k);
+            }
 
             // calculate one sided spectrum
             if (internal::oss == true) spinwaves::internal::one_sided_spectrum(combined_real_imag_fftd);

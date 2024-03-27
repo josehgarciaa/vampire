@@ -78,8 +78,8 @@ namespace spinwaves {
                sx = (*internal::sw_array)[atom];
 
                if (internal::prefactor == true){
-                  skx_r_node[time*internal::nk + k] += sx*spinwaves::internal::cos_k[k*(internal::mask.size())+atom];
-                  skx_i_node[time*internal::nk + k] += sx*spinwaves::internal::sin_k[k*(internal::mask.size())+atom];
+                  spinwaves::skx_r_node[time*internal::nk + k] += sx*spinwaves::internal::cos_k[k*(internal::mask.size())+atom];
+                  spinwaves::skx_i_node[time*internal::nk + k] += sx*spinwaves::internal::sin_k[k*(internal::mask.size())+atom];
                }
                else if (internal::prefactor == false){
                   skx_r_node[time*internal::nk + k] += sx*cos(rx[atom]*internal::kx[k] + ry[atom]*internal::kx[k] + rz[atom]*internal::kx[k]);

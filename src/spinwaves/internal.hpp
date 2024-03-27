@@ -99,6 +99,7 @@ namespace spinwaves{
       extern bool oss, cm, normk;
       extern int mat;
       extern bool prefactor;
+      extern bool isf;
 
       //-------------------------------------------------------------------------
       // Internal function declarations

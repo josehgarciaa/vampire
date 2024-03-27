@@ -168,28 +168,28 @@ namespace spinwaves {
         void write_intermediate_to_file(fftw_complex *os, int k){
 
             std::stringstream sstr_real;
-            std::stringstream sstr_imag;
+            // std::stringstream sstr_imag;
             
                 // output filenames
                 #ifdef MPICF
-                    sstr_real << "k_inter_real_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
-                    sstr_imag << "k_inter_imag_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
+                    sstr_real << "k_intermediate_real_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
+                    // sstr_imag << "k_intermediate_imag_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
                 #else 
-                    sstr_real << "k_inter_real_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
-                    sstr_imag << "k_inter_imag_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
+                    sstr_real << "k_intermediate_real_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
+                    // sstr_imag << "k_intermediate_imag_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
                 #endif
 
                 // open files
                 file_K_time_real.open(sstr_real.str());
-                file_K_time_imag.open(sstr_imag.str());
+                // file_K_time_imag.open(sstr_imag.str());
 
                 for (int time=0; time < internal::nt; time++){
                     file_K_time_real << os[time][real] << "\n";
-                    file_K_time_imag << os[time][imag] << "\n";
+                    // file_K_time_imag << os[time][imag] << "\n";
                 }
 
             file_K_time_real.close();
-            file_K_time_imag.close();
+            // file_K_time_imag.close();
         }
 
 

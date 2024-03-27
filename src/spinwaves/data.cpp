@@ -62,6 +62,7 @@ namespace spinwaves{
       std::string reduc_ver = "direct_scatter";
       std::string component = "sx";
       const std::vector<double>* sw_array = nullptr;
+      bool isf = false;
       bool oss = true;
       bool cm = true;
       bool normk = true;
