@@ -51,6 +51,8 @@ void suzuki_trotter_parallel_init(std::vector<double> &x, // atomic coordinates
    int catoms = vmpi::num_core_atoms;
    int batoms = vmpi::num_bdry_atoms;
    
+   std::cout<<"C_atoms and b_atoms "<<vmpi::num_core_atoms<<"\t"<<vmpi::num_bdry_atoms<<std::endl;
+   
  
    double widthx = max_dim[0] - min_dim[0];
    double widthy = max_dim[1] - min_dim[1];
@@ -97,7 +99,7 @@ void suzuki_trotter_parallel_init(std::vector<double> &x, // atomic coordinates
                if (   x[i] >= min_dim[0] + widthx*xoct*0.5 && x[i] < min_dim[0] + widthx*0.5 + widthx*xoct*0.5
                    && y[i] >= min_dim[1] + widthy*yoct*0.5 && y[i] < min_dim[1] + widthy*0.5 + widthy*yoct*0.5
                    && z[i] >= min_dim[2] + widthz*zoct*0.5 && z[i] < min_dim[2] + widthz*0.5 + widthz*zoct*0.5)
-               {
+               {   
                   internal::b_octants[octant_num].push_back(i);
 
                }
@@ -124,6 +126,7 @@ void suzuki_trotter_parallel_init(std::vector<double> &x, // atomic coordinates
    num_atoms_in_octants += internal::b_octants[i].size();}
 
    if(num_atoms_in_octants != batoms){
+      std::cout<< "num_atoms "<<num_atoms_in_octants<<"\t"<<batoms<<std::endl;
       std::cerr << "Programmer error: missing atoms in boundary octants in suzuki-trotter initialisation" << std::endl;
       err::vexit();
    }

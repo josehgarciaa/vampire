@@ -211,6 +211,11 @@ int run(){
    montecarlo::initialize(atoms::num_atoms, grains::num_grains, atoms::grain_array);
 
    anisotropy::initialize(atoms::num_atoms, atoms::type_array, mp::mu_s_array);
+   
+   /*
+   //SLD M. Strungaru 
+   sld::suzuki_trotter_parallel_init(atoms::x_coord_array, atoms::y_coord_array, atoms::z_coord_array,
+                                  vmpi::min_dimensions, vmpi::max_dimensions);*/
 
    // now seed generator
 	mtrandom::grnd.seed(vmpi::parallel_rng_seed(mtrandom::integration_seed));

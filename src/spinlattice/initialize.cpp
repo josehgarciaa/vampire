@@ -42,6 +42,8 @@ namespace sld{
       std::cout<<"Coupling C0 "<<sld::internal::mp[0].C0.get()<<std::endl;
       if(sld::internal::harmonic)std::cout<<"Harmonic potential is used of potential well depth V0="<<sld::internal::mp[0].V0.get()<<std::endl;
       if(sld::internal::pseudodipolar)std::cout<<"Pseudodipolar coupling is used of strength C0="<<sld::internal::mp[0].C0.get()<<std::endl;
+      if(sld::internal::full_neel)std::cout<<"Full Neel coupling is used of strength C0="<<sld::internal::mp[0].C0.get()<<std::endl;
+
       std::cout<<"*******************************************************"<<std::endl;
     
 

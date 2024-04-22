@@ -128,6 +128,8 @@ namespace sld{
 
       extern bool harmonic; // bool to enable module
       extern bool pseudodipolar;
+      extern bool full_neel;
+
 
       //extern std::vector<int> sld_neighbour_list_start_index;
       //extern std::vector<int> sld_neighbour_list_end_index;
@@ -234,6 +236,25 @@ namespace sld{
             std::vector<double>& potential_eng);
 //
       void compute_sld_coupling(const int start_index,
+            const int end_index, // last +1 atom to be calculated
+            const std::vector<int>& neighbour_list_start_index,
+            const std::vector<int>& neighbour_list_end_index,
+            const std::vector<int>& type_array, // type for atom
+            const std::vector<int>& neighbour_list_array, // list of interactions between atom
+            const std::vector<double>& x_coord_array, // coord vectors for atoms
+            const std::vector<double>& y_coord_array,
+            const std::vector<double>& z_coord_array,
+            const std::vector<double>& x_spin_array, // spin  vectors for atoms
+            const std::vector<double>& y_spin_array,
+            const std::vector<double>& z_spin_array,
+            std::vector<double>& forces_array_x, //  vectors for forces
+            std::vector<double>& forces_array_y,
+            std::vector<double>& forces_array_z,
+            std::vector<double>& fields_array_x, //  vectors for forces
+            std::vector<double>& fields_array_y,
+            std::vector<double>& fields_array_z);
+            
+      void compute_sld_coupling_neel(const int start_index,
             const int end_index, // last +1 atom to be calculated
             const std::vector<int>& neighbour_list_start_index,
             const std::vector<int>& neighbour_list_end_index,

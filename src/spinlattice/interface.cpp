@@ -65,6 +65,11 @@ namespace sld{
           sld::internal::pseudodipolar=true;
           return true;
          }
+         test="full-neel";
+         if( value == test ){
+          sld::internal::full_neel=true;
+          return true;
+         }
       }
 
       test = "potential-cutoff-range";

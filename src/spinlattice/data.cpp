@@ -60,6 +60,8 @@ namespace sld{
       bool morse;
       bool harmonic; //flag for harmonic potential
       bool pseudodipolar;
+      bool full_neel;
+
 
       //initial sld neighbor list
       //std::vector<int> sld_neighbour_list_start_index;
