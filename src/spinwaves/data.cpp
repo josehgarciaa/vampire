@@ -60,25 +60,32 @@ namespace spinwaves{
       
       // fft-in-time options;
       std::string reduc_ver = "direct_scatter";
-      std::string component = "sx";
-      const std::vector<double>* sw_array = nullptr;
-      bool isf = false;
-      bool oss = true;
-      bool cm = true;
-      bool normk = true;
-      int mat = 0;
-
+      std::vector<std::string> component;
+      std::vector<std::vector<double>*> sw_array;
+      
+      
+      bool isf;
+      std::vector<bool> oss;
+      std::vector<bool> cm;
+      std::vector<bool> normk;
+      std::vector<int> mat_in_spec; 
+      std::vector<int> mat;
+      int nspec = 1;
       bool prefactor = true;
 
 
       std::vector<double> cos_k;
       std::vector<double> sin_k;
-      std::vector<int> mask;
+      std::vector<int> atom_mask;
+      std::vector<int> spec_mask;
+
 
       // JRH number of time and kpoints
       int nk;
       int nt;
 
+      // to check number of spectrums
+      std::vector<int> super_index_values;
 
 
    } // end of internal namespace

@@ -86,7 +86,9 @@ namespace spinwaves{
       extern std::vector<double> sin_k;
 
       // JRH mask for calculations of spinwave for specific material type
-      extern std::vector<int> mask;
+      extern std::vector<int> atom_mask;
+      extern std::vector<int> spec_mask;
+
 
       //JRH time variabls
       extern int nt;
@@ -94,12 +96,15 @@ namespace spinwaves{
 
       // JRH fft-in-time variables
       extern std::string reduc_ver;
-      extern std::string component;
-      extern const std::vector<double>* sw_array;
-      extern bool oss, cm, normk;
-      extern int mat;
+      extern std::vector<std::string> component;
+      extern std::vector<std::vector<double>*> sw_array;
+      extern std::vector<bool> oss, cm, normk;
+      extern std::vector<int> mat, mat_in_spec;
       extern bool prefactor;
       extern bool isf;
+      extern int nspec;
+      extern std::vector<int> super_index_values;
+
 
       //-------------------------------------------------------------------------
       // Internal function declarations
@@ -111,24 +116,25 @@ namespace spinwaves{
       extern void path_hcp();
       extern void path_mn2au();
       extern void determine_path();
+      extern int gcd(int a, int b);
       extern void save_frequencies();
       extern void initialise_arrays();
       extern void calculate_material_mask();
       extern void determine_spin_component();
+      extern void check_numbering_of_spectrums();
       extern void calculate_fourier_prefactor(const std::vector<double>& rx, const std::vector<double>& ry, const std::vector<double>& rz);
       extern void determine_kpoints_from_user_specific_k(const double dimx, const double dimy, const double dimz,	const double uc_x, const double uc_y, const double uc_z);
       extern void determine_kpoints_from_user_high_sym_path(const double dimx, const double dimy, const double dimz,	const double uc_x, const double uc_y, const double uc_z);
 
 
       // post analysis functions
-      extern void write_intermediate_to_file(fftw_complex *os, int k);
-      extern void normalise_each_kpoint(fftw_complex *os);
-      extern void write_to_file(fftw_complex *os, int k);
-      extern void one_sided_spectrum(fftw_complex *os);
       extern void complex_magnitude(fftw_complex *os);
+      extern void one_sided_spectrum(fftw_complex *os);
+      extern void write_to_file(fftw_complex *os, int k, int spec);
+      extern void normalise_each_kpoint(fftw_complex *os);
+      extern void write_intermediate_to_file(fftw_complex *os, int k, int spec);
 
 
-      extern int gcd(int a, int b);
 
       // Peak finding at some point?????/
       // extern void write_peaks_to_file();

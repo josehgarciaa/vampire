@@ -27,6 +27,7 @@
 #include "unitcell.hpp"
 #include "errors.hpp"
 #include "sim.hpp"
+#include "vio.hpp"
 #include "vector"
 #include <cmath>
 #include "fstream"
@@ -62,8 +63,9 @@ namespace spinwaves{
 		//-------------------------------------------------------------------------------------
 		if(program::program!=74) return;
 
+		// check spectrum values in input file are in agreement with the spinwaves:number-of-spectrums
+		spinwaves::internal::check_numbering_of_spectrums();
 
-		std::cout<< "Test Spin waves...."<<std::endl;
 		int Na=atom.size();
 		const double toll_Fikj=1e-5; // tollerance for the structure factor values smaller than tollerance are considered 0
 
@@ -89,36 +91,15 @@ namespace spinwaves{
 		// determine which component of spin to calculate spinwave dispersion from
 		spinwaves::internal::determine_spin_component();
 
-
-      // output a file containing frequencies
-      if (vmpi::my_rank==0) spinwaves::internal::save_frequencies();
+      	// output a file containing frequencies
+    	spinwaves::internal::save_frequencies();
 
 		#ifdef MPICF
 			nk_per_rank = std::ceil(static_cast<double>(internal::nk) / static_cast<double>(vmpi::num_processors));
-			scatterlength = nk_per_rank * internal::nt;
+			scatterlength = nk_per_rank * internal::nt * internal::nspec;
 			skx_r_scatter.resize(scatterlength,0.0);
 			skx_i_scatter.resize(scatterlength,0.0);
 		#endif
-
-
-		//##################################################################################################
-		//#### Compute the structure factor
-		for(unsigned int k=0;k<spinwaves::internal::kx.size();k++){
-			const double kx=spinwaves::internal::kx[k];
-			const double ky=spinwaves::internal::ky[k];
-			const double kz=spinwaves::internal::kz[k];
-			for(int atom=0;atom<atoms::num_atoms;atom++){
-				const double rx=atom_coords_x[atom];
-				const double ry=atom_coords_y[atom];
-				const double rz=atom_coords_z[atom];
-				double arg=-kx*rx - ky*ry - kz*rz ;
-				double cosK= cos(arg);
-				double sinK= sin(arg);
-				double sx=1;
-				spinwaves::internal::structure_factor_array_R[k] += sx*cosK;
-				spinwaves::internal::structure_factor_array_I[k] += sx*sinK;
-			}
-		}
 
 		std::cout<< "SW initialisation completed."<<std::endl;
 		std::cout<<" "<<std::endl;

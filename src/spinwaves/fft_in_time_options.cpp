@@ -100,29 +100,29 @@ namespace spinwaves {
 
         }
 
-        void write_to_file(fftw_complex *os, int k){
+        void write_to_file(fftw_complex *os, int k, int spec){
 
             std::stringstream sstr_real;
             std::stringstream sstr_imag;
             
-            if (cm == true){
+            if (cm[spec] == true){
 
                 // output filename
                 #ifdef MPICF
-                    sstr_real << "k_real_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
+                    sstr_real << "sw_spec_" << std::setw(2) << std::setfill('0') << spec+1 << "_real_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
                 #else 
-                    sstr_real << "k_real_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
+                    sstr_real << "sw_spec_" << std::setw(2) << std::setfill('0') << spec+1 << "_real_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
                 #endif
 
                 // open file
                 file_K_time_real.open(sstr_real.str());
 
-                 if (oss == true){
+                 if (oss[spec] == true){
                     for (int time=0; time < internal::nt/2; time++){
                         file_K_time_real << os[time][real] << "\n";
                     }
                 }
-                else if (oss == false){
+                else if (oss[spec] == false){
                     for (int time=0; time < internal::nt; time++){
                     file_K_time_real << os[time][real] << "\n";
                     }
@@ -132,28 +132,28 @@ namespace spinwaves {
                 file_K_time_real.close();
 
             }
-            else if (cm == false){
+            else if (cm[spec] == false){
 
                 // output filenames
                 #ifdef MPICF
-                    sstr_real << "k_real_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
-                    sstr_imag << "k_imag_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
+                    sstr_real << "sw_spec_" << std::setw(2) << std::setfill('0') << spec+1 << "_real_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
+                    sstr_imag << "sw_spec_" << std::setw(2) << std::setfill('0') << spec+1 << "_imag_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
                 #else 
-                    sstr_real << "k_real_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
-                    sstr_imag << "k_imag_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
+                    sstr_real << "sw_spec_" << std::setw(2) << std::setfill('0') << spec+1 << "_real_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
+                    sstr_imag << "sw_spec_" << std::setw(2) << std::setfill('0') << spec+1 << "_imag_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
                 #endif
 
                 // open files
                 file_K_time_real.open(sstr_real.str());
                 file_K_time_imag.open(sstr_imag.str());
 
-                if (oss == true){
+                if (oss[spec] == true){
                     for (int time=0; time < internal::nt/2; time++){
                         file_K_time_real << os[time][real] << "\n";
                         file_K_time_imag << os[time][imag] << "\n";
                     }
                 }
-                else if (oss == false){
+                else if (oss[spec] == false){
                     for (int time=0; time < internal::nt; time++){
                         file_K_time_real << os[time][real] << "\n";
                         file_K_time_imag << os[time][imag] << "\n";
@@ -165,17 +165,17 @@ namespace spinwaves {
             file_K_time_imag.close();
         }
 
-        void write_intermediate_to_file(fftw_complex *os, int k){
+        void write_intermediate_to_file(fftw_complex *os, int k, int spec){
 
             std::stringstream sstr_real;
             // std::stringstream sstr_imag;
             
                 // output filenames
                 #ifdef MPICF
-                    sstr_real << "k_intermediate_real_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
+                    sstr_real << "sw_intermediate_spec_" << std::setw(2) << std::setfill('0') << spec+1 << "_real_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
                     // sstr_imag << "k_intermediate_imag_" << std::setw(4) << std::setfill('0') << std::to_string(k+vmpi::my_rank*spinwaves::nk_per_rank) << ".dat";
                 #else 
-                    sstr_real << "k_intermediate_real_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
+                    sstr_real << "sw_intermediate_spec_" << std::setw(2) << std::setfill('0') << spec+1 << "_real_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
                     // sstr_imag << "k_intermediate_imag_" << std::setw(4) << std::setfill('0') << std::to_string(k) << ".dat";
                 #endif
 

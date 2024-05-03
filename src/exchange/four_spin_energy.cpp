@@ -42,6 +42,8 @@ namespace exchange{
 
 double single_spin_four_spin_energy(const int atom, const double sx, const double sy, const double sz){
 
+   if (!internal::enable_fourspin) return 0.0;
+
    double energy=0.0;
 
    const double six = atoms::x_spin_array[atom];

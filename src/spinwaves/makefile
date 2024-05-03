@@ -11,7 +11,8 @@ initialize.o \
 interface.o \
 fft_in_time.o \
 fft_in_time_options.o \
-fft_in_space.o
+fft_in_space.o \
+util.o
 
 # Append module objects to global tree
 OBJECTS+=$(addprefix obj/spinwaves/,$(spinwave_objects))
