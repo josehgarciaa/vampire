@@ -51,7 +51,6 @@ void suzuki_trotter_parallel_init(std::vector<double> &x, // atomic coordinates
    int catoms = vmpi::num_core_atoms;
    int batoms = vmpi::num_bdry_atoms;
    
-   std::cout<<"C_atoms and b_atoms "<<vmpi::num_core_atoms<<"\t"<<vmpi::num_bdry_atoms<<std::endl;
    
  
    double widthx = max_dim[0] - min_dim[0];
@@ -153,12 +152,7 @@ void suzuki_trotter_step_parallel(std::vector<double> &x_spin_array,
 
                     
        double cay_dt=-mp::dt/4.0;//-dt4*consts::gyro - mp::dt contains gamma;
-       double dt2_m=0.5*mp::dt_SI*1e12/sld::internal::mp[0].mass.get();
        double dt2=0.5*mp::dt_SI*1e12;
-       double f_eta=1.0-0.5*sld::internal::mp[0].damp_lat.get()*mp::dt_SI*1e12;
-       double lambda=mp::material[0].alpha;
-       double spin_noise=mp::material[0].H_th_sigma*sqrt(sim::temperature);
-       double velo_noise=sld::internal::mp[0].F_th_sigma.get()*sqrt(sim::temperature);
        
 
        
@@ -184,6 +178,18 @@ void suzuki_trotter_step_parallel(std::vector<double> &x_spin_array,
    int number_at=0;
    int atom=0;
    
+   
+/*for(int atom=0;atom<=atoms::num_atoms-1;atom++){
+
+   if (atom==0) {
+   std::cout<<std::setprecision(15)<<std::endl;
+
+   std::cout <<" b i=atom="<<atom<<"\txyz "<<atoms::x_coord_array[atom]<<"\t"<<atoms::y_coord_array[atom]<<"\t"<<atoms::z_coord_array[atom]<<std::endl;
+   std::cout <<" b i=atom="<<atom<<"\tvel "<<atoms::x_velo_array[atom]<<"\t"<<atoms::y_velo_array[atom]<<"\t"<<atoms::z_velo_array[atom]<<std::endl;
+
+   
+   }}*/
+   
    //for velocity and position update
    const int pre_comm_si = 0;
    const int pre_comm_ei = vmpi::num_core_atoms;
@@ -207,7 +213,7 @@ void suzuki_trotter_step_parallel(std::vector<double> &x_spin_array,
          
          for (int i=0; i<core_at;i++){
          atom = internal::c_octants[octant][i];
-         
+                 
          
          sld::compute_fields(atom, // first atom for exchange interactions to be calculated
                            atom+1, // last +1 atom to be calculated
@@ -262,6 +268,8 @@ void suzuki_trotter_step_parallel(std::vector<double> &x_spin_array,
          
          for (int i=0; i<bdry_at;i++){
          atom = internal::b_octants[octant][i];
+                 
+
          
          sld::compute_fields(atom, // first atom for exchange interactions to be calculated
                            atom+1, // last +1 atom to be calculated
@@ -498,7 +506,18 @@ void suzuki_trotter_step_parallel(std::vector<double> &x_spin_array,
      //update position, Velocity
      		for(int atom=pre_comm_si;atom<pre_comm_ei;atom++){
      		
+     		
+     		     
+     		     const unsigned int imat = atoms::type_array[atom];
+ 		         double f_eta=1.0-0.5*sld::internal::mp[imat].damp_lat.get()*mp::dt_SI*1e12;
+                 double velo_noise=sld::internal::mp[imat].F_th_sigma.get()*sqrt(sim::temperature);
+                 double dt2_m=0.5*mp::dt_SI*1e12/sld::internal::mp[imat].mass.get();
                 
+                //if during equilibration:
+                if (sim::time < sim::equilibration_time) {
+                      f_eta=1.0-0.5*sld::internal::mp[imat].eq_damp_lat.get()*mp::dt_SI*1e12;
+                      velo_noise=sld::internal::mp[imat].F_th_sigma_eq.get()*sqrt(sim::temperature);
+                }
      		
                  atoms::x_velo_array[atom] =  f_eta*atoms::x_velo_array[atom] + dt2_m * sld::internal::forces_array_x[atom]+dt2*velo_noise*Fx_th[atom];
                  atoms::y_velo_array[atom] =  f_eta*atoms::y_velo_array[atom] + dt2_m * sld::internal::forces_array_y[atom]+dt2*velo_noise*Fy_th[atom];
@@ -562,7 +581,17 @@ void suzuki_trotter_step_parallel(std::vector<double> &x_spin_array,
       //update position, Velocity for boundary atoms 
       		for(int atom=post_comm_si;atom<post_comm_ei;atom++){
       		
+      		
+     		     const unsigned int imat = atoms::type_array[atom];
+ 		         double f_eta=1.0-0.5*sld::internal::mp[imat].damp_lat.get()*mp::dt_SI*1e12;
+                 double velo_noise=sld::internal::mp[imat].F_th_sigma.get()*sqrt(sim::temperature);
+                 double dt2_m=0.5*mp::dt_SI*1e12/sld::internal::mp[imat].mass.get();
                    
+                   //if during equilibration:
+                   if (sim::time < sim::equilibration_time) {
+                         f_eta=1.0-0.5*sld::internal::mp[imat].eq_damp_lat.get()*mp::dt_SI*1e12;
+                         velo_noise=sld::internal::mp[imat].F_th_sigma_eq.get()*sqrt(sim::temperature);
+                   }
 
                    atoms::x_velo_array[atom] =  f_eta*atoms::x_velo_array[atom] + dt2_m * sld::internal::forces_array_x[atom]+dt2*velo_noise*Fx_th[atom];
                    atoms::y_velo_array[atom] =  f_eta*atoms::y_velo_array[atom] + dt2_m * sld::internal::forces_array_y[atom]+dt2*velo_noise*Fy_th[atom];
@@ -640,6 +669,18 @@ void suzuki_trotter_step_parallel(std::vector<double> &x_spin_array,
 
 
            for(int atom=pre_comm_si;atom<pre_comm_ei;atom++){
+           
+           
+     		     const unsigned int imat = atoms::type_array[atom];
+ 		         double f_eta=1.0-0.5*sld::internal::mp[imat].damp_lat.get()*mp::dt_SI*1e12;
+                 double velo_noise=sld::internal::mp[imat].F_th_sigma.get()*sqrt(sim::temperature);
+                 double dt2_m=0.5*mp::dt_SI*1e12/sld::internal::mp[imat].mass.get();
+                 
+                 //if during equilibration:
+                 if (sim::time < sim::equilibration_time) {
+                       f_eta=1.0-0.5*sld::internal::mp[imat].eq_damp_lat.get()*mp::dt_SI*1e12;
+                       velo_noise=sld::internal::mp[imat].F_th_sigma_eq.get()*sqrt(sim::temperature);
+                 }
 
               atoms::x_velo_array[atom] =  f_eta*atoms::x_velo_array[atom] + dt2_m * sld::internal::forces_array_x[atom]+dt2*velo_noise*Fx_th[atom];
               atoms::y_velo_array[atom] =  f_eta*atoms::y_velo_array[atom] + dt2_m * sld::internal::forces_array_y[atom]+dt2*velo_noise*Fy_th[atom];
@@ -693,7 +734,18 @@ void suzuki_trotter_step_parallel(std::vector<double> &x_spin_array,
         //
 
            for(int atom=post_comm_si;atom<post_comm_ei;atom++){
-           
+             
+             
+     		     const unsigned int imat = atoms::type_array[atom];
+ 		         double f_eta=1.0-0.5*sld::internal::mp[imat].damp_lat.get()*mp::dt_SI*1e12;
+                 double velo_noise=sld::internal::mp[imat].F_th_sigma.get()*sqrt(sim::temperature);
+                 double dt2_m=0.5*mp::dt_SI*1e12/sld::internal::mp[imat].mass.get();
+                 
+                 //if during equilibration:
+                 if (sim::time < sim::equilibration_time) {
+                       f_eta=1.0-0.5*sld::internal::mp[imat].eq_damp_lat.get()*mp::dt_SI*1e12;
+                       velo_noise=sld::internal::mp[imat].F_th_sigma_eq.get()*sqrt(sim::temperature);
+                       }
 
               atoms::x_velo_array[atom] =  f_eta*atoms::x_velo_array[atom] + dt2_m * sld::internal::forces_array_x[atom]+dt2*velo_noise*Fx_th[atom];
               atoms::y_velo_array[atom] =  f_eta*atoms::y_velo_array[atom] + dt2_m * sld::internal::forces_array_y[atom]+dt2*velo_noise*Fy_th[atom];
@@ -959,6 +1011,16 @@ void suzuki_trotter_step_parallel(std::vector<double> &x_spin_array,
              
           
 
+/*for(int atom=0;atom<=atoms::num_atoms-1;atom++){
+
+   if ( (atom==0)) {
+   std::cout<<std::setprecision(15)<<std::endl;
+
+   std::cout <<" end i=atom="<<atom<<"\txyz "<<atoms::x_coord_array[atom]<<"\t"<<atoms::y_coord_array[atom]<<"\t"<<atoms::z_coord_array[atom]<<std::endl;
+   std::cout <<" e i=atom="<<atom<<"\tvel "<<atoms::x_velo_array[atom]<<"\t"<<atoms::y_velo_array[atom]<<"\t"<<atoms::z_velo_array[atom]<<std::endl;
+
+   
+   }}*/
            
  // Swap timers compute -> wait
  vmpi::TotalComputeTime+=vmpi::SwapTimer(vmpi::ComputeTime, vmpi::WaitTime);

@@ -1826,6 +1826,17 @@ namespace vin{
                 return EXIT_SUCCESS;
             }
             //------------------------------------------------------------
+            //------------------------------------------------------------
+            else
+            test="equilibration-damping-constant";
+            if(word==test){
+                double damping=atof(value.c_str());
+                check_for_valid_positive_value(damping, word, line, prefix, unit, "none", 0.0, 10.0,"material","0.0 - 10.0");
+                read_material[super_index].alpha_eq=damping;
+                return EXIT_SUCCESS;
+            }
+            //------------------------------------------------------------
+            
             else
             test="atomic-spin-moment";
             if(word==test){

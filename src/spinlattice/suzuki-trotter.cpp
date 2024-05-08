@@ -118,12 +118,24 @@ namespace sld{
       std::fill(sld::internal::fields_array_x.begin(), sld::internal::fields_array_x.end(), 0.0);
       std::fill(sld::internal::fields_array_y.begin(), sld::internal::fields_array_y.end(), 0.0);
       std::fill(sld::internal::fields_array_z.begin(), sld::internal::fields_array_z.end(), 0.0);
+      
+      
+      /*for(int atom=0;atom<=num_atoms-1;atom++){
+      
+         if ( (atom==555)) {
+         std::cout<<std::setprecision(15)<<std::endl;
+
+         std::cout <<" b i=atom="<<atom<<"\txyz "<<atoms::x_coord_array[atom]<<"\t"<<atoms::y_coord_array[atom]<<"\t"<<atoms::z_coord_array[atom]<<std::endl;
+         std::cout <<" b i=atom="<<atom<<"\tvel "<<atoms::x_velo_array[atom]<<"\t"<<atoms::y_velo_array[atom]<<"\t"<<atoms::z_velo_array[atom]<<std::endl;
+
+         
+         }}*/
     
       for(int atom=0;atom<=num_atoms-1;atom++){
-      const unsigned int imat = atoms::type_array[atom];
-      double lambda=mp::material[imat].alpha;
-      double spin_noise=mp::material[imat].H_th_sigma*sqrt(sim::temperature);
       
+        
+
+    
       sld::compute_fields(atom, // first atom for exchange interactions to be calculated
                         atom+1, // last +1 atom to be calculated
                         atoms::neighbour_list_start_index,
@@ -176,9 +188,7 @@ namespace sld{
       std::fill(sld::internal::fields_array_z.begin(), sld::internal::fields_array_z.end(), 0.0);
 
       for(int atom=num_atoms-1;atom>=0;atom--){
-      const unsigned int imat = atoms::type_array[atom];
-      double lambda=mp::material[imat].alpha;
-      double spin_noise=mp::material[imat].H_th_sigma*sqrt(sim::temperature);
+      
       
          sld::compute_fields(atom, // first atom for exchange interactions to be calculated
                            atom+1, // last +1 atom to be calculated
@@ -281,6 +291,12 @@ namespace sld{
       double f_eta=1.0-0.5*sld::internal::mp[imat].damp_lat.get()*mp::dt_SI*1e12;
       double velo_noise=sld::internal::mp[imat].F_th_sigma.get()*sqrt(sim::temperature);
       
+       //if during equilibration:
+       if (sim::time < sim::equilibration_time) {
+              f_eta=1.0-0.5*sld::internal::mp[imat].eq_damp_lat.get()*mp::dt_SI*1e12;
+              velo_noise=sld::internal::mp[imat].F_th_sigma_eq.get()*sqrt(sim::temperature);
+       }
+      
              atoms::x_velo_array[atom] =  f_eta*atoms::x_velo_array[atom]+ dt2_m * sld::internal::forces_array_x[atom]+dt2*velo_noise*Fx_th[atom];
              atoms::y_velo_array[atom] =  f_eta*atoms::y_velo_array[atom]+ dt2_m * sld::internal::forces_array_y[atom]+dt2*velo_noise*Fy_th[atom];
              atoms::z_velo_array[atom] =  f_eta*atoms::z_velo_array[atom]+ dt2_m * sld::internal::forces_array_z[atom]+dt2*velo_noise*Fz_th[atom];
@@ -344,6 +360,14 @@ namespace sld{
         double dt2_m=0.5*mp::dt_SI*1e12/sld::internal::mp[imat].mass.get();
         double f_eta=1.0-0.5*sld::internal::mp[imat].damp_lat.get()*mp::dt_SI*1e12;
         double velo_noise=sld::internal::mp[imat].F_th_sigma.get()*sqrt(sim::temperature);
+        
+        
+          //if during equilibration:
+          if (sim::time < sim::equilibration_time) {
+                f_eta=1.0-0.5*sld::internal::mp[imat].eq_damp_lat.get()*mp::dt_SI*1e12;
+                velo_noise=sld::internal::mp[imat].F_th_sigma_eq.get()*sqrt(sim::temperature);
+          }
+          
 
          atoms::x_velo_array[atom] =  f_eta*atoms::x_velo_array[atom] + dt2_m * sld::internal::forces_array_x[atom]+dt2*velo_noise*Fx_th[atom];
          atoms::y_velo_array[atom] =  f_eta*atoms::y_velo_array[atom] + dt2_m * sld::internal::forces_array_y[atom]+dt2*velo_noise*Fy_th[atom];
@@ -359,10 +383,6 @@ namespace sld{
 
 
    for(int atom=0;atom<=num_atoms-1;atom++){
-   
-   const unsigned int imat = atoms::type_array[atom];
-   double lambda=mp::material[imat].alpha;
-   double spin_noise=mp::material[imat].H_th_sigma*sqrt(sim::temperature);
    
    
    sld::compute_fields(atom, // first atom for exchange interactions to be calculated
@@ -416,11 +436,6 @@ namespace sld{
    std::fill(sld::internal::fields_array_z.begin(), sld::internal::fields_array_z.end(), 0.0);
 
    for(int atom=num_atoms-1;atom>=0;atom--){
-   
-   const unsigned int imat = atoms::type_array[atom];
-   double lambda=mp::material[imat].alpha;
-   double spin_noise=mp::material[imat].H_th_sigma*sqrt(sim::temperature);
-   
    
       sld::compute_fields(atom, // first atom for exchange interactions to be calculated
                         atom+1, // last +1 atom to be calculated
@@ -507,6 +522,19 @@ namespace sld{
                   atoms::x_velo_array,
                   atoms::y_velo_array,
                   atoms::z_velo_array);*/
+                  
+                  
+               /*   for(int atom=0;atom<=num_atoms-1;atom++){
+                  
+                     if ( (atom==555)) {
+                     std::cout<<std::setprecision(15)<<std::endl;
+
+                     std::cout <<" end i=atom="<<atom<<"\txyz "<<atoms::x_coord_array[atom]<<"\t"<<atoms::y_coord_array[atom]<<"\t"<<atoms::z_coord_array[atom]<<std::endl;
+                     std::cout <<" end i=atom="<<atom<<"\tvel "<<atoms::x_velo_array[atom]<<"\t"<<atoms::y_velo_array[atom]<<"\t"<<atoms::z_velo_array[atom]<<std::endl;
+
+                     
+                     }}*/
+
 
       return EXIT_SUCCESS;
   }
@@ -564,14 +592,24 @@ void add_spin_noise(const int start_index,
             std::vector<double>& Hy_th,
             std::vector<double>& Hz_th){
 
-     double lambda=mp::material[0].alpha;
-     double spin_noise=sqrt(sim::temperature)*mp::material[0].H_th_sigma;
-
-     //std::cout<<"lambda= "<<lambda<<std::endl;
 
      for( int i = start_index; i<end_index; i++)
 
     {
+        const unsigned int imat = atoms::type_array[i];
+        
+        double lambda=mp::material[imat].alpha;
+        double spin_noise=mp::material[imat].H_th_sigma*sqrt(sim::temperature);
+
+        
+        //if during equilibration:
+        if (sim::time < sim::equilibration_time) {
+        lambda=mp::material[imat].alpha_eq;
+        spin_noise=mp::material[imat].H_th_sigma_eq*sqrt(sim::temperature);
+        }
+        
+        
+        
         double Sx = x_spin_array[i];
         double Sy = y_spin_array[i];
         double Sz = z_spin_array[i];

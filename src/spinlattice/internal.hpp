@@ -77,10 +77,14 @@ namespace sld{
              set_double_t J0;
              set_double_t C0;
              set_double_t damp_lat;
+             set_double_t eq_damp_lat;
+
              set_double_t J0_ms;
              set_double_t C0_ms;
              set_double_t J0_prime;
              set_double_t F_th_sigma;
+             set_double_t F_th_sigma_eq;
+
 
 
 
@@ -97,7 +101,9 @@ namespace sld{
                 C0.set(0.5);
                 C0_ms.set(0.5/2.04028e-23);
                 F_th_sigma.set(1.0);
+                F_th_sigma_eq.set(1.0);
                 damp_lat.set(0.06);
+                eq_damp_lat.set(0.6);
 
 
 

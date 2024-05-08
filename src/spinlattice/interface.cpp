@@ -87,6 +87,17 @@ namespace sld{
           sld::internal::r_cut_fields= r_cf;
           return true;
       }
+     /* test = "fixed-lattice";
+      if( word == test ){
+          sld::internal::fixed-lattice=true;
+          return true;
+      }
+      test = "fixed-spin";
+      if( word == test ){
+          sld::internal::fixed-spin=true;
+          return true;
+      }*/
+      
      test = "initial-random-displacement";
      if( word == test ){
          double dr_in = vin::str_to_double(value);
@@ -135,7 +146,15 @@ namespace sld{
          sld::internal::mp[super_index].damp_lat.set(damp);
          return true;
       }
-
+      
+       test = "equilibration-damping-constant-lattice";
+       if( word == test ){
+          double damp= vin::str_to_double(value);
+          vin::check_for_valid_value(damp, word, line, prefix, unit, "none", 0, 1.0,"input","0- 1");
+          sld::internal::mp[super_index].eq_damp_lat.set(damp);
+          return true;
+       }
+      
       test = "exchange-J0";
       if( word == test ){
          double j0 = vin::str_to_double(value);

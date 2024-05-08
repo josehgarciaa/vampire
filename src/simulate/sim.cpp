@@ -212,10 +212,15 @@ int run(){
 
    anisotropy::initialize(atoms::num_atoms, atoms::type_array, mp::mu_s_array);
    
-   /*
+   
    //SLD M. Strungaru 
-   sld::suzuki_trotter_parallel_init(atoms::x_coord_array, atoms::y_coord_array, atoms::z_coord_array,
-                                  vmpi::min_dimensions, vmpi::max_dimensions);*/
+   #ifdef MPICF
+   if(sld::suzuki_trotter_parallel_initialized == false) {
+      sld::suzuki_trotter_parallel_init(atoms::x_coord_array, atoms::y_coord_array, atoms::z_coord_array,
+                                   vmpi::min_dimensions, vmpi::max_dimensions);
+   }
+   #endif
+
 
    // now seed generator
 	mtrandom::grnd.seed(vmpi::parallel_rng_seed(mtrandom::integration_seed));
@@ -844,10 +849,7 @@ int integrate_mpi(uint64_t n_steps){
 
  			for(uint64_t ti=0;ti<n_steps;ti++){
  				#ifdef MPICF
-                if(sld::suzuki_trotter_parallel_initialized == false) {
-                   sld::suzuki_trotter_parallel_init(atoms::x_coord_array, atoms::y_coord_array, atoms::z_coord_array,
-                                                vmpi::min_dimensions, vmpi::max_dimensions);
-                }
+                
                 sld::suzuki_trotter_step_parallel(atoms::x_spin_array, atoms::y_spin_array, atoms::z_spin_array,
                                              atoms::type_array);
              #endif

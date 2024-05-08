@@ -85,7 +85,7 @@ namespace sld{
             // add external fields 
             // only after equilibration
             
-           /* if (sim::time > sim::equilibration_time) {
+            if (sim::time > sim::equilibration_time) {
             
             const double Hx=sim::H_vec[0]*sim::H_applied;
             const double Hy=sim::H_vec[1]*sim::H_applied;
@@ -98,7 +98,7 @@ namespace sld{
                fields_array_z[i]+=Hz;
 
            }
-            }*/
+            }
 
            // add anisotropy
 
