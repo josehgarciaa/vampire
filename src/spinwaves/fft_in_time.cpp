@@ -76,7 +76,7 @@ namespace spinwaves {
          // split comm world for time series fft if nranks > nk
          MPI_Comm fft_com;
          int color=1;
-         if (vmpi::my_rank < internal::nk) color = 0;
+         if (vmpi::my_rank < (internal::nk + nk_per_rank - 1)/nk_per_rank) color = 0;
 
          MPI_Comm_split(MPI_COMM_WORLD, color, vmpi::my_rank, &fft_com);
          // We are in the new communicator
@@ -100,7 +100,9 @@ namespace spinwaves {
                      }
                   }
                }
-
+               std::cout << skx_r_node_transposed.size() << " " << scatterlength << std::endl;
+               std::cout << skx_r_scatter.size() << std::endl;
+               std::cout << new_size << std::endl;
                MPI_Scatter(&skx_r_node_transposed[0], scatterlength, MPI_DOUBLE, &skx_r_scatter[0], scatterlength, MPI_DOUBLE, 0, fft_com);
                MPI_Scatter(&skx_i_node_transposed[0], scatterlength, MPI_DOUBLE, &skx_i_scatter[0], scatterlength, MPI_DOUBLE, 0, fft_com); 
                // for (int j = 0; j < skx_r_scatter.size(); j++){
@@ -126,8 +128,6 @@ namespace spinwaves {
                   }
 
                   // exexcute the fft
-                  for (int i = 0; i < internal::nt; i++){
-                  }
                   fftw_execute(fft_in_time);
 
                   // write intermediate structure factor to file

@@ -62,12 +62,25 @@ namespace spinwaves{
 
             // the array containing the the values of k for every timepoint only needs to be stored on rank0 for each node. It also needs to be transposed
             #ifdef MPICF
+
+                nk_per_rank = std::ceil(static_cast<double>(internal::nk) / static_cast<double>(vmpi::num_processors));
+                std::cout << "nk_per_rank " << nk_per_rank << std::endl;
+                scatterlength = nk_per_rank * internal::nt * internal::nspec;
+                std::cout << "scatterlength " << scatterlength << std::endl;
+                skx_r_scatter.resize(scatterlength,0.0);
+                skx_i_scatter.resize(scatterlength,0.0);
+
                 // resize arrays
                 if (vmpi::my_rank == 0){
-                    spinwaves::skx_r_node.resize(internal::nt*internal::nk*internal::nspec,0.0);
-                    spinwaves::skx_i_node.resize(internal::nt*internal::nk*internal::nspec,0.0);	
-                    spinwaves::skx_r_node_transposed.resize(internal::nt*internal::nk*internal::nspec,0.0);
-                    spinwaves::skx_i_node_transposed.resize(internal::nt*internal::nk*internal::nspec,0.0);	                    
+                    
+                    int lennode = internal::nt * internal::nspec * internal::nk;
+                    spinwaves::skx_r_node.resize(lennode,0.0);
+                    spinwaves::skx_i_node.resize(lennode,0.0);	
+
+                    // need to pad for scatter of time-series data to each ranks.
+                    int lentrans = internal::nt * internal::nspec * ((internal::nk + nk_per_rank - 1)/nk_per_rank) * nk_per_rank;
+                    spinwaves::skx_r_node_transposed.resize(lentrans,0.0);
+                    spinwaves::skx_i_node_transposed.resize(lentrans,0.0);	                    
                 }
 
             #else   

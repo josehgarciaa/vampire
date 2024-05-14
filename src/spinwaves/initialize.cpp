@@ -94,13 +94,6 @@ namespace spinwaves{
       	// output a file containing frequencies
     	spinwaves::internal::save_frequencies();
 
-		#ifdef MPICF
-			nk_per_rank = std::ceil(static_cast<double>(internal::nk) / static_cast<double>(vmpi::num_processors));
-			scatterlength = nk_per_rank * internal::nt * internal::nspec;
-			skx_r_scatter.resize(scatterlength,0.0);
-			skx_i_scatter.resize(scatterlength,0.0);
-		#endif
-
 		std::cout<< "SW initialisation completed."<<std::endl;
 		std::cout<<" "<<std::endl;
 
