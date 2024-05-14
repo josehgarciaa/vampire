@@ -46,7 +46,6 @@ namespace spinwaves{
       std::vector <double> kx;
       std::vector <double> ky;
       std::vector <double> kz;
- 	   std::vector <double> structure_factor_array_R, structure_factor_array_I;
       std::vector<internal::mp_t> mp; // array of material properties
 
       // JRH Internally visible path vectors 

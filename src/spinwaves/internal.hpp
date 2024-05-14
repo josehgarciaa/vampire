@@ -70,7 +70,6 @@ namespace spinwaves{
       extern std::vector <double> kx;
       extern std::vector <double> ky;
       extern std::vector <double> kz;
-      extern std::vector <double> structure_factor_array_R, structure_factor_array_I;
 
       // JRH extern file variables
       extern std::string filename;
