@@ -152,7 +152,8 @@ namespace spinwaves {
          }
       }
          
-         
+      MPI_Comm_free(&fft_com);
+
       #else
        
          // rearrange array for scatter - I think this bit needs to be done for serial and parallel
@@ -211,7 +212,7 @@ namespace spinwaves {
       // destroy fftw3 plan
       fftw_destroy_plan(fft_in_time);
 
-      MPI_Comm_free(&fft_com);
+      
 
    }
 
