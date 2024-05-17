@@ -78,7 +78,7 @@ namespace spinwaves {
 
 
             // reduce kpoint to rank for fft in time.
-            if (internal::reduc_ver == "direct_scatter"){
+            if (internal::reduc_ver == "direct-scatter"){
                reduc_index=(k % nk_per_rank)*internal::nt*internal::nspec+time*internal::nspec;
                MPI_Reduce(&skx_r[k*internal::nspec], &skx_r_scatter[reduc_index], internal::nspec, MPI_DOUBLE, MPI_SUM, k / nk_per_rank, MPI_COMM_WORLD);
                MPI_Reduce(&skx_i[k*internal::nspec], &skx_i_scatter[reduc_index], internal::nspec, MPI_DOUBLE, MPI_SUM, k / nk_per_rank, MPI_COMM_WORLD);

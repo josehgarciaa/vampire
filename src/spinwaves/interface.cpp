@@ -77,7 +77,7 @@ namespace spinwaves{
             reduc_string.erase(std::remove(reduc_string.begin(), reduc_string.end(), '\"'), reduc_string.end());
             internal::reduc_ver=reduc_string;
 
-            if (internal::reduc_ver == "rank0" || internal::reduc_ver == "direct_scatter"){
+            if (internal::reduc_ver == "rank0" || internal::reduc_ver == "direct-scatter"){
                return true;
             }
             else {
@@ -109,7 +109,7 @@ namespace spinwaves{
             }
             return true;
          }
-         test="prefactor";
+         test="fourier-prefactor";
          if(word==test){
 
             if (value == "false"){
@@ -188,6 +188,8 @@ namespace spinwaves{
                   std::vector<int> temp;
                   std::istringstream iss(value);
                   std::string token;
+
+                  if (value == "all")
 
                   while (std::getline(iss, token, ',')){
                      uint64_t tt = std::stoi(token);

@@ -58,7 +58,7 @@ namespace spinwaves{
       std::string filetype = "path";
       
       // fft-in-time options;
-      std::string reduc_ver = "direct_scatter";
+      std::string reduc_ver = "rank0";
       std::vector<std::string> component;
       std::vector<std::vector<double>*> sw_array;
       
