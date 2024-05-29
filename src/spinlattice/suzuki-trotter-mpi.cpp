@@ -133,7 +133,6 @@ void suzuki_trotter_parallel_init(std::vector<double> &x, // atomic coordinates
 
     vmpi::barrier();
 
-    
    suzuki_trotter_parallel_initialized = true;
 
 
@@ -197,6 +196,20 @@ void suzuki_trotter_step_parallel(std::vector<double> &x_spin_array,
    const int post_comm_ei = vmpi::num_core_atoms+vmpi::num_bdry_atoms;
    
 
+
+
+      //----------------------------------------
+      // Initialise storage array (all)
+      //----------------------------------------
+      
+  
+     for(int atom=pre_comm_si;atom<post_comm_ei;atom++){
+ sld::internal::x_coord_storage_array[atom]=atoms::x_coord_array[atom];
+ sld::internal::y_coord_storage_array[atom]=atoms::y_coord_array[atom];
+ sld::internal::z_coord_storage_array[atom]=atoms::z_coord_array[atom];
+ }
+      
+      vmpi::barrier();
 	// start first octant loop onwards both core and boundary atoms
 	//all fields set to 0
 	std::fill(sld::internal::fields_array_x.begin(), sld::internal::fields_array_x.end(), 0.0);

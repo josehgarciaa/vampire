@@ -48,15 +48,7 @@ namespace sld{
     
 
 
-     sld::internal::initialise_positions(sld::internal::x0_coord_array, // coord vectors for atoms
-                 sld::internal::y0_coord_array,
-                 sld::internal::z0_coord_array,
-                 atoms::x_coord_array, // coord vectors for atoms
-                 atoms::y_coord_array,
-                 atoms::z_coord_array,
-                 sld::internal::dr_init);
-
-
+   
 
     //initialise exchange, coupling parameters
      sld::internal::initialise_sld_parameters();
@@ -83,6 +75,18 @@ namespace sld{
      internal::all_atoms_octant_end_index.reserve(8); 
      internal::all_atoms_octant.reserve(atoms::num_atoms);
      
+     
+     sld::internal::initialise_positions(sld::internal::x0_coord_array, // coord vectors for atoms
+                  sld::internal::y0_coord_array,
+                  sld::internal::z0_coord_array,
+                  atoms::x_coord_array, // coord vectors for atoms
+                  atoms::y_coord_array,
+                  atoms::z_coord_array,
+                  sld::internal::dr_init);
+                  
+     //sld::internal::thermal_velocity(atoms::x_velo_array, atoms::y_velo_array,atoms::z_velo_array);
+
+
     
      
     // sld::tests();
@@ -257,18 +261,7 @@ namespace sld{
         atoms::mass_spin_array[atom]=mp::material[mat].mass;
         }
    	
-       //test cayley_update
-      /* sld::internal::cayley_update(0,
-                   0,
-                   -mp::dt/4.0,
-                   atoms::x_spin_array,
-                   atoms::y_spin_array,
-                   atoms::z_spin_array,
-                   sld::internal::fields_array_x,
-                   sld::internal::fields_array_y,
-                   sld::internal::fields_array_z);
-*/
-
+      
 
    return;
    }
