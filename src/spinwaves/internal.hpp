@@ -114,6 +114,7 @@ namespace spinwaves{
       extern void path_fcc();
       extern void path_hcp();
       extern void path_mn2au();
+      extern void path_rocksalt();
       extern void determine_path();
       extern int gcd(int a, int b);
       extern void save_frequencies();

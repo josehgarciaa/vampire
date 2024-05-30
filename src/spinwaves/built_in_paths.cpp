@@ -80,6 +80,25 @@ namespace spinwaves {
             spinwaves::internal::pathy.swap(dummy_y);
             spinwaves::internal::pathz.swap(dummy_z);
         }
+
+        void path_rocksalt(){
+            std::vector<double> dummy_x = {0.0, 0.0, 0.0, 0.25,  0.75,  0.0,  0.0,  0.5,  0.5,  0.5,  0.5,  0.0};
+            std::vector<double> dummy_y = {0.0, 1.0, 1.0, 1.0 , 0.75 , 0.0 , 0.0 , 0.5 , 0.5 , 1.0 , 1.0 , 1.0};
+            std::vector<double> dummy_z = {0.0, 0.0, 0.0, 0.25,  0.0 , 0.0 , 0.0 , 0.5 , 0.5 , 0.0 , 0.0 , 0.0};
+            spinwaves::internal::pathx.swap(dummy_x);
+            spinwaves::internal::pathy.swap(dummy_y);
+            spinwaves::internal::pathz.swap(dummy_z);
+        }
+
+        void path_heusler(){ 
+            std::vector<double> dummy_x = {0.00, 0.00, 0.00, 0.25, 0.75, 0.00, 0.00, 0.50, 0.50, 0.50, 0.50, 0.00};
+            std::vector<double> dummy_y = {0.00, 1.00, 1.00, 1.00, 0.75, 0.00, 0.00, 0.50, 0.50, 1.00, 1.00, 1.00};
+            std::vector<double> dummy_z = {0.00, 0.00, 0.00, 0.25, 0.00, 0.00, 0.00, 0.50, 0.50, 0.00, 0.00, 0.00};
+            spinwaves::internal::pathx.swap(dummy_x);
+            spinwaves::internal::pathy.swap(dummy_y);
+            spinwaves::internal::pathz.swap(dummy_z);
+        }
+
        
 
         int gcd(int a, int b){

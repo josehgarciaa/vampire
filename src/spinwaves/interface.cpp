@@ -12,6 +12,7 @@
 
 // C++ standard library headers
 #include <algorithm>
+#include <iostream>
 #include <string>
 
 // Vampire headers
@@ -45,7 +46,20 @@ namespace spinwaves{
             test="";
             // if filename not blank set ucf file name
             if(kpath_file!=test){
+               
+               // send name to internal variable
                spinwaves::internal::filename=kpath_file;
+
+               // check file exists
+               std::ifstream fin(kpath_file);
+               if (!fin){
+                  terminaltextcolor(RED);
+                  std::cerr << "Error - cannot find file \'" << kpath_file << "\' in control statement \'spinwaves:" << word << "\' on line " << line << " of input file" << std::endl;
+                  zlog << zTs() << "Error - cannot find file \'" << kpath_file << "\' in control statement \'spinwaves:" << word << "\' on line " << line << " of input file" << std::endl;
+                  terminaltextcolor(WHITE);
+                  err::vexit();
+               }  
+
                return true;
             }
             else{
@@ -189,7 +203,7 @@ namespace spinwaves{
                   std::istringstream iss(value);
                   std::string token;
 
-                  if (value == "all")
+                  // if (value == "all")
 
                   while (std::getline(iss, token, ',')){
                      uint64_t tt = std::stoi(token);

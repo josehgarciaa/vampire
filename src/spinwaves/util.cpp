@@ -71,14 +71,15 @@ namespace spinwaves {
             if (static_cast<unsigned>(internal::nspec) != internal::super_index_values.size()){
                 terminaltextcolor(RED);
                 std::cerr << "The value of spinwaves:number-of-spectrums does not agree with the values of \"spinwaves[x]:\" found in input file" << std::endl;
+                std::cerr << internal::nspec << " " << internal::super_index_values.size() << std::endl;
                 err::vexit();
             }
 
             for (int i = 0; i < internal::nspec; i++){
                 if (internal::super_index_values[i] != i){
                     terminaltextcolor(RED);
-                    std::cerr << "Difference identified between spinwaves::number-of-spectrums and ordering of spectrum specific parameters." << std::endl;
-                    std::cerr << "Number of spectrums specified with spinwaves::number-of-spectrums: " << internal::nspec << std::endl;
+                    std::cerr << "Difference identified between spinwaves::num-spectrums and ordering of spectrum specific parameters." << std::endl;
+                    std::cerr << "Number of spectrums specified with spinwaves::num-spectrums: " << internal::nspec << std::endl;
                     std::cerr << "Additional/Missing parameters for spectrum \"spinwaves[" << internal::super_index_values[i] <<  "]:\" found in input file" << std::endl;
                     err::vexit();
                 }

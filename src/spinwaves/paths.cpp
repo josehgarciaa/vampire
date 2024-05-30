@@ -140,14 +140,14 @@ namespace spinwaves{
                 else if(uc::sw_crystal_structure == "fcc"               ) spinwaves::internal::path_fcc();
                 else if(uc::sw_crystal_structure == "fcc-111"           ) spinwaves::internal::path_fcc();
                 else if(uc::sw_crystal_structure == "hcp"               ) spinwaves::internal::path_hcp();
-                else if(uc::sw_crystal_structure == "heusler"           ) spinwaves::internal::path_bcc();
+                else if(uc::sw_crystal_structure == "heusler"           ) spinwaves::internal::path_fcc();
                 // else if(uc::sw_crystal_structure == "honeycomb"      ) spinwaves::internal::path_honeycomb();
                 // else if(uc::sw_crystal_structure == "alpha-honeycomb") spinwaves::internal::path_honeycomb_alpha();
                 // else if(uc::sw_crystal_structure == "beta-honeycomb" ) spinwaves::internal::path_honeycomb_beta();
                 // else if(uc::sw_crystal_structure == "kagome"         ) spinwaves::internal::path_kagome();
                 else if(uc::sw_crystal_structure == "mn2au"             ) spinwaves::internal::path_mn2au();
                 // else if(uc::sw_crystal_structure == "NdFeB"          ) spinwaves::internal::path_NdFeB();
-                // else if(uc::sw_crystal_structure == "rocksalt"       ) spinwaves::internal::path_rock_salt();
+                else if(uc::sw_crystal_structure == "rocksalt"          ) spinwaves::internal::path_rocksalt();
                 // else if(uc::sw_crystal_structure == "spinel"         ) spinwaves::internal::path_spinel();
                 // else if(uc::sw_crystal_structure == "spinel-layered" ) spinwaves::internal::path_spinel_layered();
                 // else if(uc::sw_crystal_structure == "SmFeN"          ) spinwaves::internal::path_SmFeN();
@@ -182,6 +182,12 @@ namespace spinwaves{
 					const double unit_cell_size_y,
 					const double unit_cell_size_z){
 
+
+            // kfile
+            std::ofstream kfile;
+            kfile.open("kvectors.out");
+
+
             // number of kpoints
             int len=spinwaves::internal::pathx.size();  
             
@@ -191,17 +197,26 @@ namespace spinwaves{
             b[1] = 2.0 * M_PI * (unit_cell_size_z * unit_cell_size_x) / (unit_cell_size_x * (unit_cell_size_y * unit_cell_size_z));
             b[2] = 2.0 * M_PI * (unit_cell_size_x * unit_cell_size_y) / (unit_cell_size_x * (unit_cell_size_y * unit_cell_size_z));
             
-            std::cout << "Determining k-points..." << std::endl;
+            std::cout << "Determining k-points from user specific k-values..." << std::endl;
 
             // loop over number of kpoints
             for (int k = 0; k < len; k++){
                                
-               // convert from user defined values in units of 2pi/a to m^{-1} and push back to array 
-               spinwaves::internal::kx.push_back(b[0] * pathx[k]);
-               spinwaves::internal::ky.push_back(b[1] * pathy[k]);
-               spinwaves::internal::kz.push_back(b[2] * pathz[k]);
+                // convert from user defined values in units of 2pi/a to m^{-1} and push back to array 
+                double kxtemp = b[0] * pathx[k];
+                double kytemp = b[1] * pathy[k];
+                double kztemp = b[2] * pathz[k];
+
+                spinwaves::internal::kx.push_back(kxtemp);
+                spinwaves::internal::ky.push_back(kytemp);
+                spinwaves::internal::kz.push_back(kztemp);
+
+                // save to kfile
+                kfile << kxtemp << " " << kytemp << " " << kztemp << "\n";
 
             }
+
+            kfile.close();
 
         }
       
@@ -211,6 +226,10 @@ namespace spinwaves{
 					const double unit_cell_size_x,
 					const double unit_cell_size_y,
 					const double unit_cell_size_z){
+
+            // kfile
+            std::ofstream kfile;
+            kfile.open("kvectors.out");
             
             int len=spinwaves::internal::pathx.size();  
 
@@ -223,6 +242,8 @@ namespace spinwaves{
                 err::vexit();
             }
 
+            std::cout << unit_cell_size_x << " " << unit_cell_size_y << " " << unit_cell_size_z << std::endl;
+
 
             // Get reciprocal lattice vectors from cubic unit cell JRH 26/10/23
             // Based on equations through link: http://lampx.tugraz.at/~hadley/ss1/crystaldiffraction/fourier/reciprocal_lattice.php
@@ -231,10 +252,18 @@ namespace spinwaves{
             b[0] = 2.0 * M_PI * (unit_cell_size_y * unit_cell_size_z) / (unit_cell_size_x * (unit_cell_size_y * unit_cell_size_z));
             b[1] = 2.0 * M_PI * (unit_cell_size_z * unit_cell_size_x) / (unit_cell_size_x * (unit_cell_size_y * unit_cell_size_z));
             b[2] = 2.0 * M_PI * (unit_cell_size_x * unit_cell_size_y) / (unit_cell_size_x * (unit_cell_size_y * unit_cell_size_z));
+
+            zlog << zTs()  << "Reciprocal Lattice Vectors:" << std::endl;
+            zlog << zTs()  << b[0] << " 0.0 0.0" << std::endl;
+            zlog << zTs()  << "0.0 " << b[1] << " 0.0" << std::endl;
+            zlog << zTs()  << "0.0 0.0 " << b[2] << std::endl;
+        
             
             // Generate k-points
-            std::cout << "Determining k-points..." << std::endl;
-            // std::cout << "Len " << std::endl;
+            std::cout << "Determining k-points from user specified high-symmetry path..." << std::endl;
+            zlog << zTs()  << "Determining k-points from user specified high-symmetry path..." << std::endl;
+
+            double kx, ky, kz;
 
             for (int row=0; row<len; row+=2){
 
@@ -260,25 +289,42 @@ namespace spinwaves{
                 int res1 = spinwaves::internal::gcd(static_cast<int>(round(distancex)), static_cast<int>(round(distancey)));
                 int common_denom = spinwaves::internal::gcd(res1, static_cast<int>(round(distancez)));
 
+                std::cout << "Spinwaves module has found " << common_denom << " k-points between locations ";
+                std::cout << "[" << kx0 << ", " << ky0 << ", " << kz0 << "] and ";
+                std::cout << "[" << kx1 << ", " << ky1 << ", " << kz1 << "]" << std::endl;
+                zlog << zTs() << "Spinwaves module has found " << common_denom << " k-points between locations ";
+                zlog << "[" << kx0 << ", " << ky0 << ", " << kz0 << "] and ";
+                zlog << "[" << kx1 << ", " << ky1 << ", " << kz1 << "]" << std::endl;
+
                 double kx=kx0;
                 double ky=ky0;
                 double kz=kz0;
 
+                // make sure you always finish at the points specified by user.
+
+                // loop over points between two locations
                 for (int k = 0; k < common_denom; k++){
 
-                    kx = kx + distancex/static_cast<double>(common_denom)/cellx;
-                    ky = ky + distancey/static_cast<double>(common_denom)/celly;
-                    kz = kz + distancez/static_cast<double>(common_denom)/cellz;
+                    kfile << b[0] * kx << " " << b[1] * ky << " " << b[2] * kz << std::endl;
 
                     // make sure to convert to units of 2pi/latconst
                     spinwaves::internal::kx.push_back(b[0] * kx);
                     spinwaves::internal::ky.push_back(b[1] * ky);
                     spinwaves::internal::kz.push_back(b[2] * kz);
-                    // std::cout << b[0] * kx  << " " << b[1] * ky << " " << b[2] * kz << std::endl;
-                    // std::cout << kx  << " " << ky << " " << kz << std::endl;
+
+                    kx = kx + distancex/static_cast<double>(common_denom)/cellx;
+                    ky = ky + distancey/static_cast<double>(common_denom)/celly;
+                    kz = kz + distancez/static_cast<double>(common_denom)/cellz;
+                    
                 }
 
             }
+
+            // push back final row 
+            kfile << b[0] * kx << " " << b[1] * ky << " " << b[2] * kz << std::endl;
+            spinwaves::internal::kx.push_back(b[0] * kx);
+            spinwaves::internal::ky.push_back(b[1] * ky);
+            spinwaves::internal::kz.push_back(b[2] * kz);
         }
    }
 } 
