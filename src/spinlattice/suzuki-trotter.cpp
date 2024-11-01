@@ -26,7 +26,7 @@
 #include "errors.hpp"
 
 
-// sld module headers
+//sld module headers M Strungaru
 #include "internal.hpp"
 
 namespace sld{
