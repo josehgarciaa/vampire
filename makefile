@@ -26,7 +26,8 @@ IBM=bgxlc++ -DCOMP='"IBM XLC++ Compiler"'
 MPICC=mpicxx -DMPICF
 MPIICC=mpiicpc -DMPICF
 
-LIBS= -lstdc++
+LIBS=
+#LIBS= -lstdc++
 #-lm $(FFTLIBS) -L/opt/local/lib/
 
 CCC_CFLAGS=-I./hdr -I./src/qvoronoi -O0
@@ -61,7 +62,8 @@ ICC_LDFLAGS= -I./hdr -I./src/qvoronoi -axCORE-AVX2
 #ICC_LDFLAGS= -lstdc++ -ipo -I./hdr -xT -vec-report
 
 LLVM_CFLAGS= -Wall -pedantic -O3 -mtune=native -funroll-loops -I./hdr -I./src/qvoronoi
-LLVM_LDFLAGS= -lstdc++ -I./hdr -I./src/qvoronoi
+#LLVM_LDFLAGS= -lstdc++ -I./hdr -I./src/qvoronoi
+LLVM_LDFLAGS= -I./hdr -I./src/qvoronoi
 
 GCC_CFLAGS=-O3 -mtune=native -funroll-all-loops -fexpensive-optimizations -funroll-loops -I./hdr -I./src/qvoronoi -std=c++11 -Wsign-compare
 GCC_LDFLAGS= -lstdc++ -I./hdr -I./src/qvoronoi -Wsign-compare
@@ -110,24 +112,6 @@ obj/utility/errors.o \
 obj/utility/statistics.o \
 obj/utility/units.o \
 obj/utility/vmath.o\
-obj/qvoronoi/geom.o\
-obj/qvoronoi/geom2.o\
-obj/qvoronoi/global.o\
-obj/qvoronoi/io.o\
-obj/qvoronoi/libqhull.o\
-obj/qvoronoi/mem.o\
-obj/qvoronoi/merge.o\
-obj/qvoronoi/poly.o\
-obj/qvoronoi/poly2.o\
-obj/qvoronoi/qhrandom.o\
-obj/qvoronoi/qset.o\
-obj/qvoronoi/qvoronoi.o\
-obj/qvoronoi/rboxlib.o\
-obj/qvoronoi/stat.o\
-obj/qvoronoi/user.o\
-obj/qvoronoi/usermem.o\
-obj/qvoronoi/userprintf.o\
-obj/qvoronoi/userprintf_rbox.o\
 
 # Include supplementary makefiles
 include src/anisotropy/makefile
@@ -153,6 +137,7 @@ include src/statistics/makefile
 include src/unitcell/makefile
 include src/vio/makefile
 include src/environment/makefile
+include src/qvoronoi/makefile
 
 # Cuda must be last for some odd reason
 include src/cuda/makefile
