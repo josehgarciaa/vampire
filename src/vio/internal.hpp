@@ -82,8 +82,7 @@ namespace vout{
          mean_magnetisation_length,
          mean_specific_heat,
          mean_susceptibility,
-         mean_torque,
-         mean_spin_temp
+         mean_torque
       };
 
       // internal variables

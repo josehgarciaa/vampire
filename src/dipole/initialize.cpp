@@ -288,7 +288,7 @@ namespace dipole{
       if (vmpi::my_rank == 0)
       {
 
-         int cells_non_zero = 0;          /// Counter for cells with atoms inside
+         //int cells_non_zero = 0;          /// Counter for cells with atoms inside
          int num_atoms_magnetic = 0.0;   // Initialise tot num of magnetic atoms
          double Vtot = 0.0;               /// Initialise total volume of the system
          // Define and initialise Demag factor N tensor components
@@ -305,7 +305,7 @@ namespace dipole{
             if (dipole::internal::cells_num_atoms_in_cell[i] > 0)
             {
                num_atoms_magnetic += dipole::internal::cells_num_atoms_in_cell[i];
-               cells_non_zero++ ;
+               //cells_non_zero++ ;
             }
          }
 
