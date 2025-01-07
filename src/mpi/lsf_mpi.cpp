@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+//
+//   This file is part of the VAMPIRE open source package under the
+//   Free BSD licence (see licence file for details).
+//
+//   (c) David R Papp 2024. All rights reserved.
+//
+//------------------------------------------------------------------------------
+//
+
 #ifdef MPICF
 #include "atoms.hpp"
 #include "errors.hpp"
@@ -6,7 +16,7 @@
 #include "sim.hpp"
 #include "constants.hpp"
 #include "random.hpp"
-#include "LSF.hpp"
+#include "lsf.hpp"
 #include "vio.hpp"
 #include "../simulate/internal.hpp"
 
@@ -27,10 +37,10 @@ void calculate_lsf_field(const int start_index, const int end_index){
 
    // Check calling of routine if error checking is activated
 	if(err::check==true){std::cout << "calculate_lsf_magnetic_field has been called" << std::endl;}
-      
+
    // LSF Hamiltonian calculation
    for(int atom=start_index;atom<end_index;atom++){
-         
+
       const int imaterial = atoms::type_array[atom];
 
       const double sx = atoms::x_spin_array[atom];
@@ -43,13 +53,13 @@ void calculate_lsf_field(const int start_index, const int end_index){
       const double L4 = 4.0*sim::internal::lsf_fourth_order_coefficient[imaterial]*imu_S;
       const double L6 = 6.0*sim::internal::lsf_sixth_order_coefficient[imaterial]*imu_S;
 
-   	const double ss2 = sx*sx + sy*sy + sz*sz;   
+   	const double ss2 = sx*sx + sy*sy + sz*sz;
 
       LSF_arrays::x_lsf_array[atom] = L2*sx + L4*sx*ss2 + L6*sx*ss2*ss2;
       LSF_arrays::y_lsf_array[atom] = L2*sy + L4*sy*ss2 + L6*sy*ss2*ss2;
       LSF_arrays::z_lsf_array[atom] = L2*sz + L4*sz*ss2 + L6*sz*ss2*ss2;
-      
-   } 
+
+   }
 
 }
 
@@ -120,8 +130,8 @@ int LSF_mpi(){
 		for(int atom=pre_comm_si;atom<pre_comm_ei;atom++){
 
 			const int imaterial=atoms::type_array[atom];
-			const double alpha = mp::material[atoms::type_array[atom]].alpha;
-         const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+			const double alpha = mp::material[imaterial].alpha;
+         const double mu = mp::material[imaterial].mu_s_SI;
 
 			// Store local spin in S and local field in H
 		   const double S[3] = {atoms::x_spin_array[atom],atoms::y_spin_array[atom],atoms::z_spin_array[atom]};
@@ -178,8 +188,8 @@ int LSF_mpi(){
 		for(int atom=post_comm_si;atom<post_comm_ei;atom++){
 
 			const int imaterial=atoms::type_array[atom];
-			const double alpha = mp::material[atoms::type_array[atom]].alpha;
-         const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+			const double alpha = mp::material[imaterial].alpha;
+         const double mu = mp::material[imaterial].mu_s_SI;
 
 			// Store local spin in S and local field in H
 		   const double S[3] = {atoms::x_spin_array[atom],atoms::y_spin_array[atom],atoms::z_spin_array[atom]};
@@ -237,8 +247,8 @@ int LSF_mpi(){
 		for(int atom=pre_comm_si;atom<pre_comm_ei;atom++){
 
 			const int imaterial=atoms::type_array[atom];
-         const double alpha = mp::material[atoms::type_array[atom]].alpha;
-         const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+         const double alpha = mp::material[imaterial].alpha;
+         const double mu = mp::material[imaterial].mu_s_SI;
 
 			// Store local spin in S and local field in H
          const double S[3] = {atoms::x_spin_array[atom],atoms::y_spin_array[atom],atoms::z_spin_array[atom]};
@@ -277,8 +287,8 @@ int LSF_mpi(){
 		for(int atom=post_comm_si;atom<post_comm_ei;atom++){
 
 			const int imaterial=atoms::type_array[atom];
-         const double alpha = mp::material[atoms::type_array[atom]].alpha;
-         const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+         const double alpha = mp::material[imaterial].alpha;
+         const double mu = mp::material[imaterial].mu_s_SI;
 
 			// Store local spin in S and local field in H
          const double S[3] = {atoms::x_spin_array[atom],atoms::y_spin_array[atom],atoms::z_spin_array[atom]};

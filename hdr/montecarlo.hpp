@@ -49,7 +49,7 @@ namespace montecarlo{
    int cmc_mc_step();
    void cmc_mc_step_mask();
    void mc_step_parallel(std::vector<double> &x_spin_array, std::vector<double> &y_spin_array, std::vector<double> &z_spin_array, std::vector<int> &type_array);
-   int lsf_mc_step();
+   void lsf_mc_step();
    void lsf_mc_step_parallel(std::vector<double> &x_spin_array, std::vector<double> &y_spin_array, std::vector<double> &z_spin_array, std::vector<int> &type_array);
 
    //---------------------------------------------------------------------------

@@ -42,17 +42,16 @@ namespace anisotropy{
       //
       // The rotational term here is given by
       // E_{6r-3} = -k_{6r-3}sin^3{theta}( cos^3(theta) (3/11)cos(theta) )sin{3phi}
-      // 
+      //
       // The field is found by taking the negative gradient w.r.t. the magnetic moment
       // basis.
       //
       //--------------------------------------------------------------------------------------------------------------
-      
+
       // Define useful constants
 		const double three = 3.0;
 		const double four = 4.0;
 		const double five = 5.0;
-		const double eight = 8.0;
 		const double twelve = 12.0;
 		const double fourteen = 14.0;
 		const double fortytwo = 42.0;
@@ -109,7 +108,7 @@ namespace anisotropy{
             // calculate full form to add to field
             const double y_component = - k6r3_odd * Sz * three * ( Sz4 + four * Sy2Sz2 - oneoeleven * ( fourteen * Sz2 + twelve * Sy2 - three ) );
             const double z_component = - k6r3_odd * Sy * three * ( five * Sz4 + four * Sy2Sz2 - oneoeleven * ( fortytwo * Sz2 + four * Sy2 - three ) );
-            
+
             field_array_x[ atom ] += z_component * ex + y_component * gx;
             field_array_y[ atom ] += z_component * ey + y_component * gy;
             field_array_z[ atom ] += z_component * ez + y_component * gz;

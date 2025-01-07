@@ -70,23 +70,18 @@ namespace montecarlo{
       return;
    }
 
-   int lsf_mc_step(){
+   void lsf_mc_step(){
 
       // Enable calling of routine if error checking is activated
       if (err::check == true){
          std::cout << "sim::lsf_mc has been called" << std::endl;
       }
 
-      const int num_atoms = atoms::num_atoms;
-
-      const double kB = 1.3806503e-23;
-
       // Temporaries
       int atom = 0;
       double Eold = 0.0;
       double Enew = 0.0;
       double DE = 0.0;
-      double P = 0.0;
 
       // Material dependent temperature rescaling
       std::vector<double> rescaled_material_kBTBohr(internal::num_materials);

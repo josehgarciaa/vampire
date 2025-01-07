@@ -47,7 +47,7 @@ namespace anisotropy{
       // basis.
       //
       //--------------------------------------------------------------------------------------------------------------
-      
+
       //Define useful constants
       const double three = 3.0;
 		const double threeoseven = 3.0 / 7.0;
@@ -92,7 +92,6 @@ namespace anisotropy{
 
             // calculate S_y and S_y^3 parts
             const double Sx = sx * fx + sy * fy + sz * fz;
-            const double Sx2 = Sx * Sx;
 
             // get reduced anisotropy constant ku/mu_s
             const double k4r1 = internal::k4r1[ mat ];

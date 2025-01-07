@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+//
+//   This file is part of the VAMPIRE open source package under the
+//   Free BSD licence (see licence file for details).
+//
+//   (c) David R Papp 2024. All rights reserved.
+//
+//------------------------------------------------------------------------------
+//
+
 #ifdef MPICF
 #include "atoms.hpp"
 #include "errors.hpp"
@@ -6,7 +16,7 @@
 #include "sim.hpp"
 #include "constants.hpp"
 #include "random.hpp"
-#include "LSF_RK4.hpp"
+#include "lsf_rk4.hpp"
 #include "vio.hpp"
 #include "../simulate/internal.hpp"
 
@@ -79,7 +89,6 @@ int LSF_RK4_mpi(){
 	const int post_comm_ei = vmpi::num_core_atoms+vmpi::num_bdry_atoms;
 
 	double xyz[3];		/// Local Delta Spin Components
-	double S_new[3];	/// New Local Spin Moment
    const double kB = 1.3806503e-23; // Boltzmann constant
 
 		//----------------------------------------
@@ -120,8 +129,8 @@ int LSF_RK4_mpi(){
 		for(int atom=pre_comm_si;atom<pre_comm_ei;atom++){
 
 			const int imaterial=atoms::type_array[atom];
-			const double alpha = mp::material[atoms::type_array[atom]].alpha;
-         const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+			const double alpha = mp::material[imaterial].alpha;
+         const double mu = mp::material[imaterial].mu_s_SI;
 
 			// Store local spin in S and local field in H
 		   const double S[3] = {atoms::x_spin_array[atom],atoms::y_spin_array[atom],atoms::z_spin_array[atom]};
@@ -173,8 +182,8 @@ int LSF_RK4_mpi(){
 		for(int atom=post_comm_si;atom<post_comm_ei;atom++){
 
 			const int imaterial=atoms::type_array[atom];
-			const double alpha = mp::material[atoms::type_array[atom]].alpha;
-         const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+			const double alpha = mp::material[imaterial].alpha;
+         const double mu = mp::material[imaterial].mu_s_SI;
 
 			// Store local spin in S and local field in H
 		   const double S[3] = {atoms::x_spin_array[atom],atoms::y_spin_array[atom],atoms::z_spin_array[atom]};
@@ -218,8 +227,8 @@ int LSF_RK4_mpi(){
 		for(int atom=pre_comm_si;atom<pre_comm_ei;atom++){
 
 			const int imaterial=atoms::type_array[atom];
-         const double alpha = mp::material[atoms::type_array[atom]].alpha;
-         const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+         const double alpha = mp::material[imaterial].alpha;
+         const double mu = mp::material[imaterial].mu_s_SI;
 
 			// Store local spin in S and local field in H
          const double S[3] = {atoms::x_spin_array[atom],atoms::y_spin_array[atom],atoms::z_spin_array[atom]};
@@ -263,8 +272,8 @@ int LSF_RK4_mpi(){
 		for(int atom=post_comm_si;atom<post_comm_ei;atom++){
 
 			const int imaterial=atoms::type_array[atom];
-         const double alpha = mp::material[atoms::type_array[atom]].alpha;
-         const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+         const double alpha = mp::material[imaterial].alpha;
+         const double mu = mp::material[imaterial].mu_s_SI;
 
 			// Store local spin in S and local field in H
          const double S[3] = {atoms::x_spin_array[atom],atoms::y_spin_array[atom],atoms::z_spin_array[atom]};
@@ -301,8 +310,8 @@ int LSF_RK4_mpi(){
 		for(int atom=pre_comm_si;atom<pre_comm_ei;atom++){
 
 			const int imaterial=atoms::type_array[atom];
-         const double alpha = mp::material[atoms::type_array[atom]].alpha;
-         const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+         const double alpha = mp::material[imaterial].alpha;
+         const double mu = mp::material[imaterial].mu_s_SI;
 
 			// Store local spin in S and local field in H
          const double S[3] = {atoms::x_spin_array[atom],atoms::y_spin_array[atom],atoms::z_spin_array[atom]};
@@ -339,8 +348,8 @@ int LSF_RK4_mpi(){
 		for(int atom=post_comm_si;atom<post_comm_ei;atom++){
 
 			const int imaterial=atoms::type_array[atom];
-         const double alpha = mp::material[atoms::type_array[atom]].alpha;
-         const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+         const double alpha = mp::material[imaterial].alpha;
+         const double mu = mp::material[imaterial].mu_s_SI;
 
 			// Store local spin in S and local field in H
          const double S[3] = {atoms::x_spin_array[atom],atoms::y_spin_array[atom],atoms::z_spin_array[atom]};
@@ -384,8 +393,8 @@ int LSF_RK4_mpi(){
 		for(int atom=pre_comm_si;atom<pre_comm_ei;atom++){
 
 			const int imaterial=atoms::type_array[atom];
-         const double alpha = mp::material[atoms::type_array[atom]].alpha;
-         const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+         const double alpha = mp::material[imaterial].alpha;
+         const double mu = mp::material[imaterial].mu_s_SI;
 
 			// Store local spin in S and local field in H
          const double S[3] = {atoms::x_spin_array[atom],atoms::y_spin_array[atom],atoms::z_spin_array[atom]};
@@ -424,8 +433,8 @@ int LSF_RK4_mpi(){
 		for(int atom=post_comm_si;atom<post_comm_ei;atom++){
 
 			const int imaterial=atoms::type_array[atom];
-         const double alpha = mp::material[atoms::type_array[atom]].alpha;
-         const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+         const double alpha = mp::material[imaterial].alpha;
+         const double mu = mp::material[imaterial].mu_s_SI;
 
 			// Store local spin in S and local field in H
          const double S[3] = {atoms::x_spin_array[atom],atoms::y_spin_array[atom],atoms::z_spin_array[atom]};

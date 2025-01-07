@@ -152,18 +152,18 @@ PCCDB_OBJECTS=$(OBJECTS:.o=_pdb.o)
 IBMDB_OBJECTS=$(OBJECTS:.o=_ibmdb.o)
 LLVMDB_OBJECTS=$(OBJECTS:.o=_llvmdb.o)
 
-MPI_OBJECTS=$(OBJECTS:.o=_mpi.o)
-MPI_ICC_OBJECTS=$(OBJECTS:.o=_i_mpi.o)
-MPI_LLVM_OBJECTS=$(OBJECTS:.o=_llvm_mpi.o)
-MPI_PCC_OBJECTS=$(OBJECTS:.o=_p_mpi.o)
-MPI_IBM_OBJECTS=$(OBJECTS:.o=_ibm_mpi.o)
-MPI_CRAY_OBJECTS=$(OBJECTS:.o=_cray_mpi.o)
-MPI_ICCDB_OBJECTS=$(OBJECTS:.o=_idb_mpi.o)
-MPI_GCCDB_OBJECTS=$(OBJECTS:.o=_gdb_mpi.o)
-MPI_PCCDB_OBJECTS=$(OBJECTS:.o=_pdb_mpi.o)
-MPI_IBMDB_OBJECTS=$(OBJECTS:.o=_ibmdb_mpi.o)
-MPI_CRAYDB_OBJECTS=$(OBJECTS:.o=_craydb_mpi.o)
-MPI_ARCHER_OBJECTS=$(OBJECTS:.o=_archer_mpi.o)
+MPI_OBJECTS=$(OBJECTS:.o=_par.o)
+MPI_ICC_OBJECTS=$(OBJECTS:.o=_i_par.o)
+MPI_LLVM_OBJECTS=$(OBJECTS:.o=_llvm_par.o)
+MPI_PCC_OBJECTS=$(OBJECTS:.o=_p_par.o)
+MPI_IBM_OBJECTS=$(OBJECTS:.o=_ibm_par.o)
+MPI_CRAY_OBJECTS=$(OBJECTS:.o=_cray_par.o)
+MPI_ICCDB_OBJECTS=$(OBJECTS:.o=_idb_par.o)
+MPI_GCCDB_OBJECTS=$(OBJECTS:.o=_gdb_par.o)
+MPI_PCCDB_OBJECTS=$(OBJECTS:.o=_pdb_par.o)
+MPI_IBMDB_OBJECTS=$(OBJECTS:.o=_ibmdb_par.o)
+MPI_CRAYDB_OBJECTS=$(OBJECTS:.o=_craydb_par.o)
+MPI_ARCHER_OBJECTS=$(OBJECTS:.o=_archer_par.o)
 
 CLEXECUTABLE=vampire-opencl
 CUDAEXECUTABLE=vampire-cuda
@@ -236,67 +236,67 @@ $(PCCDB_OBJECTS): obj/%_pdb.o: src/%.cpp
 parallel: $(MPI_OBJECTS)
 	$(MPICC) $(GCC_LDFLAGS) $(MPI_OBJECTS) $(LIBS) -o $(PEXECUTABLE)
 
-$(MPI_OBJECTS): obj/%_mpi.o: src/%.cpp
+$(MPI_OBJECTS): obj/%_par.o: src/%.cpp
 	$(MPICC) -c -o $@ $(GCC_CFLAGS) $(OPTIONS) $<
 
 parallel-intel: $(MPI_ICC_OBJECTS)
 	$(MPIICC) $(ICC_LDFLAGS) $(LIBS) $(MPI_ICC_OBJECTS) -o $(PEXECUTABLE)-intel
 
-$(MPI_ICC_OBJECTS): obj/%_i_mpi.o: src/%.cpp
+$(MPI_ICC_OBJECTS): obj/%_i_par.o: src/%.cpp
 	$(MPIICC) -c -o $@ $(ICC_CFLAGS) $<
 
 parallel-cray: $(MPI_CRAY_OBJECTS)
 	$(MPICC) $(CRAY_LDFLAGS) $(LIBS) $(MPI_CRAY_OBJECTS) -o $(PEXECUTABLE)
 
-$(MPI_CRAY_OBJECTS): obj/%_cray_mpi.o: src/%.cpp
+$(MPI_CRAY_OBJECTS): obj/%_cray_par.o: src/%.cpp
 	$(MPICC) -c -o $@ $(CRAY_CFLAGS) $<
 
 parallel-archer: $(MPI_ARCHER_OBJECTS)
 	CC -DMPICF $(GCC_LDFLAGS) $(LIBS) $(MPI_ARCHER_OBJECTS) -o $(PEXECUTABLE)
 
-$(MPI_ARCHER_OBJECTS): obj/%_archer_mpi.o: src/%.cpp
+$(MPI_ARCHER_OBJECTS): obj/%_archer_par.o: src/%.cpp
 	CC -DMPICF -c -o $@ $(GCC_CFLAGS) $<
 
 parallel-llvm: $(MPI_LLVM_OBJECTS)
 	$(MPICC) $(LLVM_LDFLAGS) $(LIBS) $(MPI_LLVM_OBJECTS) -o $(PEXECUTABLE)
 
-$(MPI_LLVM_OBJECTS): obj/%_llvm_mpi.o: src/%.cpp
+$(MPI_LLVM_OBJECTS): obj/%_llvm_par.o: src/%.cpp
 	$(MPICC) -c -o $@ $(LLVM_CFLAGS) $(OPTIONS) $<
 
 parallel-pathscale: $(MPI_PCC_OBJECTS)
 	$(MPICC) $(PCC_LDFLAGS) $(LIBS) $(MPI_PCC_OBJECTS) -o $(PEXECUTABLE)
 
-$(MPI_PCC_OBJECTS): obj/%_p_mpi.o: src/%.cpp
+$(MPI_PCC_OBJECTS): obj/%_p_par.o: src/%.cpp
 	$(MPICC) -c -o $@ $(PCC_CFLAGS) $(OPTIONS) $<
 
 parallel-ibm: $(MPI_IBM_OBJECTS)
 	$(MPICC) $(IBM_LDFLAGS) $(MPI_IBM_OBJECTS) -o $(PEXECUTABLE)
 
-$(MPI_IBM_OBJECTS): obj/%_ibm_mpi.o: src/%.cpp
+$(MPI_IBM_OBJECTS): obj/%_ibm_par.o: src/%.cpp
 	$(MPICC) -c -o $@ $(IBM_CFLAGS) $(OPTIONS) $<
 
 parallel-debug: $(MPI_GCCDB_OBJECTS)
 	$(MPICC) $(GCC_DBLFLAGS) $(LIBS) $(MPI_GCCDB_OBJECTS) -o $(PEXECUTABLE)-debug
 
-$(MPI_GCCDB_OBJECTS): obj/%_gdb_mpi.o: src/%.cpp
+$(MPI_GCCDB_OBJECTS): obj/%_gdb_par.o: src/%.cpp
 	$(MPICC) -c -o $@ $(GCC_DBCFLAGS) $(OPTIONS) $<
 
 parallel-intel-debug: $(MPI_ICCDB_OBJECTS)
 	$(MPIICC) $(ICC_DBLFLAGS) $(LIBS) $(MPI_ICCDB_OBJECTS) -o $(PEXECUTABLE)-intel-debug
 
-$(MPI_ICCDB_OBJECTS): obj/%_idb_mpi.o: src/%.cpp
+$(MPI_ICCDB_OBJECTS): obj/%_idb_par.o: src/%.cpp
 	$(MPIICC) -c -o $@ $(ICC_DBCFLAGS) $(OPTIONS) $<
 
 parallel-cray-debug: $(MPI_CRAY_OBJECTS)
 	$(MPICC) $(CCC_LDFLAGS) $(LIBS) $(MPI_CRAYDB_OBJECTS) -o $(PEXECUTABLE)
 
-$(MPI_CRAYDB_OBJECTS): obj/%_craydb_mpi.o: src/%.cpp
+$(MPI_CRAYDB_OBJECTS): obj/%_craydb_par.o: src/%.cpp
 	$(MPICC) -c -o $@ $(CCC_CFLAGS) $(OPTIONS) $<
 
 parallel-pathscale-debug: $(MPI_PCCDB_OBJECTS)
 	$(MPICC) $(PCC_DBLFLAGS) $(LIBS) $(MPI_PCCDB_OBJECTS) -o $(PEXECUTABLE)
 
-$(MPI_PCCDB_OBJECTS): obj/%_pdb_mpi.o: src/%.cpp
+$(MPI_PCCDB_OBJECTS): obj/%_pdb_par.o: src/%.cpp
 	$(MPICC) -c -o $@ $(PCC_DBCFLAGS) $(OPTIONS) $<
 
 clean:

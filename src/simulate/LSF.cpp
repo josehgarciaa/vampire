@@ -17,7 +17,7 @@
 #include <stdio.h>
 
 // Vampire Header files
-#include "LSF.hpp"
+#include "lsf.hpp"
 #include "atoms.hpp"
 #include "constants.hpp"
 #include "errors.hpp"
@@ -183,8 +183,8 @@ namespace sim{
          for (int atom = 0; atom < num_atoms; atom++){
 
             const int imaterial = atoms::type_array[atom];
-            const double alpha = mp::material[atoms::type_array[atom]].alpha;
-            const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+            const double alpha = mp::material[imaterial].alpha;
+            const double mu = mp::material[imaterial].mu_s_SI;
 
             // Store local spin in S and local field in H
             const double S[3] = {atoms::x_spin_array[atom], atoms::y_spin_array[atom], atoms::z_spin_array[atom]};
@@ -228,8 +228,8 @@ namespace sim{
          for (int atom = 0; atom < num_atoms; atom++){
 
             const int imaterial = atoms::type_array[atom];
-            const double alpha = mp::material[atoms::type_array[atom]].alpha;
-            const double mu = mp::material[atoms::type_array[atom]].mu_s_SI;
+            const double alpha = mp::material[imaterial].alpha;
+            const double mu = mp::material[imaterial].mu_s_SI;
 
             // Store local spin in S and local field in H
             const double S[3] = {atoms::x_spin_array[atom], atoms::y_spin_array[atom], atoms::z_spin_array[atom]};
