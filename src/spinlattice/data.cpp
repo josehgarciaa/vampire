@@ -33,9 +33,6 @@ namespace sld{
    bool suzuki_trotter_parallel_initialized = false;
    
     
-        std::vector<double> x_seq_coord_array;
-        std::vector<double> y_seq_coord_array;
-        std::vector<double> z_seq_coord_array;
 
    namespace internal{
 
@@ -53,8 +50,18 @@ namespace sld{
       double dr_init; // initial conditions
       double th_velo;
 
+      double morse_beta;
+      double morse_factor;
+      double alpha_m;
+      double r0_m;
+      double morse_D;
+      
+      
+      bool morse;
       bool harmonic; //flag for harmonic potential
       bool pseudodipolar;
+      bool full_neel;
+
 
       //initial sld neighbor list
       //std::vector<int> sld_neighbour_list_start_index;
@@ -65,6 +72,10 @@ namespace sld{
       std::vector<double> y0_coord_array;
       std::vector<double> z0_coord_array;
      
+     
+      std::vector <double> x_coord_storage_array;
+      std::vector <double> y_coord_storage_array;
+      std::vector <double> z_coord_storage_array;
 
       std::vector<double> forces_array_x;
       std::vector<double> forces_array_y;

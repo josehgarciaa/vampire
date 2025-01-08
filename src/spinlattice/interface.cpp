@@ -51,6 +51,11 @@ namespace sld{
           sld::internal::harmonic=true;
           return true;
          }
+          test="morse";
+          if( value == test ){
+           sld::internal::morse=true;
+           return true;
+          }
       }
 
       test = "coupling";
@@ -58,6 +63,11 @@ namespace sld{
          test="pseudodipolar";
          if( value == test ){
           sld::internal::pseudodipolar=true;
+          return true;
+         }
+         test="full-neel";
+         if( value == test ){
+          sld::internal::full_neel=true;
           return true;
          }
       }
@@ -77,6 +87,17 @@ namespace sld{
           sld::internal::r_cut_fields= r_cf;
           return true;
       }
+     /* test = "fixed-lattice";
+      if( word == test ){
+          sld::internal::fixed-lattice=true;
+          return true;
+      }
+      test = "fixed-spin";
+      if( word == test ){
+          sld::internal::fixed-spin=true;
+          return true;
+      }*/
+      
      test = "initial-random-displacement";
      if( word == test ){
          double dr_in = vin::str_to_double(value);
@@ -125,11 +146,19 @@ namespace sld{
          sld::internal::mp[super_index].damp_lat.set(damp);
          return true;
       }
-
+      
+       test = "equilibration-damping-constant-lattice";
+       if( word == test ){
+          double damp= vin::str_to_double(value);
+          vin::check_for_valid_value(damp, word, line, prefix, unit, "none", 0, 1.0,"input","0- 1");
+          sld::internal::mp[super_index].eq_damp_lat.set(damp);
+          return true;
+       }
+      
       test = "exchange-J0";
       if( word == test ){
          double j0 = vin::str_to_double(value);
-         vin::check_for_valid_value(j0, word, line, prefix, unit, "energy", 1.0e-20, 1.0e20,"input","1E-20 - 1E20");
+         vin::check_for_valid_value(j0, word, line, prefix, unit, "energy", 0, 5,"input","0 - 5 eV");
          sld::internal::mp[super_index].J0.set(j0);
          return true;
       }
@@ -145,7 +174,7 @@ namespace sld{
       test = "coupling-C0";
       if( word == test ){
          double c0 = vin::str_to_double(value);
-         vin::check_for_valid_value(c0, word, line, prefix, unit, "mass", 1.0e-20, 1.0e20,"input","1E-20 - 1E20");
+         vin::check_for_valid_value(c0, word, line, prefix, unit, "mass", 0, 1,"input","0 - 1");
          sld::internal::mp[super_index].C0.set(c0);
          return true;
       }

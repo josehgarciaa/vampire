@@ -77,10 +77,14 @@ namespace sld{
              set_double_t J0;
              set_double_t C0;
              set_double_t damp_lat;
+             set_double_t eq_damp_lat;
+
              set_double_t J0_ms;
              set_double_t C0_ms;
              set_double_t J0_prime;
              set_double_t F_th_sigma;
+             set_double_t F_th_sigma_eq;
+
 
 
 
@@ -97,7 +101,9 @@ namespace sld{
                 C0.set(0.5);
                 C0_ms.set(0.5/2.04028e-23);
                 F_th_sigma.set(1.0);
+                F_th_sigma_eq.set(1.0);
                 damp_lat.set(0.06);
+                eq_damp_lat.set(0.6);
 
 
 
@@ -116,10 +122,20 @@ namespace sld{
       extern double r_cut_fields; // exchange/coupling cutoff
       
       extern double dr_init; 
-      extern double th_velo; // exchange/coupling cutoff
+      extern double th_velo; 
+      
+       //for the morse potential
+       extern double morse_beta;
+       extern double morse_factor;
+       extern double alpha_m;
+       extern double r0_m;
+       extern double morse_D;
+       extern bool morse;
 
       extern bool harmonic; // bool to enable module
       extern bool pseudodipolar;
+      extern bool full_neel;
+
 
       //extern std::vector<int> sld_neighbour_list_start_index;
       //extern std::vector<int> sld_neighbour_list_end_index;
@@ -128,6 +144,11 @@ namespace sld{
       extern std::vector<double> x0_coord_array;
       extern std::vector<double> y0_coord_array;
       extern std::vector<double> z0_coord_array;
+      
+      
+      extern std::vector <double> x_coord_storage_array;
+      extern std::vector <double> y_coord_storage_array;
+      extern std::vector <double> z_coord_storage_array;
       
           
 
@@ -177,9 +198,9 @@ namespace sld{
             const std::vector<double>& x0_coord_array, // coord vectors for atoms
             const std::vector<double>& y0_coord_array,
             const std::vector<double>& z0_coord_array,
-            std::vector<double>& x_coord_array, // coord vectors for atoms
-            std::vector<double>& y_coord_array,
-            std::vector<double>& z_coord_array,
+            const std::vector<double>& x_coord_array, // coord vectors for atoms
+            const std::vector<double>& y_coord_array,
+            const std::vector<double>& z_coord_array,
             std::vector<double>& forces_array_x, //  vectors for forces
             std::vector<double>& forces_array_y,
             std::vector<double>& forces_array_z,
@@ -192,18 +213,33 @@ namespace sld{
             const std::vector<int>& neighbour_list_end_index,
             const std::vector<int>& type_array, // type for atom
             const std::vector<int>& neighbour_list_array, // list of interactions between atom
-            std::vector<double>& x_coord_array, // coord vectors for atoms
-            std::vector<double>& y_coord_array,
-            std::vector<double>& z_coord_array,
-            std::vector<double>& x_spin_array, // coord vectors for atoms
-            std::vector<double>& y_spin_array,
-            std::vector<double>& z_spin_array,
+            const std::vector<double>& x_coord_array, // coord vectors for atoms
+            const std::vector<double>& y_coord_array,
+            const std::vector<double>& z_coord_array,
+            const std::vector<double>& x_spin_array, // coord vectors for atoms
+            const std::vector<double>& y_spin_array,
+            const std::vector<double>& z_spin_array,
             std::vector<double>& forces_array_x, //  vectors for forces
             std::vector<double>& forces_array_y,
             std::vector<double>& forces_array_z,
             std::vector<double>& fields_array_x, //  vectors for forces
             std::vector<double>& fields_array_y,
             std::vector<double>& fields_array_z);
+            
+            
+      void compute_forces_morse(const int start_index,
+            const int end_index, // last +1 atom to be calculated
+            const std::vector<int>& neighbour_list_start_index,
+            const std::vector<int>& neighbour_list_end_index,
+            const std::vector<int>& type_array, // type for atom
+            const std::vector<int>& neighbour_list_array, // list of interactions between atom
+            const std::vector<double>& x_coord_array, // coord vectors for atoms
+            const std::vector<double>& y_coord_array,
+            const std::vector<double>& z_coord_array,
+            std::vector<double>& forces_array_x, //  vectors for forces
+            std::vector<double>& forces_array_y,
+            std::vector<double>& forces_array_z,
+            std::vector<double>& potential_eng);
 //
       void compute_sld_coupling(const int start_index,
             const int end_index, // last +1 atom to be calculated
@@ -211,12 +247,31 @@ namespace sld{
             const std::vector<int>& neighbour_list_end_index,
             const std::vector<int>& type_array, // type for atom
             const std::vector<int>& neighbour_list_array, // list of interactions between atom
-            std::vector<double>& x_coord_array, // coord vectors for atoms
-            std::vector<double>& y_coord_array,
-            std::vector<double>& z_coord_array,
-            std::vector<double>& x_spin_array, // coord vectors for atoms
-            std::vector<double>& y_spin_array,
-            std::vector<double>& z_spin_array,
+            const std::vector<double>& x_coord_array, // coord vectors for atoms
+            const std::vector<double>& y_coord_array,
+            const std::vector<double>& z_coord_array,
+            const std::vector<double>& x_spin_array, // spin  vectors for atoms
+            const std::vector<double>& y_spin_array,
+            const std::vector<double>& z_spin_array,
+            std::vector<double>& forces_array_x, //  vectors for forces
+            std::vector<double>& forces_array_y,
+            std::vector<double>& forces_array_z,
+            std::vector<double>& fields_array_x, //  vectors for forces
+            std::vector<double>& fields_array_y,
+            std::vector<double>& fields_array_z);
+            
+      void compute_sld_coupling_neel(const int start_index,
+            const int end_index, // last +1 atom to be calculated
+            const std::vector<int>& neighbour_list_start_index,
+            const std::vector<int>& neighbour_list_end_index,
+            const std::vector<int>& type_array, // type for atom
+            const std::vector<int>& neighbour_list_array, // list of interactions between atom
+            const std::vector<double>& x_coord_array, // coord vectors for atoms
+            const std::vector<double>& y_coord_array,
+            const std::vector<double>& z_coord_array,
+            const std::vector<double>& x_spin_array, // spin  vectors for atoms
+            const std::vector<double>& y_spin_array,
+            const std::vector<double>& z_spin_array,
             std::vector<double>& forces_array_x, //  vectors for forces
             std::vector<double>& forces_array_y,
             std::vector<double>& forces_array_z,
@@ -241,9 +296,9 @@ namespace sld{
                   const int end_index,
                   double dt,
                   const std::vector<int>& type_array, // type for atom
-                  std::vector<double>& x_spin_array, // coord vectors for atoms
-                  std::vector<double>& y_spin_array,
-                  std::vector<double>& z_spin_array,
+                  const std::vector<double>& x_spin_array, // coord vectors for atoms
+                  const std::vector<double>& y_spin_array,
+                  const std::vector<double>& z_spin_array,
                   std::vector<double>& fields_array_x, //  vectors for fields
                   std::vector<double>& fields_array_y,
                   std::vector<double>& fields_array_z,

@@ -317,7 +317,7 @@ namespace stats
         };
         bool is_initialized();
         void set_mask(const int mask_size, std::vector<int> inmask, const std::vector<double>& mm);
-          void get_mask(std::vector<int>& out_mask);
+        void get_mask(std::vector<int>& out_mask, std::vector<double>& out_normalisation);
         void calculate_spin_temp(const std::vector<double>& sx, const std::vector<double>& sy, const std::vector<double>& sz,
 									 const std::vector<double>& bxs, const std::vector<double>& bys, const std::vector<double>& bzs,
 									 const std::vector<double>& bxe, const std::vector<double>& bye, const std::vector<double>& bze,
@@ -337,8 +337,12 @@ namespace stats
 		std::vector<int> num_atoms_in_mask;
         std::vector<double> spin_temp;
         std::vector<double> mean_spin_temp;
+        std::vector<double> SxH2;
+        std::vector<double> SH;
         std::vector<int> zero_list;
+        std::vector<double> normalisation;
         std::string name;
+
 
   };
   

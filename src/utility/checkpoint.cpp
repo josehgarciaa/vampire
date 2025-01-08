@@ -86,7 +86,18 @@ void save_checkpoint(){
    chkfile.write(reinterpret_cast<const char*>(&atoms::x_spin_array[0]),sizeof(double)*natoms64);
    chkfile.write(reinterpret_cast<const char*>(&atoms::y_spin_array[0]),sizeof(double)*natoms64);
    chkfile.write(reinterpret_cast<const char*>(&atoms::z_spin_array[0]),sizeof(double)*natoms64);
-
+   
+   
+   //modified M Strungaru SLD
+    // write pos array to file
+   chkfile.write(reinterpret_cast<const char*>(&atoms::x_coord_array[0]),sizeof(double)*natoms64);
+   chkfile.write(reinterpret_cast<const char*>(&atoms::y_coord_array[0]),sizeof(double)*natoms64);
+   chkfile.write(reinterpret_cast<const char*>(&atoms::z_coord_array[0]),sizeof(double)*natoms64);
+    
+     // write pos array to file
+   chkfile.write(reinterpret_cast<const char*>(&atoms::x_velo_array[0]),sizeof(double)*natoms64);
+   chkfile.write(reinterpret_cast<const char*>(&atoms::y_velo_array[0]),sizeof(double)*natoms64);
+   chkfile.write(reinterpret_cast<const char*>(&atoms::z_velo_array[0]),sizeof(double)*natoms64);
    // close checkpoint file
    chkfile.close();
 
@@ -195,6 +206,20 @@ void load_checkpoint(){
    chkfile.read((char*)&atoms::x_spin_array[0],sizeof(double)*natoms64);
    chkfile.read((char*)&atoms::y_spin_array[0],sizeof(double)*natoms64);
    chkfile.read((char*)&atoms::z_spin_array[0],sizeof(double)*natoms64);
+      
+
+   //modified M Strungaru SLD
+    // Load coord positions
+   chkfile.read((char*)&atoms::x_coord_array[0],sizeof(double)*natoms64);
+   chkfile.read((char*)&atoms::y_coord_array[0],sizeof(double)*natoms64);
+   chkfile.read((char*)&atoms::z_coord_array[0],sizeof(double)*natoms64);
+   
+     // Load velo positions
+   chkfile.read((char*)&atoms::x_velo_array[0],sizeof(double)*natoms64);
+   chkfile.read((char*)&atoms::y_velo_array[0],sizeof(double)*natoms64);
+   chkfile.read((char*)&atoms::z_velo_array[0],sizeof(double)*natoms64);
+
+
 
    // close checkpoint file
    chkfile.close();
