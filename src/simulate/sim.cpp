@@ -539,6 +539,14 @@ int run(){
 			}
 			program::boltzmann_dist_micromagnetic_llg();
 			break;
+		// JRH call spin_waves program -------------------------------------------
+		case 74:
+			if(vmpi::my_rank==0){
+				std::cout << "Spin-waves..." << std::endl;
+				zlog << "Spin-waves..." << std::endl;
+			}
+			program::spin_waves();
+			break;
 		default:{
 			std::cerr << "Unknown Internal Program ID "<< program::program << " requested, exiting" << std::endl;
 			zlog << "Unknown Internal Program ID "<< program::program << " requested, exiting" << std::endl;

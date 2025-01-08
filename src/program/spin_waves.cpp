@@ -1,13 +1,16 @@
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
-// This source file is part of the VAMPIRE open source package under the
-// GNU GPL (version 2) licence (see licence file for details).
+//   This file is part of the VAMPIRE open source package under the
+//   Free BSD licence (see licence file for details).
 //
-// (c) R F L Evans and Andrea Meo 2014-2018. All rights reserved.
+//   (c) Joel Hirst 2022. All rights reserved.
 //
-//-----------------------------------------------------------------------------
+//   Email: j.r.hirst@shu.ac.uk
+//
+//------------------------------------------------------------------------------
 //
 
+// C++ standard library headers
 // Standard Libraries
 #include <iostream>
 
@@ -29,10 +32,10 @@ namespace program{
 //------------------------------------------------------------------------------
 // Program to calculate a simple time series
 //------------------------------------------------------------------------------
-void time_series(){
+void spin_waves(){
 
 	// check calling of routine if error checking is activated
-	if(err::check==true) std::cout << "program::time_series has been called" << std::endl;
+	if(err::check==true) std::cout << "program::spin_waves has been called" << std::endl;
 
 	double temp=sim::temperature;
 
@@ -76,6 +79,15 @@ void time_series(){
 		// Integrate system
 		sim::integrate(sim::partial_time);
 
+		// calculate spinwaves JRH
+		//const int step = (sim::time-sim::equilibration_time)/sim::partial_time-1;
+
+		// std::cout << "calling spinwave function." << std::endl;
+		spinwaves::fft_in_space(atoms::x_coord_array,
+										atoms::y_coord_array,
+										atoms::z_coord_array,
+										(sim::time-sim::equilibration_time)/sim::partial_time-1);
+
 		// Calculate magnetisation statistics
 		stats::update();
 
@@ -83,6 +95,8 @@ void time_series(){
 		vout::data();
 
 	}
+
+	spinwaves::fft_in_time();
 
 }
 
