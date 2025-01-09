@@ -296,9 +296,9 @@ namespace spinwaves{
                 zlog << "[" << kx0 << ", " << ky0 << ", " << kz0 << "] and ";
                 zlog << "[" << kx1 << ", " << ky1 << ", " << kz1 << "]" << std::endl;
 
-                double kx=kx0;
-                double ky=ky0;
-                double kz=kz0;
+                kx=kx0;
+                ky=ky0;
+                kz=kz0;
 
                 // make sure you always finish at the points specified by user.
 

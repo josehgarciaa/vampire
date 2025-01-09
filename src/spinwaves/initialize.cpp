@@ -66,11 +66,11 @@ namespace spinwaves{
 		// check spectrum values in input file are in agreement with the spinwaves:number-of-spectrums
 		spinwaves::internal::check_numbering_of_spectrums();
 
-		int Na=atom.size();
-		const double toll_Fikj=1e-5; // tollerance for the structure factor values smaller than tollerance are considered 0
+		//int Na=atom.size();
+		//const double toll_Fikj=1e-5; // tollerance for the structure factor values smaller than tollerance are considered 0
 
 		// number of steps for sw calculations
-		int numsteps = (sim::total_time / sim::partial_time);
+		//int numsteps = (sim::total_time / sim::partial_time);
 
 		// if caclulating spinwaves for a specific material, we need to apply a mask
 		spinwaves::internal::calculate_material_mask();

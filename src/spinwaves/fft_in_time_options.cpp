@@ -68,14 +68,14 @@ namespace spinwaves {
         void normalise_each_kpoint(fftw_complex *os){
 
             double largest = std::abs(os[0][real]);
-            double index;
+            //double index;
 
             // Find largest value in k_z array - REAL
             for (int j1 = 1; j1 < internal::nt; j1++){
 
                 if (largest < std::abs(os[j1][real])){
                     largest = std::abs(os[j1][real]);
-                    index = j1;
+                    //index = j1;
                 }
                 }
                 // normlise each value
@@ -89,7 +89,7 @@ namespace spinwaves {
             for (int j1 = 1; j1 < internal::nt; j1++){
                 if (largest < std::abs(os[j1][imag])){
                     largest = std::abs(os[j1][imag]);
-                    index = j1;
+                    //index = j1;
                 }
                 }
                 // normlise each value

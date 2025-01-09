@@ -30,6 +30,7 @@
 #include <cmath>
 #include "fstream"
 #include "atoms.hpp"
+#include <complex.h>
 #include <fftw3.h>
 
 
@@ -50,11 +51,12 @@ namespace spinwaves {
       const int real = 0;
       const int imag = 1;
 
-
-
-
-      fftw_complex combined_real_imag[internal::nt];
-      fftw_complex combined_real_imag_fftd[internal::nt];
+      //------------------------------------------------------------------------------------
+      //fftw_complex combined_real_imag[internal::nt]; //- can lead to stack overflow
+      //fftw_complex combined_real_imag_fftd[internal::nt];
+      // same using allocated memory
+      fftw_complex *combined_real_imag = fftw_alloc_complex(internal::nt);
+      fftw_complex *combined_real_imag_fftd = fftw_alloc_complex(internal::nt);
       fftw_plan fft_in_time = fftw_plan_dft_1d(internal::nt, &combined_real_imag[0], &combined_real_imag_fftd[0], FFTW_FORWARD, FFTW_MEASURE);
 
 
@@ -212,7 +214,9 @@ namespace spinwaves {
       // destroy fftw3 plan
       fftw_destroy_plan(fft_in_time);
 
-
+      // free complex alocated arrays
+      fftw_free(combined_real_imag);
+      fftw_free(combined_real_imag_fftd);
 
    }
 

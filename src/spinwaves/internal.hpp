@@ -88,8 +88,7 @@ namespace spinwaves{
       extern std::vector<int> atom_mask;
       extern std::vector<int> spec_mask;
 
-
-      //JRH time variabls
+      //JRH time variables
       extern int nt;
       extern int nk;
 
