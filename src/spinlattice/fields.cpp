@@ -141,14 +141,14 @@ namespace internal{
        double si_dot_sj;
        double fx = 0.0, fy = 0.0, fz = 0.0;
        double hx = 0.0, hy = 0.0, hz = 0.0;
-       double rji_sqr, rji, inv_rji,  inv_rji2;
+       double rji_sqr, rji, inv_rji; //,  inv_rji2;
        double y, f_exch,  energy = 0.0;
-       double exch_J0 = sld::internal::mp[0].J0_ms.get(); //7034.8836847351113; //
-       double exch_J0_prime = sld::internal::mp[0].J0_prime.get()/1.602176634e-19; //in J  0.72320000000000007 ;
+       //double exch_J0 = sld::internal::mp[0].J0_ms.get(); //7034.8836847351113; //
+       //double exch_J0_prime = sld::internal::mp[0].J0_prime.get()/1.602176634e-19; //in J  0.72320000000000007 ;
        double J;
        int j;
        double r_sqr_cut=sld::internal::r_cut_fields*sld::internal::r_cut_fields;
-       double oneover3=1.0/3.0;
+       //double oneover3=1.0/3.0;
        double exch_inv_rcut=1.0/sld::internal::r_cut_fields;
        double sumJ=0.0;
 
@@ -157,7 +157,7 @@ namespace internal{
           const unsigned int imat = atoms::type_array[i];
           double exch_J0 = sld::internal::mp[imat].J0_ms.get(); //7034.8836847351113; //
           double exch_J0_prime = sld::internal::mp[imat].J0_prime.get()/1.602176634e-19;
-          int count_int=0;
+          //int count_int=0;
 
           fx = 0.0;
           fy = 0.0;
@@ -196,7 +196,7 @@ namespace internal{
              rji_sqr = dx*dx + dy*dy + dz*dz;
 
              if( rji_sqr < r_sqr_cut)
-             {   count_int++;
+             {   //count_int++;
 
                  rji = sqrt(rji_sqr);
                  inv_rji = 1.0/ rji;
@@ -306,7 +306,7 @@ namespace internal{
                   double rji_sqr, rji, inv_rji,  inv_rji2, inv_rji4, inv_rji6;
                   double sj_dot_rji, si_dot_rji;
                   double energy_c;
-                  int j, count_int;
+                  int j; //, count_int;
 
                   double r_sqr_cut=sld::internal::r_cut_fields*sld::internal::r_cut_fields;
                   double oneover3=1.0/3.0;
@@ -318,7 +318,7 @@ namespace internal{
                      double fact=sld::internal::mp[imat].C0.get()/1.602176634e-19;//in J, 0.4520;//
                      double fact_ms= sld::internal::mp[imat].C0_ms.get();//3517.4418423675556;
 
-                     count_int=0;
+                     //count_int=0;
                      fc_x = 0.0;
                      fc_y = 0.0;
                      fc_z = 0.0;
@@ -360,7 +360,7 @@ namespace internal{
                        if( rji_sqr < r_sqr_cut)
                        {
 
-                            count_int++;
+                            //count_int++;
                             rji = sqrt(rji_sqr);
                             inv_rji = 1.0/ rji;
 
@@ -464,11 +464,11 @@ namespace internal{
                   double rji_sqr, rji, inv_rji,  inv_rji2, inv_rji4, inv_rji6;
                   double sj_dot_rji, si_dot_rji;
                   double energy_c;
-                  int j, count_int;
+                  int j; //, count_int;
 
                   double r_sqr_cut=sld::internal::r_cut_fields*sld::internal::r_cut_fields;
                   double oneover3=1.0/3.0;
-                  double sumC;
+                  //double sumC;
 
                   for(int i=start_index;i<end_index; ++i){
 
@@ -476,7 +476,7 @@ namespace internal{
                      double fact=sld::internal::mp[imat].C0.get()/1.602176634e-19;//in J, 0.4520;//
                      double fact_ms= sld::internal::mp[imat].C0_ms.get();//3517.4418423675556;
 
-                     count_int=0;
+                     //count_int=0;
                      fc_x = 0.0;
                      fc_y = 0.0;
                      fc_z = 0.0;
@@ -484,7 +484,7 @@ namespace internal{
                      hc_y = 0.0;
                      hc_z = 0.0;
                      energy_c=0.0;
-                     sumC=0.0;
+                     //sumC=0.0;
 
                      rx = x_coord_array[i];
                      ry = y_coord_array[i];
@@ -518,7 +518,7 @@ namespace internal{
                        if( rji_sqr < r_sqr_cut)
                        {
 
-                            count_int++;
+                            //count_int++;
                             rji = sqrt(rji_sqr);
                             inv_rji = 1.0/ rji;
 

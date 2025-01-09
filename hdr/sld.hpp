@@ -27,6 +27,11 @@
 namespace sld{
 
    //-----------------------------------------------------------------------------
+   // Externally visible SLD variables
+   //-----------------------------------------------------------------------------
+   extern bool enabled; // bolean to enable and disable sld components
+
+   //-----------------------------------------------------------------------------
    // Function to initialise sld module
    //-----------------------------------------------------------------------------
    void initialize();
@@ -161,12 +166,12 @@ namespace sld{
    extern double sld_exchange_energy;
    extern double sld_coupling_energy;
    extern double sld_total_energy;
-   extern double sld_total_spin_energy;*/  
-   
-   
+   extern double sld_total_spin_energy;*/
+
+
    extern double J_eff;
    extern double C_eff;
-   
+
    void suzuki_trotter_parallel_init(std::vector<double> &x, std::vector<double> &y, std::vector<double> &z,
                          double min_dim[3], double max_dim[3]);
    extern bool suzuki_trotter_parallel_initialized;

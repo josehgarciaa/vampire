@@ -27,7 +27,7 @@ MPICC=mpicxx -DMPICF
 MPIICC=mpiicpc -DMPICF
 
 #LIBS=
-LIBS= -lstdc++ -lm $(FFTLIBS) -L/opt/local/lib/
+LIBS= -lm $(FFTLIBS) -L/opt/local/lib/
 FFTW=-I/opt/local/include/
 CCC_CFLAGS=-I./hdr -I./src/qvoronoi -O0
 CCC_LDFLAGS=-I./hdr -I./src/qvoronoi -O0

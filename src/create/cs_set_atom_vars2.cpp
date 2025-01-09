@@ -58,7 +58,7 @@ void set_atom_vars(std::vector<cs::catom_t> & catom_array,
 	atoms::y_spin_array.resize(atoms::num_atoms,0.0);
 	atoms::z_spin_array.resize(atoms::num_atoms,1.0);
    atoms::m_spin_array.resize(atoms::num_atoms,0.0);
-   atoms::mass_spin_array.resize(atoms::num_atoms,0.0);
+
 
    atoms::type_array.resize(     atoms::num_atoms,0);
    atoms::category_array.resize( atoms::num_atoms,0);
@@ -71,13 +71,20 @@ void set_atom_vars(std::vector<cs::catom_t> & catom_array,
 	atoms::y_total_spin_field_array.resize(atoms::num_atoms,0.0);
 	atoms::z_total_spin_field_array.resize(atoms::num_atoms,0.0);
 
-	atoms::x_total_spin_forces_array.resize(atoms::num_atoms,0.0);
-   atoms::y_total_spin_forces_array.resize(atoms::num_atoms,0.0);
-   atoms::z_total_spin_forces_array.resize(atoms::num_atoms,0.0);
+   // For spin lattice only
+   if(sld::enabled){
 
-   atoms::x_velo_array.resize(atoms::num_atoms,0.0);
-   atoms::y_velo_array.resize(atoms::num_atoms,0.0);
-   atoms::z_velo_array.resize(atoms::num_atoms,0.0);
+      atoms::mass_spin_array.resize(atoms::num_atoms,0.0);
+
+      atoms::x_total_spin_forces_array.resize(atoms::num_atoms,0.0);
+      atoms::y_total_spin_forces_array.resize(atoms::num_atoms,0.0);
+      atoms::z_total_spin_forces_array.resize(atoms::num_atoms,0.0);
+
+      atoms::x_velo_array.resize(atoms::num_atoms,0.0);
+      atoms::y_velo_array.resize(atoms::num_atoms,0.0);
+      atoms::z_velo_array.resize(atoms::num_atoms,0.0);
+
+   }
 
 	atoms::x_total_external_field_array.resize(atoms::num_atoms,0.0);
 	atoms::y_total_external_field_array.resize(atoms::num_atoms,0.0);

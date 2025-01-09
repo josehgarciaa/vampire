@@ -107,7 +107,8 @@ void compute_forces_harmonic(const int start_index,
             double dx0, dy0, dz0;
             double fx = 0.0, fy = 0.0, fz = 0.0;
             double rji_sqr, rji, rji0, inv_rji;
-            int j, total_int;
+            int j;
+            //int total_int;
             double r_sqr_cut=sld::internal::r_cut_pot*sld::internal::r_cut_pot;
             double energy;
 
@@ -119,7 +120,7 @@ void compute_forces_harmonic(const int start_index,
                fy = 0.0;
                fz = 0.0;
                energy=0.0;
-               total_int=0;
+               //total_int=0;
 
                rx = x_coord_array[i];
                ry = y_coord_array[i];
@@ -162,7 +163,7 @@ void compute_forces_harmonic(const int start_index,
 
         		       if( rji_sqr < r_sqr_cut){
 
-        		          total_int++;
+        		          //total_int++;
 
 
         		           rji = sqrt(rji_sqr);
@@ -216,13 +217,13 @@ void compute_forces_morse(const int start_index,
             double rx, ry, rz;
             double dx, dy, dz;
             double fx = 0.0, fy = 0.0, fz = 0.0;
-            double rji_sqr, rji, rji0, inv_rji;
-            int j, total_int;
+            double rji_sqr, rji, inv_rji; // rji0,
+            int j; //, total_int;
             double r_sqr_cut=sld::internal::r_cut_pot*sld::internal::r_cut_pot;
             double energy;
 
            double alpha_m= sld::internal::alpha_m; //1.3885;
-           double r0_m= sld::internal::r0_m;//2.845;
+           //double r0_m= sld::internal::r0_m;//2.845;
            double morse_D=sld::internal::morse_D; //0.4174;;
            double morse_beta=sld::internal::morse_beta;//exp( alpha_m * r0_m);
            double morse_factor = sld::internal::morse_factor; //-2.0 * morse_D * alpha_m;
@@ -236,7 +237,7 @@ void compute_forces_morse(const int start_index,
                fy = 0.0;
                fz = 0.0;
                energy=0.0;
-               total_int=0;
+               //total_int=0;
 
 
                rx = x_coord_array[i];

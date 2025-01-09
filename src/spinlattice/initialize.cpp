@@ -29,6 +29,10 @@ namespace sld{
    // Function to initialize sld module
    //----------------------------------------------------------------------------
    void initialize(){
+
+      // check for sld module being enabled
+      if(!sld::enabled) return;
+
       std::cout<<"Input parameters for Spin-lattice dynamics simulations:"<<std::endl;
       std::cout<<"*******************************************************"<<std::endl;
 
@@ -153,7 +157,7 @@ namespace sld{
        const double v_therm = sqrt( 3.0 * constants::kB_eV * sld::internal::th_velo / sld::internal::mp[0].mass.get());
        int N=atoms::num_atoms;
        double rx,ry,s;
-       double net_v[] = {0.0, 0.0, 0.0};
+       //double net_v[] = {0.0, 0.0, 0.0};
 
        std::cout<<"velocities before "<<x_velo_array[0]<<"\t"<<x_velo_array[10]<<"\t"<<th_velo<<std::endl;
 

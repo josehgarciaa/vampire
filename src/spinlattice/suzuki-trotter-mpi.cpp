@@ -173,8 +173,8 @@ void suzuki_trotter_step_parallel(std::vector<double> &x_spin_array,
          generate (Fy_th.begin(),Fy_th.end(), mtrandom::gaussian);
          generate (Fz_th.begin(),Fz_th.end(), mtrandom::gaussian);
 
-   int indx_start, indx_end;
-   int number_at=0;
+   //int indx_start, indx_end;
+   //int number_at=0;
    int atom=0;
 
 

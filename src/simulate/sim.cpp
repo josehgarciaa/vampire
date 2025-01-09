@@ -212,9 +212,8 @@ int run(){
 
    anisotropy::initialize(atoms::num_atoms, atoms::type_array, mp::mu_s_array);
 
-   //SLD M. Strungaru
    #ifdef MPICF
-   if(sld::suzuki_trotter_parallel_initialized == false) {
+   if(sld::suzuki_trotter_parallel_initialized == false && sld::enabled) {
       sld::suzuki_trotter_parallel_init(atoms::x_coord_array, atoms::y_coord_array, atoms::z_coord_array,
                                    	    vmpi::min_dimensions, vmpi::max_dimensions);
    }

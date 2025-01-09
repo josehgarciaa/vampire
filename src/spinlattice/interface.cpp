@@ -35,12 +35,12 @@ namespace sld{
       //------------------------------------------------------------------------
       // If spin-transport parameter is requested, then enable module
       //------------------------------------------------------------------------
-      internal::enabled=true;
+      sld::enabled = true;
+      sld::internal::enabled=true;
+
       //----------------------------------
       // Now test for all valid options
       //----------------------------------
-
-
 
       std::string test = "potential";
       if( word == test ){

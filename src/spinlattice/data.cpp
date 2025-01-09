@@ -25,6 +25,7 @@ namespace sld{
    //------------------------------------------------------------------------------
    // Externally visible variables
    //------------------------------------------------------------------------------
+   bool enabled = false;
    double var_test=0;
    double spin_temperature;
    double lattice_temperature;

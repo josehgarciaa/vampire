@@ -21,15 +21,13 @@
 #include "create.hpp"
 #include "material.hpp"
 #include "errors.hpp"
+#include "sld.hpp"
 #include "vio.hpp"
 #include "vmpi.hpp"
 #include "vutil.hpp"
 
 
 #ifdef MPICF
-
-
-
 
 namespace create{
 
@@ -839,7 +837,9 @@ namespace create{
          // Resize translation and data arrays
          vmpi::recv_atom_translation_array.resize(num_halo_swaps);
          vmpi::recv_spin_data_array.resize(3*num_halo_swaps);
-         vmpi::recv_coord_data_array.resize(3*num_halo_swaps);
+
+         // For spin lattice only
+         if(sld::enabled) vmpi::recv_coord_data_array.resize(3*num_halo_swaps);
 
          // Populate recv_translation_array
          std::vector<int> recv_counter_array(vmpi::num_processors);

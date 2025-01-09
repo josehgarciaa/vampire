@@ -35,6 +35,7 @@
 //		Locally allocated variables:
 //
 //=====================================================================================
+
 #include "atoms.hpp"
 #include "errors.hpp"
 #include "vmpi.hpp"
@@ -58,7 +59,6 @@ void mpi_init_halo_swap(){
 	//		Locally allocated variables:
 	//
 	//====================================================================================
-
 	//using namespace mpi_comms;
 #ifdef MPICF
 	//----------------------------------------------------------
@@ -197,7 +197,7 @@ void mpi_init_halo_swap_coords(){
 	//----------------------------------------------------------
 
 	vmpi::requests.resize(0);
-	MPI_Request req;
+	MPI_Request req = 0;
 
 	for (int p=0;p<vmpi::num_processors;p++){
 		if(vmpi::send_num_array[p]!=0){
