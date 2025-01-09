@@ -16,6 +16,7 @@
 // C++ standard library headers
 //#include <vector>
 //#include <string>
+#include <cstdint>
 
 // Vampire headers
 #include "anisotropy.hpp"

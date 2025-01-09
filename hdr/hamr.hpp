@@ -12,6 +12,7 @@
 #define HAMR_H_
 
 // System headers
+#include <cstdint>
 #include <string>
 #include <vector>
 
