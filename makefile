@@ -15,7 +15,7 @@ export OMPI_CXX=g++ -std=c++11
 
 # Include the FFTW library by uncommenting the -DFFT (off by default)
 #export incFFT= -DFFT -DFFTW_OMP -fopenmp
-#export FFTLIBS= -lfftw3_omp -lfftw3
+export FFTLIBS= -lfftw3
 
 # Compilers
 ICC=icc -std=c++11 -DCOMP='"Intel C++ Compiler"'
@@ -26,10 +26,9 @@ IBM=bgxlc++ -DCOMP='"IBM XLC++ Compiler"'
 MPICC=mpicxx -DMPICF
 MPIICC=mpiicpc -DMPICF
 
-LIBS=
-#LIBS= -lstdc++
-#-lm $(FFTLIBS) -L/opt/local/lib/
-
+#LIBS=
+LIBS= -lstdc++ -lm $(FFTLIBS) -L/opt/local/lib/
+FFTW=-I/opt/local/include/
 CCC_CFLAGS=-I./hdr -I./src/qvoronoi -O0
 CCC_LDFLAGS=-I./hdr -I./src/qvoronoi -O0
 
@@ -44,8 +43,8 @@ CUDALIBS=-L/usr/local/cuda/lib64/ -lcuda -lcudart
 ICC_DBCFLAGS= -O0 -C -I./hdr -I./src/qvoronoi
 ICC_DBLFLAGS= -C -I./hdr -I./src/qvoronoi
 
-GCC_DBCFLAGS= -g -pg -fprofile-arcs -ftest-coverage -Wall -Wextra -O0 -fbounds-check -pedantic -std=c++0x -Wno-long-long -I./hdr -I./src/qvoronoi -Wsign-compare
-GCC_DBLFLAGS= -g -pg -fprofile-arcs -ftest-coverage -lstdc++ -std=c++0x -fbounds-check -I./hdr -I./src/qvoronoi -Wsign-compare
+GCC_DBCFLAGS= -g -pg -fprofile-arcs -ftest-coverage -Wall -Wextra -O0 -fbounds-check -pedantic -std=c++0x -Wno-long-long -I./hdr -I./src/qvoronoi $(FFTW) -Wsign-compare
+GCC_DBLFLAGS= -g -pg -fprofile-arcs -ftest-coverage -lstdc++ -std=c++0x -fbounds-check -I./hdr -I./src/qvoronoi $(FFTW) -Wsign-compare
 
 PCC_DBCFLAGS= -O0 -I./hdr -I./src/qvoronoi
 PCC_DBLFLAGS= -O0 -I./hdr -I./src/qvoronoi
@@ -61,12 +60,12 @@ ICC_LDFLAGS= -I./hdr -I./src/qvoronoi -axCORE-AVX2
 #ICC_CFLAGS= -O3 -xT -ipo -static -fno-alias -align -falign-functions -vec-report -I./hdr
 #ICC_LDFLAGS= -lstdc++ -ipo -I./hdr -xT -vec-report
 
-LLVM_CFLAGS= -Wall -pedantic -O3 -mtune=native -funroll-loops -I./hdr -I./src/qvoronoi
+LLVM_CFLAGS= -Wall -pedantic -O3 -mtune=native -funroll-loops -I./hdr -I./src/qvoronoi $(FFTW)
 #LLVM_LDFLAGS= -lstdc++ -I./hdr -I./src/qvoronoi
-LLVM_LDFLAGS= -I./hdr -I./src/qvoronoi
+LLVM_LDFLAGS= -I./hdr -I./src/qvoronoi $(FFTW)
 
-GCC_CFLAGS=-O3 -mtune=native -funroll-all-loops -fexpensive-optimizations -funroll-loops -I./hdr -I./src/qvoronoi -std=c++11 -Wsign-compare
-GCC_LDFLAGS= -lstdc++ -I./hdr -I./src/qvoronoi -Wsign-compare
+GCC_CFLAGS=-O3 -mtune=native -funroll-all-loops -fexpensive-optimizations -funroll-loops -I./hdr -I./src/qvoronoi $(FFTW) -std=c++11 -Wsign-compare
+GCC_LDFLAGS= -lstdc++ -I./hdr -I./src/qvoronoi $(FFTW) -Wsign-compare
 
 PCC_CFLAGS=-O2 -march=barcelona -ipa -I./hdr -I./src/qvoronoi
 PCC_LDFLAGS= -I./hdr -I./src/qvoronoi -O2 -march=barcelona -ipa
@@ -113,6 +112,7 @@ obj/utility/statistics.o \
 obj/utility/units.o \
 obj/utility/vmath.o\
 
+
 # Include supplementary makefiles
 include src/anisotropy/makefile
 include src/cells/makefile
@@ -139,6 +139,7 @@ include src/vio/makefile
 include src/environment/makefile
 include src/qvoronoi/makefile
 include src/spinwaves/makefile
+include src/spinlattice/makefile
 
 # Cuda must be last for some odd reason
 include src/cuda/makefile

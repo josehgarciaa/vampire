@@ -53,7 +53,7 @@ namespace config{
 
             const double cc[3] = {atoms::x_coord_array[atom], atoms::y_coord_array[atom], atoms::z_coord_array[atom]};
 
-            // check atom within output bounds
+            // check atom within local bounds (except for SLD)
             if ((cc[0] >= minB[0]) && (cc[0] <= maxB[0]))
             {
                if ((cc[1] >= minB[1]) && (cc[1] <= maxB[1]))

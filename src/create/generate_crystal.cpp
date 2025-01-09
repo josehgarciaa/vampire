@@ -88,6 +88,8 @@ int create_crystal_structure(std::vector<cs::catom_t> & catom_array){
 	std::vector<bool> inc_uc_atom(mp::max_materials, false);
 	for( auto m : create::internal::mp) inc_uc_atom[m.unit_cell_category] = true;
 
+	// This has been modified by Mara Strungaru to go from x to z, rather than z to x
+	// unmodified by RE as this is less optimal for large lateral samples in x,y which is a more common usage pattern in ASD
 	// Duplicate unit cell
 	for(int z=min_bounds[2];z<max_bounds[2];z++){
 		for(int y=min_bounds[1];y<max_bounds[1];y++){

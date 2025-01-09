@@ -364,6 +364,24 @@ If ``single-tone-predefined'' is given, a single tone adapted to the system size
 Specifies the bit sequence to be simulated in the program \textit{hamr-simulation}.
 Acceptable values are -1 (opposite to field direction), 0 (zero field) and 1 (along field direction) and by default the vector is empty.
 
+\section*{Spin-Lattice calculations}
+This includes phonons (lattice dynamics) and uses a Suzuki-Trotter decomposition for the integration. Hence it needs the following:
+sim:integrator=suzuki-trotter.
+
+{\zicf spin-lattice:potential-cutoff-range=float}\phantomsection\addcontentsline{toc}{subsubsection}{spin-lattice:potential-cutoff-range=float}
+Distance cutoff for the interatomic potential calculations. Units is Angstrom.  Default value is 7.8 !A;
+
+{\zicf spin-lattice:fields-cutoff-range=float}\phantomsection\addcontentsline{toc}{subsubsection}{spin-lattice:fields-cutoff-range=float}
+Distance cutoff for the interatomic potential calculations. Units is Angstrom.  Default value is 3.75 !A;
+
+{\zicf spin-lattice:coupling=string}\phantomsection\addcontentsline{toc}{subsubsection}{spin-lattice:coupling=string}
+ Flag that sets up the type of spin-lattice coupling. Possible values are : pseudodipolar, {neel-full};
+
+ {\zicf spin-lattice:potential=string}\phantomsection\addcontentsline{toc}{subsubsection}{spin-lattice:potential=string}
+ Flag that sets up the type of potential. Possible values are : harmonic, morse, embedded;
+
+
+
 \section*{Simulation Control}
 \phantomsection\addcontentsline{toc}{section}{Simulation Control}
 The following commands control the simulation, including the program, maximum temperatures, applied field strength etc.
@@ -375,6 +393,7 @@ The following commands control the simulation, including the program, maximum te
   \item[] llg-midpoint
   \item[] constrained-monte-carlo
   \item[] hybrid-constrained-monte-carlo
+  \item[] suzuki-trotter
 \end{itemize}
 
 {\zicf sim:program = exclusive string}\phantomsection\addcontentsline{toc}{subsection}{sim:program} Defines the simulation program to be used.
@@ -769,6 +788,15 @@ C_{\mathrm{v}} = \frac{\left(\langle U^2 \rangle - \langle U \rangle^2 \right)}{
 {\zicf output:fractional-electric-field-strength}\phantomsection\addcontentsline{toc}{subsection}{output:fractional-electric-field-strength}
 Outputs the fractional electric field strngth (or voltage) during an \textit{electrical-pulse} simulation.
 
+
+{\zicf output:spin-temperature}\phantomsection\addcontentsline{toc}{subsection}{output:spin-temperature} outputs the spin-temperature. Also possible to output the time-averaged values: mean-spin-temperature and material specific values: material-spin-temperature, mean-material-spin-temperature
+
+{\zicf output:lattice-temperature}\phantomsection\addcontentsline{toc}{subsection}{output:lattice-temperature} outputs the lattice-temperature. Also possible to output the time-averaged values: mean-lattice-temperature and material specific values: material-lattice-temperature, mean-material-lattice-temperature
+
+
+
+Outputs the fractional electric field strngth (or voltage) during an \textit{electrical-pulse} simulation.
+
 {\zicf output:mpi-timings}\phantomsection\addcontentsline{toc}{subsection}{output:mpi-timings}
 
 {\zicf output:gnuplot-array-format}\phantomsection\addcontentsline{toc}{subsection}{output:gnuplot-array-format}
@@ -780,6 +808,9 @@ Outputs the fractional electric field strngth (or voltage) during an \textit{ele
 {\zicf output:fixed-width = flag [default false]}\phantomsection\addcontentsline{toc}{subsection}{output:fixed-width} Controls the formatting to be used for data written to the output file or printed to screen. The default is false which ignores trailing zeros in the output.
 
 {\zicf output:column-headers= flag [default false]}\phantomsection\addcontentsline{toc}{subsection}{output:column-headers} Controls the headers at the top of output columns in the output file. The default is false which writes no headers.
+
+
+
 
 \section*{Configuration output}
 \phantomsection\addcontentsline{toc}{section}{Configuration output} These options enable the output of spin configuration snapshots during the simulation. The configurations can then be visualised using povray or other software generated with the vampire data converter (vdc) utility.

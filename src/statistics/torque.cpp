@@ -150,7 +150,7 @@ void torque_statistic_t::calculate_torque(const std::vector<double>& sx, // spin
    #endif
 
    // Calculate magnetisation length and normalize
-   /*for(int mask_id=0; mask_id < mask_size; ++mask_id){
+   for(int mask_id=0; mask_id < mask_size; ++mask_id){
 
       // determine inverse number of atoms in mask
       double inv_atoms_in_mask = 1.0 / double(num_atoms_in_mask[mask_id]);
@@ -159,7 +159,7 @@ void torque_statistic_t::calculate_torque(const std::vector<double>& sx, // spin
       torque[3*mask_id + 1] *= inv_atoms_in_mask;
       torque[3*mask_id + 2] *= inv_atoms_in_mask;
 
-   }*/
+   }
 
    // Zero empty mask id's
    for(unsigned int id=0; id<zero_list.size(); ++id) torque[zero_list[id]]=0.0;
