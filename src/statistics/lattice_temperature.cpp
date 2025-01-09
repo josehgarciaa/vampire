@@ -129,8 +129,7 @@ void lattice_temp_statistic_t::calculate_lattice_temp(const std::vector<double>&
    // calculate contributions of spins to each magetization category
    for(int atom=0; atom < num_atoms; ++atom){
 
-      const int mask_id = mask[atom]; // get mask id
-
+      const unsigned int mask_id = mask[atom]; // get mask id
 
        if(mask_id>=lattice_temp.size()) std::cerr<<"ERROR"<<std::endl;
 

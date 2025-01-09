@@ -156,7 +156,7 @@ void sld_energy_statistic_t::calculate(const std::vector<double>& sx,  // spin u
    std::fill(    sld_coupling_energy.begin(),    sld_coupling_energy.end(), 0.0 );
    std::fill( kinetic_energy.begin(), kinetic_energy.end(), 0.0 );
    std::fill( potential_energy.begin(), potential_energy.end(), 0.0 );
-   
+
    //---------------------------------------------------------------------------
    // Calculate exchange energy (in Tesla)
    //---------------------------------------------------------------------------
@@ -167,7 +167,7 @@ void sld_energy_statistic_t::calculate(const std::vector<double>& sx,  // spin u
       sld_exchange_energy[mask_id] += sld::compute_exchange_energy(atom,atom+1);
    }
 
-   
+
 
    //---------------------------------------------------------------------------
    // Calculate anisotropy energy (in Tesla)
@@ -193,7 +193,7 @@ void sld_energy_statistic_t::calculate(const std::vector<double>& sx,  // spin u
       potential_energy[mask_id] += sld::compute_potential_energy(atom,atom+1,atoms::type_array);
    }
 
-   
+
    //---------------------------------------------------------------------------
    // Calculate total energy (in Tesla)
    //---------------------------------------------------------------------------
@@ -218,7 +218,7 @@ void sld_energy_statistic_t::calculate(const std::vector<double>& sx,  // spin u
       //MPI_Allreduce(MPI_IN_PLACE, &total_atoms,  1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
    #endif
-   
+
    // divide by number of atoms
    for(int mask_id=0; mask_id < mask_size; ++mask_id){
 
@@ -230,9 +230,9 @@ void sld_energy_statistic_t::calculate(const std::vector<double>& sx,  // spin u
       sld_total_energy[mask_id] *= inv_atoms_in_mask;
       kinetic_energy[mask_id] *= inv_atoms_in_mask;
       potential_energy[mask_id] *= inv_atoms_in_mask;
-  
+
   }
-  
+
 
 
    //---------------------------------------------------------------------------
@@ -317,7 +317,7 @@ void sld_energy_statistic_t::set_sld_total_energy(std::vector<double>& new_energ
    // copy energy vector
    sld_total_energy = new_energy;
 
-   const unsigned int array_size = mean_sld_total_energy.size();
+   const int array_size = mean_sld_total_energy.size();
    for( int i=0; i < array_size; ++i ){
       mean_sld_total_energy[i] += new_mean_energy[i];
    }
@@ -332,7 +332,7 @@ void sld_energy_statistic_t::set_sld_exchange_energy(std::vector<double>& new_en
    // copy energy vector
    sld_exchange_energy = new_energy;
 
-   const unsigned int array_size = mean_sld_exchange_energy.size();
+   const int array_size = mean_sld_exchange_energy.size();
    for( int i=0; i < array_size; ++i ){
       mean_sld_exchange_energy[i] += new_mean_energy[i];
    }
@@ -347,7 +347,7 @@ void sld_energy_statistic_t::set_sld_coupling_energy(std::vector<double>& new_en
    // copy energy vector
    sld_coupling_energy = new_energy;
 
-   const unsigned int array_size = mean_sld_coupling_energy.size();
+   const int array_size = mean_sld_coupling_energy.size();
    for( int i=0; i < array_size; ++i ){
       mean_sld_coupling_energy[i] += new_mean_energy[i];
    }
@@ -362,7 +362,7 @@ void sld_energy_statistic_t::set_potential_energy(std::vector<double>& new_energ
    // copy energy vector
    potential_energy = new_energy;
 
-   const unsigned int array_size = mean_potential_energy.size();
+   const int array_size = mean_potential_energy.size();
    for( int i=0; i < array_size; ++i ){
       mean_potential_energy[i] += new_mean_energy[i];
    }
@@ -377,7 +377,7 @@ void sld_energy_statistic_t::set_kinetic_energy(std::vector<double>& new_energy,
    // copy energy vector
    kinetic_energy = new_energy;
 
-   const unsigned int array_size = mean_kinetic_energy.size();
+   const int array_size = mean_kinetic_energy.size();
    for( int i=0; i < array_size; ++i ){
       mean_kinetic_energy[i] += new_mean_energy[i];
    }
@@ -402,11 +402,11 @@ void sld_energy_statistic_t::update_mean_counter(long counter){
 void sld_energy_statistic_t::reset_averages(){
 
    // reinitialise mean energies to zero
-   std::fill(        mean_sld_total_energy.begin(),         mean_sld_total_energy.end(), 0.0);
-   std::fill(     mean_sld_exchange_energy.begin(),      mean_sld_exchange_energy.end(), 0.0);
-   std::fill(   mean_sld_coupling_energy.begin(),    mean_sld_coupling_energy.end(), 0.0);
-   std::fill(mean_kinetic_energy.begin(), mean_kinetic_energy.end(), 0.0);
-   std::fill(mean_potential_energy.begin(), mean_potential_energy.end(), 0.0);
+   std::fill(mean_sld_total_energy.begin(),    mean_sld_total_energy.end(),    0.0);
+   std::fill(mean_sld_exchange_energy.begin(), mean_sld_exchange_energy.end(), 0.0);
+   std::fill(mean_sld_coupling_energy.begin(), mean_sld_coupling_energy.end(), 0.0);
+   std::fill(mean_kinetic_energy.begin(),      mean_kinetic_energy.end(),      0.0);
+   std::fill(mean_potential_energy.begin(),    mean_potential_energy.end(),    0.0);
 
    // reset data counter
    mean_counter = 0.0;
@@ -422,7 +422,7 @@ std::string sld_energy_statistic_t::output_sld_energy(enum sld_energy_t sld_ener
 
    // result string stream
    std::ostringstream res;
-   vout::fixed_width_output result(res,vout::fw_size); 
+   vout::fixed_width_output result(res,vout::fw_size);
    // set custom precision if enabled
    if(vout::custom_precision){
       res.precision(vout::precision);
@@ -440,15 +440,15 @@ std::string sld_energy_statistic_t::output_sld_energy(enum sld_energy_t sld_ener
    // output correct energy type (in Joules)
        switch(sld_energy_type){
           case sld_total :
-             for(int mask_id=0; mask_id<mask_size; ++mask_id) result <<         sld_total_energy[mask_id];
+             for(int mask_id=0; mask_id<mask_size; ++mask_id) result << sld_total_energy[mask_id];
              break;
 
           case sld_exchange :
-             for(int mask_id=0; mask_id<mask_size; ++mask_id) result <<      sld_exchange_energy[mask_id];
+             for(int mask_id=0; mask_id<mask_size; ++mask_id) result << sld_exchange_energy[mask_id];
              break;
 
           case sld_coupling :
-             for(int mask_id=0; mask_id<mask_size; ++mask_id) result <<   sld_coupling_energy[mask_id] ;
+             for(int mask_id=0; mask_id<mask_size; ++mask_id) result << sld_coupling_energy[mask_id] ;
              break;
 
           case potential :
@@ -476,7 +476,7 @@ std::string sld_energy_statistic_t::output_mean_sld_energy(enum sld_energy_t sld
 
    // result string stream
    std::ostringstream res;
-   vout::fixed_width_output result(res,vout::fw_size); 
+   vout::fixed_width_output result(res,vout::fw_size);
    // set custom precision if enabled
    if(vout::custom_precision){
       res.precision(vout::precision);
@@ -496,15 +496,15 @@ std::string sld_energy_statistic_t::output_mean_sld_energy(enum sld_energy_t sld
        switch(sld_energy_type){
 
           case sld_total :
-             for(int mask_id=0; mask_id<mask_size; ++mask_id) result <<         mean_sld_total_energy[mask_id] / mean_counter;
+             for(int mask_id=0; mask_id<mask_size; ++mask_id) result << mean_sld_total_energy[mask_id] / mean_counter;
              break;
 
           case sld_exchange :
-             for(int mask_id=0; mask_id<mask_size; ++mask_id) result <<      mean_sld_exchange_energy[mask_id] / mean_counter;
+             for(int mask_id=0; mask_id<mask_size; ++mask_id) result << mean_sld_exchange_energy[mask_id] / mean_counter;
              break;
 
           case sld_coupling :
-             for(int mask_id=0; mask_id<mask_size; ++mask_id) result <<    mean_sld_coupling_energy[mask_id] / mean_counter;
+             for(int mask_id=0; mask_id<mask_size; ++mask_id) result << mean_sld_coupling_energy[mask_id] / mean_counter;
              break;
 
           case potential :

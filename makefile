@@ -185,7 +185,7 @@ all: serial parallel vdc
 
 # Serial Targets
 serial: $(OBJECTS)
-	$(GCC) $(GCC_LDFLAGS)  $(OBJECTS) $(LIBS) -o $(EXECUTABLE) -lfftw3
+	$(GCC) $(GCC_LDFLAGS)  $(OBJECTS) $(LIBS) -o $(EXECUTABLE)
 
 $(OBJECTS): obj/%.o: src/%.cpp
 	$(GCC) -c -o $@ $(GCC_CFLAGS) $(OPTIONS) $<
@@ -241,7 +241,7 @@ $(PCCDB_OBJECTS): obj/%_pdb.o: src/%.cpp
 # MPI Targets
 
 parallel: $(MPI_OBJECTS)
-	$(MPICC) $(GCC_LDFLAGS) $(MPI_OBJECTS) $(LIBS) -o $(PEXECUTABLE) -lfftw3
+	$(MPICC) $(GCC_LDFLAGS) $(MPI_OBJECTS) $(LIBS) -o $(PEXECUTABLE)
 
 $(MPI_OBJECTS): obj/%_par.o: src/%.cpp
 	$(MPICC) -c -o $@ $(GCC_CFLAGS) $(OPTIONS) $<
@@ -283,7 +283,7 @@ $(MPI_IBM_OBJECTS): obj/%_ibm_par.o: src/%.cpp
 	$(MPICC) -c -o $@ $(IBM_CFLAGS) $(OPTIONS) $<
 
 parallel-debug: $(MPI_GCCDB_OBJECTS)
-	$(MPICC) $(GCC_DBLFLAGS) $(LIBS) $(MPI_GCCDB_OBJECTS) -o $(PEXECUTABLE)-debug -lfftw3
+	$(MPICC) $(GCC_DBLFLAGS) $(LIBS) $(MPI_GCCDB_OBJECTS) -o $(PEXECUTABLE)-debug
 
 $(MPI_GCCDB_OBJECTS): obj/%_gdb_par.o: src/%.cpp
 	$(MPICC) -c -o $@ $(GCC_DBCFLAGS) $(OPTIONS) $<
