@@ -30,15 +30,18 @@
 #include <cmath>
 #include "fstream"
 #include "atoms.hpp"
-#include <complex.h>
-#include <fftw3.h>
 
+#ifdef FFT
+#include <fftw3.h>
+#endif
 
 namespace spinwaves {
 
 
 
    void fft_in_time(){
+
+      #ifdef FFT
 
       // Start time for time series fourier transform
       // Set timer for runtime
@@ -58,7 +61,6 @@ namespace spinwaves {
       fftw_complex *combined_real_imag = fftw_alloc_complex(internal::nt);
       fftw_complex *combined_real_imag_fftd = fftw_alloc_complex(internal::nt);
       fftw_plan fft_in_time = fftw_plan_dft_1d(internal::nt, &combined_real_imag[0], &combined_real_imag_fftd[0], FFTW_FORWARD, FFTW_MEASURE);
-
 
       #ifdef MPICF
 
@@ -149,6 +151,7 @@ namespace spinwaves {
 
                   // write each k-value to file
                   spinwaves::internal::write_to_file(combined_real_imag_fftd, k, spec);
+
                }
             }
          }
@@ -218,6 +221,8 @@ namespace spinwaves {
       fftw_free(combined_real_imag);
       fftw_free(combined_real_imag_fftd);
 
+      #endif // end of FFT macro
+
    }
 
-}
+} // end of spinwaves namespace

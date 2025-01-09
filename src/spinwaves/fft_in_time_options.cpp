@@ -11,25 +11,25 @@
 //
 
 // C++ standard library headers
+#include <cmath>
+#include <fstream>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <vector>
 
 // Vampire headers
+#include "atoms.hpp"
 #include "spinwaves.hpp"
+#include "unitcell.hpp"
+#include "vmpi.hpp"
 
 // sw module headers
 #include "internal.hpp"
-#include "iostream"
-#include <iomanip>
-#include <sstream>
 
-//sergiu for SW
-#include "unitcell.hpp"
-#include "vector"
-#include "vmpi.hpp"
-#include <cmath>
-#include "fstream"
-#include "atoms.hpp"
-#include <fftw3.h>
-
+#ifdef FFT
+   #include <fftw3.h>
+#endif
 
 namespace spinwaves {
 
@@ -38,6 +38,9 @@ namespace spinwaves {
         std::ofstream file_K_time_real;
         std::ofstream file_K_time_imag;
         int j2;
+
+        #ifdef FFT
+
         const int real = 0;
         const int imag = 1;
 
@@ -192,7 +195,7 @@ namespace spinwaves {
             // file_K_time_imag.close();
         }
 
-
+        #endif // end of FFT macro
     }
 
 }

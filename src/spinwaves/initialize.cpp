@@ -11,30 +11,26 @@
 //
 
 // C++ standard library headers
-
-// Vampire headers
-#include "spinwaves.hpp"
-
-// sw module headers
-#include "internal.hpp"
-#include "iostream"
+#include <cmath>
+#include <fstream>
+#include <iostream>
 #include <iomanip>
 #include <string>
 #include <sstream>
-#include "vmpi.hpp"
+#include <vector>
 
-//sergiu for SW
-#include "unitcell.hpp"
+// Vampire headers
+#include "atoms.hpp"
+#include "spinwaves.hpp"
 #include "errors.hpp"
+#include "program.hpp"
 #include "sim.hpp"
 #include "vio.hpp"
-#include "vector"
-#include <cmath>
-#include "fstream"
-#include "atoms.hpp"
-#include "program.hpp"
+#include "unitcell.hpp"
+#include "vmpi.hpp"
 
-
+// sw module headers
+#include "internal.hpp"
 
 namespace spinwaves{
 	//   std::vector <double> Skx_FFT_array;
@@ -62,6 +58,13 @@ namespace spinwaves{
 		// Check if spinwave calculation enabled, if not do nothing
 		//-------------------------------------------------------------------------------------
 		if(program::program!=74) return;
+
+		// ensure that code was compiled with FFT library
+		#ifdef FFT
+		#else
+			std::cerr << "Error: code must be compiled with a linked FFTW library for the spin wave module to function, exiting" << std::endl;
+			err::vexit();
+		#endif
 
 		// check spectrum values in input file are in agreement with the spinwaves:number-of-spectrums
 		spinwaves::internal::check_numbering_of_spectrums();
