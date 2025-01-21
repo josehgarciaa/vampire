@@ -43,12 +43,12 @@ int create_crystal_structure(std::vector<cs::catom_t> & catom_array){
 
 	#ifdef MPICF
 	if(vmpi::mpi_mode==0){
-		min_bounds[0] = int(vmpi::min_dimensions[0]/unit_cell.dimensions[0]);
-		min_bounds[1] = int(vmpi::min_dimensions[1]/unit_cell.dimensions[1]);
-		min_bounds[2] = int(vmpi::min_dimensions[2]/unit_cell.dimensions[2]);
-		max_bounds[0] = vmath::iceil(vmpi::max_dimensions[0]/unit_cell.dimensions[0]);
-		max_bounds[1] = vmath::iceil(vmpi::max_dimensions[1]/unit_cell.dimensions[1]);
-		max_bounds[2] = vmath::iceil(vmpi::max_dimensions[2]/unit_cell.dimensions[2]);
+		min_bounds[0] = int(vmpi::min_dimensions[0]/unit_cell.dimensions[0]) - 1;
+		min_bounds[1] = int(vmpi::min_dimensions[1]/unit_cell.dimensions[1]) - 1;
+		min_bounds[2] = int(vmpi::min_dimensions[2]/unit_cell.dimensions[2]) - 1;
+		max_bounds[0] = vmath::iceil(vmpi::max_dimensions[0]/unit_cell.dimensions[0]) + 1;
+		max_bounds[1] = vmath::iceil(vmpi::max_dimensions[1]/unit_cell.dimensions[1]) + 1;
+		max_bounds[2] = vmath::iceil(vmpi::max_dimensions[2]/unit_cell.dimensions[2]) + 1;
 	}
 	else{
 		min_bounds[0]=0;
@@ -109,9 +109,9 @@ int create_crystal_structure(std::vector<cs::catom_t> & catom_array){
                            (cz>=vmpi::min_dimensions[2] && cz<vmpi::max_dimensions[2])){
 						#endif
 							if(inc_uc_atom[unit_cell.atom[uca].mat] &&
-								cx < cs::system_dimensions[0] &&
-								cy < cs::system_dimensions[1] &&
-								cz < cs::system_dimensions[2]
+								cx >= 0.0 && cx < cs::system_dimensions[0] &&
+								cy >= 0.0 && cy < cs::system_dimensions[1] &&
+								cz >= 0.0 && cz < cs::system_dimensions[2]
 							){
 							catom_array.push_back(cs::catom_t());
 							catom_array[atom].x=cx;
