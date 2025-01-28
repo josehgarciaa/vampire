@@ -100,10 +100,11 @@ void mc_parallel_init(std::vector<double> &x, // atomic coordinates
    }
    // boundary atoms
    num_atoms_in_octants = 0;
-   //for(int i=0; i< 8; i++){
-   //   num_atoms_in_octants += internal::b_octants[i].size();
-   //   std::cout<<"i="<<i<<"\t"<<internal::b_octants[i].size()<<std::endl;
-   //}
+
+   for(int i=0; i< 8; i++){
+      num_atoms_in_octants += internal::b_octants[i].size();
+      //std::cout<<"i="<<i<<"\t"<<internal::b_octants[i].size()<<std::endl;
+   }
    //std::cout<<"num_atoms_in_octants boundary "<<num_atoms_in_octants<<"\t"<<batoms<<std::endl;
    if(num_atoms_in_octants != batoms){
       std::cerr << "Programmer error: missing atoms in boundary octants in parallel monte carlo initialisation" << std::endl;
