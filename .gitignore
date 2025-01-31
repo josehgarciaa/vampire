@@ -58,6 +58,8 @@ vampire_manual.synctex.gz
 *.meta
 *.vtu
 *.txt
+*.dat
+*.out
 crystal.xyz
 log
 grain
