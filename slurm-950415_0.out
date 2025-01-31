@@ -1,0 +1,44 @@
+[33m[33m[0m[0m                                                _          
+                                               (_)         
+                    __   ____ _ _ __ ___  _ __  _ _ __ ___ 
+                    \ \ / / _` | '_ ` _ \| '_ \| | '__/ _ \
+                     \ V / (_| | | | | | | |_) | | | |  __/
+                      \_/ \__,_|_| |_| |_| .__/|_|_|  \___|
+                                         | |               
+                                         |_|               
+
+                      Version 7.0.0 Jan 29 2025 23:14:03
+
+             Git commit: ca21851c12817d8d42307a37775db8055ab732a7
+
+  Licensed under the GNU Public License(v2). See licence file for details.
+
+  Developers:   Richard F L Evans, Sarah Jenkins, Andrea Meo, 
+                Daniel Meilak, Andrew Naden, Matthew Ellis,
+                Oscar Arbelaez, Sam Morris, Rory Pond, Weijia Fan,
+                Phanwadee Chureemart, Pawel Sobieszczyk, Joe Barker, 
+                Thomas Ostler, Andreas Biternas, Roy W Chantrell,
+                Wu Hong-Ye, Razvan Ababei, Sam Westmoreland,
+                Milton Persson
+ 
+                Compiled with:  GNU C++ Compiler
+                Compiler Flags: 
+
+  Vampire includes a copy of the qhull library from C.B. Barber and The 
+  Geometry Center and may be obtained via http from www.qhull.org.
+
+================================================================================
+Thu Jan 30 18:03:30 2025
+================================================================================
+Initialising system variables
+Assigned A: 10
+Assigned omega0: 7
+Assigned S0: 1
+Creating system
+Generating neighbour list..........[32m[32mdone!
+[0m[0mCopying system data to optimised data structures.
+Using generic/normalised form of exchange interaction with 48 total interactions.
+Number of atoms generated: 6912
+Starting Simulation with Program Time-Series...
+Temperature: 0.75
+[>                                                 ]   0%[>                                                 ]   1%[>                                                 ]   2%[=>                                                ]   3%[=>                                                ]   4%slurmstepd: error: *** JOB 950415 ON n-hpc-ca6 CANCELLED AT 2025-01-30T18:04:11 ***

@@ -532,14 +532,14 @@ int qh_rboxpoints(FILE* fout, FILE* ferr, char* rbox_command) {
   }
   /* ============= regular points for 'r Ln D2' =============== */
   else if (isregular && islens && dim == 2) {
-    double cos_0;
+    double coS0;
 
     angle= lensangle;
     anglediff= 2 * lensangle/(numpoints - 1);
-    cos_0= cos(lensangle);
+    coS0= cos(lensangle);
     for (i=0; i < numpoints; i++, angle -= anglediff) {
       x= radius * sin(angle);
-      y= radius * (cos(angle) - cos_0);
+      y= radius * (cos(angle) - coS0);
       if (iscdd)
         out1( 1.0);
       out2n( x*box, y*box);

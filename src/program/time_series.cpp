@@ -34,13 +34,17 @@ void time_series(){
 	// check calling of routine if error checking is activated
 	if(err::check==true) std::cout << "program::time_series has been called" << std::endl;
 
-	double temp=sim::temperature;
+	const char* temp_text = std::getenv("SIM_TEMPERATURE");
+    double temp = std::atof(temp_text);
+	std::cout << "Temperature: " << temp << std::endl;
+	//double temp=sim::temperature;
+
 
    // Set equilibration temperature only if continue checkpoint not loaded
    if(sim::load_checkpoint_flag && sim::load_checkpoint_continue_flag){}
    else{
 	   // Set equilibration temperature
-	   sim::temperature=sim::Teq;
+	   sim::temperature=temp;
    }
 
 	// Output data

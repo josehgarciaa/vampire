@@ -73,6 +73,11 @@ namespace mp
 	const int max_materials=100;
 	extern int num_materials;
 
+	extern double A;
+    extern double Gamma;
+    extern double omega0;
+	extern double S0;
+
 	class materials_t {
 		public:
 		// input parameters
@@ -133,6 +138,10 @@ namespace mp
       double temperature_rescaling_alpha; // temperature rescaling exponent
       double temperature_rescaling_Tc; // temperaure rescaling Tc
       int non_magnetic;
+	  double A;
+	  double Gamma;
+	  double omega0;
+	  double S0;
 
 		materials_t();
 		int print();

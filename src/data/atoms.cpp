@@ -60,6 +60,19 @@ namespace atoms{
    std::vector <double> m_spin_array(0);
    std::vector <double> mass_spin_array(0);
 
+    std::vector <double> x_w_array(0);
+	std::vector <double> y_w_array(0);
+	std::vector <double> z_w_array(0);
+	std::vector <double> x_v_array(0);
+	std::vector <double> y_v_array(0);
+	std::vector <double> z_v_array(0);
+	std::vector<std::vector<double>> noise_field;
+	double noise_index;
+
+	std::vector<double> atom_idx_x(0);
+    std::vector<double> atom_idx_y(0);
+	std::vector<double> atom_idx_z(0);
+
 	std::vector <double> x_total_spin_field_array(0);		/// Total spin dependent fields
 	std::vector <double> y_total_spin_field_array(0);		/// Total spin dependent fields
 	std::vector <double> z_total_spin_field_array(0);		/// Total spin dependent fields

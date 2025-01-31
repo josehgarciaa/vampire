@@ -337,9 +337,31 @@ namespace vin{
         //-------------------------------------------------------------------
         // System simulation variables
         //-------------------------------------------------------------------
+        
 
+        std::string test = "noise-type";
+        if (word == test) {
+            if (value == "classical") {
+                sim::noise_type = 0;
+                return EXIT_SUCCESS;
+            } else if (value == "quantum") {
+                sim::noise_type = 1;
+                return EXIT_SUCCESS;
+            } else if (value == "semiquantum") {
+                sim::noise_type = 2;
+                return EXIT_SUCCESS;
+            } else {
+                terminaltextcolor(RED);
+                std::cerr << "Error - value for 'sim:" << word << "' must be one of:" << std::endl;
+                std::cerr << "\t\"classical\"" << std::endl;
+                std::cerr << "\t\"quantum\"" << std::endl;
+                std::cerr << "\t\"semiquantum\"" << std::endl;
+                terminaltextcolor(WHITE);
+                err::vexit();
+            }
+        }
         //-------------------------------------------------------------------
-        std::string test="enable-fmr-field";
+        test="enable-fmr-field";
         if(word==test){
             sim::hamiltonian_simulation_flags[5]=1;
             return EXIT_SUCCESS;
@@ -1892,7 +1914,36 @@ namespace vin{
                 return EXIT_SUCCESS;
             }
             //------------------------------------------------------------
+            test="A";
+            if(word==test){
+                read_material[super_index].A = std::stod(value);
+                std::cout << "Assigned A: " << read_material[super_index].A << std::endl; // Debug output
+                return EXIT_SUCCESS;
+            }
+            //------------------------------------------------------------
             else
+            test="Gamma";
+            if(word==test){
+                read_material[super_index].Gamma = std::stod(value);
+                return EXIT_SUCCESS;
+            }
+            //------------------------------------------------------------
+            else
+            test="omega0";
+            if(word==test){
+                read_material[super_index].omega0 = std::stod(value);
+                std::cout << "Assigned omega0: " << read_material[super_index].omega0 << std::endl; // Debug output
+                return EXIT_SUCCESS;
+            }
+            else
+            test="S0";
+            if(word==test){
+                read_material[super_index].S0 = std::stod(value);
+                std::cout << "Assigned S0: " << read_material[super_index].S0 << std::endl; // Debug output
+                return EXIT_SUCCESS;
+            }
+            else
+            //------------------------------------------------------------
             test="initial-spin-direction";
             if(word==test){
                 // first test for random spins
