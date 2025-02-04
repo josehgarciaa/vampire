@@ -92,43 +92,6 @@ namespace sim{
 //---------------------------------------------------------------------------
 // Class for FFTW plan management
 //---------------------------------------------------------------------------
-class FFTWPlanCache {
-public:
-    static FFTWPlanCache& instance(){
-        static FFTWPlanCache cache;
-        return cache;
-    }
-
-    std::pair<fftw_plan, fftw_plan> get_plans(int N, double* in, fftw_complex* out, double* result){
-        if(N != cached_N){
-        cleanup();
-        forward = fftw_plan_dft_r2c_1d(N, in, out, FFTW_MEASURE);
-        backward = fftw_plan_dft_c2r_1d(N, out, result, FFTW_MEASURE);
-        cached_N = N;
-        }
-        return {forward, backward};
-    }
-
-    ~FFTWPlanCache(){ cleanup(); }
-
-private:
-    FFTWPlanCache() : cached_N(0), forward(nullptr), backward(nullptr) {}
-    FFTWPlanCache(const FFTWPlanCache&) = delete;
-    FFTWPlanCache& operator=(const FFTWPlanCache&) = delete;
-
-    void cleanup(){
-        if(cached_N > 0){
-        fftw_destroy_plan(forward);
-        fftw_destroy_plan(backward);
-        cached_N = 0;
-        }
-    }
-
-    int cached_N;
-    fftw_plan forward;
-    fftw_plan backward;
-};
-
 void calculate_random_fields(int realizations, int n, double dt, double T);
 void assign_unique_indices(int realizations);
 void precompute_sqrt_PSD(int n, double dt, double T);
@@ -442,30 +405,30 @@ void calculate_random_fields(int realizations, int n, double dt, double T) {
     LLGQ_arrays::noise_field.clear();
     const double S0 = mp::material[0].S0;
     const double inv_sqrt_S0 = 1.0 / std::sqrt(S0);
-    
-    
-    // Pre-allocate all buffers
-    double* __restrict in = (double*)fftw_malloc(sizeof(double) * n);
-    fftw_complex* __restrict out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * (n/2 + 1));
-    double* __restrict result = (double*)fftw_malloc(sizeof(double) * n);
-    
-    // Get cached FFTW plans once
-    auto& planner = FFTWPlanCache::instance();
-    auto [forward, backward] = planner.get_plans(n, in, out, result);
-    
+
+    // Allocate FFT arrays
+    double* in = static_cast<double*>(fftw_malloc(sizeof(double) * n));
+    fftw_complex* out = static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * (n/2 + 1)));
+    double* result = static_cast<double*>(fftw_malloc(sizeof(double) * n));
+
+    if (!in || !out || !result) {
+        std::cerr << "Error: Memory allocation failed for FFTW arrays!" << std::endl;
+        return;
+    }
+
+    // Create FFTW plans
+    fftw_plan forward = fftw_plan_dft_r2c_1d(n, in, out, FFTW_MEASURE);
+    fftw_plan backward = fftw_plan_dft_c2r_1d(n, out, result, FFTW_MEASURE);
+
     // Pre-calculate constants
     const double df = 1.0 / (n * dt);
-    const double two_pi = 2.0 * M_PI;
     const double norm_factor = 1.0 / n;
-    
-    
-    LLGQ_arrays::noise_field.resize(realizations, std::vector<double>(n));
-
 
     // Progress bar setup
     const int bar_width = 50;
     int last_printed_percent = -1;
 
+    LLGQ_arrays::noise_field.resize(realizations, std::vector<double>(n));
 
     // Precompute square root of PSD
     if (LLGQ_arrays::sqrt_PSD_buffer.empty()) {
@@ -473,10 +436,9 @@ void calculate_random_fields(int realizations, int n, double dt, double T) {
     }
 
     for (int r = 0; r < realizations; ++r) {
-        // Generate white noise directly into input buffer
-        std::generate(in, in+n, mtrandom::gaussian);
+        // Generate white noise
+        std::generate(in, in + n, mtrandom::gaussian);
 
-        // Forward FFT
         fftw_execute(forward);
 
         // Apply PSD
@@ -485,11 +447,9 @@ void calculate_random_fields(int realizations, int n, double dt, double T) {
             out[i][0] *= magnitude;
             out[i][1] *= magnitude;
         }
-
-        // Inverse FFT
         fftw_execute(backward);
 
-        // Store normalized result directly in noise_field
+         // Store normalized result directly in noise_field
         for (int j = 0; j < n; ++j) {
             LLGQ_arrays::noise_field[r][j] = result[j] * norm_factor * inv_sqrt_S0;
         }
@@ -514,11 +474,12 @@ void calculate_random_fields(int realizations, int n, double dt, double T) {
     }
 
     // Cleanup
+    fftw_destroy_plan(forward);
+    fftw_destroy_plan(backward);
     fftw_free(in);
     fftw_free(out);
     fftw_free(result);
-    
-    std::cout << std::endl;
+
 }
 
 double PSD(const double& omega, const double& T) {
