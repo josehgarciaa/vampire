@@ -101,19 +101,6 @@ namespace atoms
    extern std::vector <double> m_spin_array; /// Array of atomic spin moments
    extern std::vector <double> mass_spin_array; /// Array of mass of atoms
 
-	extern std::vector <double> x_w_array;
-	extern std::vector <double> y_w_array;
-	extern std::vector <double> z_w_array;
-	extern std::vector <double> x_v_array;
-	extern std::vector <double> y_v_array;
-	extern std::vector <double> z_v_array;
-	extern std::vector<std::vector<double>> noise_field;
-	extern double noise_index;
-	extern std::vector<double> atom_idx_x;
-    extern std::vector<double> atom_idx_y;
-	extern std::vector<double> atom_idx_z;
-
-
 	extern std::vector <double> x_total_spin_field_array;		/// Total spin dependent fields
 	extern std::vector <double> y_total_spin_field_array;		/// Total spin dependent fields
 	extern std::vector <double> z_total_spin_field_array;		/// Total spin dependent fields
