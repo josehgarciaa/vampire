@@ -187,6 +187,7 @@ void llg_quantum_step(){
 	std::vector<double> H(3);
     const int num_atoms = atoms::num_atoms;
 
+
     
 
 	// Store initial state
@@ -194,12 +195,12 @@ void llg_quantum_step(){
         y_in_storage[atom][0] = atoms::x_spin_array[atom];
         y_in_storage[atom][1] = atoms::y_spin_array[atom];
         y_in_storage[atom][2] = atoms::z_spin_array[atom];
-        y_in_storage[atom][3] = x_v_array[atom];
-        y_in_storage[atom][4] = y_v_array[atom];
-        y_in_storage[atom][5] = z_v_array[atom];
-        y_in_storage[atom][6] = x_w_array[atom];
-        y_in_storage[atom][7] = y_w_array[atom];
-        y_in_storage[atom][8] = z_w_array[atom];
+        y_in_storage[atom][3] = LLGQ_arrays::x_v_array[atom];
+        y_in_storage[atom][4] = LLGQ_arrays::y_v_array[atom];
+        y_in_storage[atom][5] = LLGQ_arrays::z_v_array[atom];
+        y_in_storage[atom][6] = LLGQ_arrays::x_w_array[atom];
+        y_in_storage[atom][7] = LLGQ_arrays::y_w_array[atom];
+        y_in_storage[atom][8] = LLGQ_arrays::z_w_array[atom];
     }
 
 
@@ -207,6 +208,7 @@ void llg_quantum_step(){
 	calculate_spin_fields(0, num_atoms);
     calculate_external_fields(0, num_atoms);
 
+    const double dt = mp::dt;
     const double half_dt = 0.5 * mp::dt;
     const double dt_over_6 = mp::dt / 6.0;
 
@@ -216,6 +218,8 @@ void llg_quantum_step(){
         H[0] = atoms::x_total_spin_field_array[atom] + atoms::x_total_external_field_array[atom] + LLGQ_arrays::noise_field[atom_idx_x[atom]][LLGQ_arrays::noise_index];
         H[1] = atoms::y_total_spin_field_array[atom] + atoms::y_total_external_field_array[atom] + LLGQ_arrays::noise_field[atom_idx_y[atom]][LLGQ_arrays::noise_index];
         H[2] = atoms::z_total_spin_field_array[atom] + atoms::z_total_external_field_array[atom] + LLGQ_arrays::noise_field[atom_idx_z[atom]][LLGQ_arrays::noise_index];
+
+        
 
         // Calculate K1
         spinDynamics(y_in_storage[atom].data(), H.data(), k1_storage[atom].data());
@@ -287,9 +291,9 @@ void llg_quantum_step(){
         // Calculate K3
         spinDynamics(y_pred_storage[atom].data(), H.data(), k3_storage[atom].data());
 
-        // Calculate y_pred for k3
+        // Calculate y_pred for k4
         for (size_t i = 0; i < 9; ++i) {
-            y_pred_storage[atom][i] = y_in_storage[atom][i] + half_dt * k3_storage[atom][i];
+            y_pred_storage[atom][i] = y_in_storage[atom][i] + dt * k3_storage[atom][i];
         }
 
 		// Normalize spin length
@@ -335,12 +339,12 @@ void llg_quantum_step(){
         atoms::z_spin_array[atom] = y_pred_storage[atom][2];
 
         // Update auxiliary variables
-        LLGQ_arrays::x_v_array[atom] += (dt_over_6) * (k1_storage[atom][3] + 2.0 * k2_storage[atom][3] + 2.0 * k3_storage[atom][3] + k4_storage[atom][3]);
-        LLGQ_arrays::y_v_array[atom] += (dt_over_6) * (k1_storage[atom][4] + 2.0 * k2_storage[atom][4] + 2.0 * k3_storage[atom][4] + k4_storage[atom][4]);
-        LLGQ_arrays::z_v_array[atom] += (dt_over_6) * (k1_storage[atom][5] + 2.0 * k2_storage[atom][5] + 2.0 * k3_storage[atom][5] + k4_storage[atom][5]);
-        LLGQ_arrays::x_w_array[atom] += (dt_over_6) * (k1_storage[atom][6] + 2.0 * k2_storage[atom][6] + 2.0 * k3_storage[atom][6] + k4_storage[atom][6]);
-        LLGQ_arrays::y_w_array[atom] += (dt_over_6) * (k1_storage[atom][7] + 2.0 * k2_storage[atom][7] + 2.0 * k3_storage[atom][7] + k4_storage[atom][7]);
-        LLGQ_arrays::z_w_array[atom] += (dt_over_6) * (k1_storage[atom][8] + 2.0 * k2_storage[atom][8] + 2.0 * k3_storage[atom][8] + k4_storage[atom][8]);
+        LLGQ_arrays::x_v_array[atom] = y_in_storage[atom][3] + (dt_over_6) * (k1_storage[atom][3] + 2.0 * k2_storage[atom][3] + 2.0 * k3_storage[atom][3] + k4_storage[atom][3]);
+        LLGQ_arrays::y_v_array[atom] = y_in_storage[atom][4] + (dt_over_6) * (k1_storage[atom][4] + 2.0 * k2_storage[atom][4] + 2.0 * k3_storage[atom][4] + k4_storage[atom][4]);
+        LLGQ_arrays::z_v_array[atom] = y_in_storage[atom][5] + (dt_over_6) * (k1_storage[atom][5] + 2.0 * k2_storage[atom][5] + 2.0 * k3_storage[atom][5] + k4_storage[atom][5]);
+        LLGQ_arrays::x_w_array[atom] = y_in_storage[atom][6] + (dt_over_6) * (k1_storage[atom][6] + 2.0 * k2_storage[atom][6] + 2.0 * k3_storage[atom][6] + k4_storage[atom][6]);
+        LLGQ_arrays::y_w_array[atom] = y_in_storage[atom][7] + (dt_over_6) * (k1_storage[atom][7] + 2.0 * k2_storage[atom][7] + 2.0 * k3_storage[atom][7] + k4_storage[atom][7]);
+        LLGQ_arrays::z_w_array[atom] = y_in_storage[atom][8] + (dt_over_6) * (k1_storage[atom][8] + 2.0 * k2_storage[atom][8] + 2.0 * k3_storage[atom][8] + k4_storage[atom][8]);
     }
 
 	// Increment noise index
@@ -353,14 +357,12 @@ inline void spinDynamics(const double* y, const double* H, double* dydt) {
     const double A = mp::material[0].A;
     const double Gamma = mp::material[0].Gamma;
     const double omega0 = mp::material[0].omega0;
-    const double Hv0 = H[0] + y[3];
-    const double Hv1 = H[1] + y[4];
-    const double Hv2 = H[2] + y[5];
-    
+
     // dS/dt = S × (H + v)
-    dydt[0] = (y[1]*Hv2 - y[2]*Hv1);
-    dydt[1] = (y[2]*Hv0 - y[0]*Hv2);
-    dydt[2] = (y[0]*Hv1 - y[1]*Hv0);
+    dydt[0] =  (y[1]*(H[2]+y[5]) - y[2]*(H[1]+y[4]));
+    dydt[1] =  (y[2]*(H[0]+y[3]) - y[0]*(H[2]+y[5]));
+    dydt[2] =  (y[0]*(H[1]+y[4]) - y[1]*(H[0]+y[3]));
+    
     
     // dv/dt = w
     dydt[3] = y[6];
@@ -405,30 +407,34 @@ void calculate_random_fields(int realizations, int n, double dt, double T) {
     LLGQ_arrays::noise_field.clear();
     const double S0 = mp::material[0].S0;
     const double inv_sqrt_S0 = 1.0 / std::sqrt(S0);
-
-    // Allocate FFT arrays
-    double* in = static_cast<double*>(fftw_malloc(sizeof(double) * n));
-    fftw_complex* out = static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * (n/2 + 1)));
-    double* result = static_cast<double*>(fftw_malloc(sizeof(double) * n));
-
-    if (!in || !out || !result) {
-        std::cerr << "Error: Memory allocation failed for FFTW arrays!" << std::endl;
-        return;
-    }
-
+    
+    
+    // Pre-allocate all buffers
+    double* __restrict in = (double*)fftw_malloc(sizeof(double) * n);
+    fftw_complex* __restrict out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * (n/2 + 1));
+    double* __restrict result = (double*)fftw_malloc(sizeof(double) * n);
+    
     // Create FFTW plans
     fftw_plan forward = fftw_plan_dft_r2c_1d(n, in, out, FFTW_MEASURE);
     fftw_plan backward = fftw_plan_dft_c2r_1d(n, out, result, FFTW_MEASURE);
-
+    
     // Pre-calculate constants
     const double df = 1.0 / (n * dt);
+    const double two_pi = 2.0 * M_PI;
     const double norm_factor = 1.0 / n;
+    
+    // Setup random number generation
+    static thread_local std::random_device rd;
+    static thread_local std::mt19937 gen(rd());
+    std::normal_distribution<> dist(0.0, 1.0 / std::sqrt(dt));
+    
+    LLGQ_arrays::noise_field.resize(realizations, std::vector<double>(n));
+
 
     // Progress bar setup
     const int bar_width = 50;
     int last_printed_percent = -1;
 
-    LLGQ_arrays::noise_field.resize(realizations, std::vector<double>(n));
 
     // Precompute square root of PSD
     if (LLGQ_arrays::sqrt_PSD_buffer.empty()) {
@@ -436,9 +442,12 @@ void calculate_random_fields(int realizations, int n, double dt, double T) {
     }
 
     for (int r = 0; r < realizations; ++r) {
-        // Generate white noise
-        std::generate(in, in + n, mtrandom::gaussian);
+        // Generate white noise directly into input buffer
+        for (int i = 0; i < n; ++i) {
+            in[i] = dist(gen);
+        }
 
+        // Forward FFT
         fftw_execute(forward);
 
         // Apply PSD
@@ -447,9 +456,11 @@ void calculate_random_fields(int realizations, int n, double dt, double T) {
             out[i][0] *= magnitude;
             out[i][1] *= magnitude;
         }
+
+        // Inverse FFT
         fftw_execute(backward);
 
-         // Store normalized result directly in noise_field
+        // Store normalized result directly in noise_field
         for (int j = 0; j < n; ++j) {
             LLGQ_arrays::noise_field[r][j] = result[j] * norm_factor * inv_sqrt_S0;
         }
@@ -474,12 +485,11 @@ void calculate_random_fields(int realizations, int n, double dt, double T) {
     }
 
     // Cleanup
-    fftw_destroy_plan(forward);
-    fftw_destroy_plan(backward);
     fftw_free(in);
     fftw_free(out);
     fftw_free(result);
-
+    
+    std::cout << std::endl;
 }
 
 double PSD(const double& omega, const double& T) {
