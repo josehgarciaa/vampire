@@ -23,6 +23,10 @@ typedef struct
    real_t alpha;
    real_t gamma_rel;
    real_t mu_s_si;
+   real_t Gamma;
+   real_t A;
+   real_t omega0;
+   real_t S0;
    real_t i_mu_s_si;
    real_t k_latt;
    real_t sh2;

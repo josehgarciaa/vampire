@@ -156,6 +156,7 @@ namespace sim{
 
 	int system_simulation_flags;
 	int hamiltonian_simulation_flags[10];
+	int noise_type = 0; // set noise type for quantum thermostat
 
 	bool local_temperature=false; /// flag to enable material specific temperature
 	bool local_applied_field=false; /// flag to enable material specific applied field

@@ -60,7 +60,11 @@ materials_t::materials_t ():
    fill(false),
    temperature_rescaling_alpha(1.0),
 	temperature_rescaling_Tc(0.0),
-	non_magnetic(0)
+	non_magnetic(0),
+	A(0.0),
+	Gamma(0.0),
+	omega0(0.0),
+	S0(1.0)
 	{
 
 	//std::cout << "constructor " << anis_flag << "\t" << ianis_flag << std::endl;
@@ -103,7 +107,10 @@ int materials_t::print(){
 	std::cout << "alpha          = " << alpha << std::endl;
 	std::cout << "mu_s_SI        = " << mu_s_SI << std::endl;
 	std::cout << "gamma_rel      = " << gamma_rel << std::endl;
-
+	std::cout << "A              = " << A << std::endl;
+	std::cout << "Gamma          = " << Gamma << std::endl;
+	std::cout << "omega0         = " << omega0 << std::endl;
+	std::cout << "S0            = " << S0 << std::endl;
 	return 0;
 
 }

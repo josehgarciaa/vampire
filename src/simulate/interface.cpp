@@ -250,6 +250,30 @@ namespace sim{
          return true;
       }
       //--------------------------------------------------------------------
+      test = "noise-type";
+      if (word == test) {
+          if (value == "classical") {
+             sim::noise_type = 0;
+             return EXIT_SUCCESS;
+          }
+          else if (value == "quantum") {
+             sim::noise_type = 1;
+             return EXIT_SUCCESS;
+          }
+          else if (value == "semiquantum") {
+             sim::noise_type = 2;
+             return EXIT_SUCCESS;
+          }
+          else {
+             terminaltextcolor(RED);
+             std::cerr << "Error - value for 'sim:" << word << "' must be one of:" << std::endl;
+             std::cerr << "\t\"classical\"" << std::endl;
+             std::cerr << "\t\"quantum\"" << std::endl;
+             std::cerr << "\t\"semiquantum\"" << std::endl;
+             terminaltextcolor(WHITE);
+             err::vexit();
+          }
+      }
       // input parameter not found here
       return false;
    }
@@ -388,6 +412,33 @@ namespace sim{
          vin::check_for_valid_value(c_l, word, line, prefix, unit, "energy", -1.0e-16, 1.0e-16,"material","-1.0e-16 - 1.0e-16");
          sim::internal::mp[super_index].lsf_sixth_order_coefficient.set(c_l);
          return true;
+      }
+      //------------------------------------------------------------
+      test="A"; // what is this value for?
+      if(word==test){
+          read_material[super_index].A = std::stod(value); // need to error check these
+          //std::cout << "Assigned A: " << read_material[super_index].A << std::endl; // Debug output
+          return true;
+      }
+      //------------------------------------------------------------
+      test="Gamma";
+      if(word==test){
+          read_material[super_index].Gamma = std::stod(value);
+          return true;
+      }
+      //------------------------------------------------------------
+      test="omega0";
+      if(word==test){
+          read_material[super_index].omega0 = std::stod(value);
+          //std::cout << "Assigned omega0: " << read_material[super_index].omega0 << std::endl; // Debug output
+          return true;
+      }
+      //------------------------------------------------------------
+      test="S0";
+      if(word==test){
+          read_material[super_index].S0 = std::stod(value);
+          //std::cout << "Assigned S0: " << read_material[super_index].S0 << std::endl; // Debug output
+          return true;
       }
       //--------------------------------------------------------------------
       // keyword not found

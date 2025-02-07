@@ -79,7 +79,6 @@ namespace mp
 		string name;
 		string element;
 
-
 		bool micromagnetic_enabled;
 		std::vector<double> SAF;
 		bool enable_SAF;
@@ -90,9 +89,9 @@ namespace mp
 		std::vector<bool> override_atomsitic;
 
 		double alpha;
-                double alpha_eq;
+      double alpha_eq;
 		double mu_s_SI;
-	    double mass;
+	   double mass;
 		double magnetisation;
 
 		double gamma_rel;
@@ -115,8 +114,8 @@ namespace mp
 		double one_oneplusalpha_sq;
 		double alpha_oneplusalpha_sq;
 		double H_th_sigma;
-//modified SLD M Strungaru
-                double H_th_sigma_eq;
+		//modified SLD M Strungaru
+      double H_th_sigma_eq;
 
 		bool constrained; /// specifies primary or alternate integrator
 
@@ -133,6 +132,12 @@ namespace mp
       double temperature_rescaling_alpha; // temperature rescaling exponent
       double temperature_rescaling_Tc; // temperaure rescaling Tc
       int non_magnetic;
+
+		// parameters for quantum thermostat
+		double A;
+		double Gamma;
+		double omega0;
+		double S0;
 
 		materials_t();
 		int print();

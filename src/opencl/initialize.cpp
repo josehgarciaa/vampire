@@ -441,6 +441,10 @@ namespace vopencl
             h_materials[i].gamma_rel = ::mp::material[i].gamma_rel;
             h_materials[i].mu_s_si = mu_s_si;
             h_materials[i].i_mu_s_si = 1.0 / mu_s_si;
+            h_materials[i].A = ::mp::material[i].A;
+            h_materials[i].Gamma = ::mp::material[i].Gamma;
+            h_materials[i].omega0 = ::mp::material[i].omega0;
+            h_materials[i].S0 = ::mp::material[i].S0;
             h_materials[i].k_latt = ::mp::material[i].Klatt_SI / mu_s_si;
             h_materials[i].sh2 = ::mp::material[i].sh2 / mu_s_si;
             h_materials[i].sh4 = ::mp::material[i].sh4 / mu_s_si;
