@@ -133,12 +133,6 @@ namespace mp
       double temperature_rescaling_Tc; // temperaure rescaling Tc
       int non_magnetic;
 
-		// parameters for quantum thermostat
-		double A;
-		double Gamma;
-		double omega0;
-		double S0;
-
 		materials_t();
 		int print();
 	};

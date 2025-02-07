@@ -19,15 +19,19 @@
 #include <iomanip>
 
 // Library for FFT
+#ifdef FFT
 #include <fftw3.h>
+#endif
 
 // Vampire Header files
 #include "atoms.hpp"
 #include "errors.hpp"
 #include "LLG.hpp"
 #include "material.hpp"
-#include "sim.hpp"
 #include "random.hpp"
+#include "sim.hpp"
+
+#include "internal.hpp"
 
 namespace LLGQ_arrays{
 
@@ -341,9 +345,9 @@ namespace sim{
       }
 
       inline void spinDynamics(const double* y, const double* H, double* dydt) {
-         const double A = mp::material[0].A;
-         const double Gamma = mp::material[0].Gamma;
-         const double omega0 = mp::material[0].omega0;
+         const double A = sim::internal::mp[0].A.get();
+         const double Gamma = sim::internal::mp[0].Gamma.get();
+         const double omega0 = sim::internal::mp[0].omega0.get();
 
          // dS/dt = S × (H + v)
          dydt[0] =  (y[1]*(H[2]+y[5]) - y[2]*(H[1]+y[4]));
@@ -388,11 +392,13 @@ namespace sim{
    }
 
    void calculate_random_fields(int realizations, int n, double dt, double T) {
+
+      #ifdef FFT
+
       // Pre-allocate result vectors
       LLGQ_arrays::noise_field.clear();
-      const double S0 = mp::material[0].S0;
+      const double S0 = sim::internal::mp[0].S0.get();
       const double inv_sqrt_S0 = 1.0 / std::sqrt(S0);
-
 
       // Pre-allocate all buffers
       double* __restrict in = (double*)fftw_malloc(sizeof(double) * n);
@@ -404,8 +410,8 @@ namespace sim{
       fftw_plan backward = fftw_plan_dft_c2r_1d(n, out, result, FFTW_MEASURE);
 
       // Pre-calculate constants
-      const double df = 1.0 / (n * dt);
-      const double two_pi = 2.0 * M_PI;
+      //const double df = 1.0 / (n * dt);
+      //const double two_pi = 2.0 * M_PI;
       const double norm_factor = 1.0 / n;
 
       // Setup random number generation
@@ -473,13 +479,18 @@ namespace sim{
       fftw_free(out);
       fftw_free(result);
 
+      #else
+         std::cerr << "Error - quantum thermostat requires the FFTW library to function. Please recompile with the FFT library linked" << std::endl;
+         err::vexit();
+      #endif
+
       std::cout << std::endl;
    }
 
    double PSD(const double& omega, const double& T) {
-      const double A = mp::material[0].A;
-      const double Gamma = ::mp::material[0].Gamma;
-      const double omega0 = ::mp::material[0].omega0;
+      const double A = sim::internal::mp[0].A.get();
+      const double Gamma = sim::internal::mp[0].Gamma.get();
+      const double omega0 = sim::internal::mp[0].omega0.get();
 
       double x =   omega / (2 *  T);  // hbar and kB constants
       double lorentzian = A * Gamma *    omega / ((omega0 * omega0 - omega * omega) * (omega0 * omega0 - omega * omega) + Gamma * Gamma * omega * omega);

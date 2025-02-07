@@ -58,6 +58,10 @@ namespace sim{
          set_double_t lsf_second_order_coefficient; // Second order LSF coefficient
          set_double_t lsf_fourth_order_coefficient; // Fourth order LSF coefficient
          set_double_t lsf_sixth_order_coefficient; // Sixth order LSF coefficient
+         set_double_t A; // Quantum thermostat parameter
+         set_double_t Gamma; // Quantum thermostat parameter
+         set_double_t omega0; // Quantum thermostat parameter
+         set_double_t S0; // Quantum thermostat parameter
       };
 
       //-----------------------------------------------------------------------------

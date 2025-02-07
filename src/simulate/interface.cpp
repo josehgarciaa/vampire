@@ -416,27 +416,27 @@ namespace sim{
       //------------------------------------------------------------
       test="A"; // what is this value for?
       if(word==test){
-          read_material[super_index].A = std::stod(value); // need to error check these
+          sim::internal::mp[super_index].A.set(std::stod(value)); // need to error check these
           //std::cout << "Assigned A: " << read_material[super_index].A << std::endl; // Debug output
           return true;
       }
       //------------------------------------------------------------
       test="Gamma";
       if(word==test){
-          read_material[super_index].Gamma = std::stod(value);
+          sim::internal::mp[super_index].Gamma.set(std::stod(value));
           return true;
       }
       //------------------------------------------------------------
       test="omega0";
       if(word==test){
-          read_material[super_index].omega0 = std::stod(value);
+          sim::internal::mp[super_index].omega0.set(std::stod(value));
           //std::cout << "Assigned omega0: " << read_material[super_index].omega0 << std::endl; // Debug output
           return true;
       }
       //------------------------------------------------------------
       test="S0";
       if(word==test){
-          read_material[super_index].S0 = std::stod(value);
+          sim::internal::mp[super_index].S0.set(std::stod(value));
           //std::cout << "Assigned S0: " << read_material[super_index].S0 << std::endl; // Debug output
           return true;
       }
