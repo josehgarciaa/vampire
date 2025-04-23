@@ -555,6 +555,16 @@ int run(){
 			}
 			program::spin_waves();
 			break;
+		//------------------------------------------------------------------------
+		case 75:
+			if(vmpi::my_rank==0){
+				std::cout << "HAMR cool..." << std::endl;
+				zlog << "HAMR cool..." << std::endl;
+			}
+			program::hamr_cool();
+			break;
+
+		//------------------------------------------------------------------------
 		default:{
 			std::cerr << "Unknown Internal Program ID "<< program::program << " requested, exiting" << std::endl;
 			zlog << "Unknown Internal Program ID "<< program::program << " requested, exiting" << std::endl;
