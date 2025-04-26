@@ -1,9 +1,11 @@
-Vampire
+Alucard
 ==============
 
-By Richard Evans
+A fork of Vampire (by Richard Evans)
 
-Vampire is a high performance general purpose code for the atomistic simulation of magnetic materials. Using a variety of common simulation methods it can calculate the equilibrium and dynamic magnetic properties of a wide variety of magnetic materials and phenomena, including ferro, ferri and antiferromagnets, core-shell nanoparticles, ultrafast spin dynamics, magnetic recording media, heat assisted magnetic recording, exchange bias, magnetic multilayer films and complete devices.
+Alucard is a high performance general purpose code for the atomistic simulation of magnetic materials. It is a fork of the Vampire project, inheriting its scientific capabilities and codebase, and is maintained in compliance with the original GNU GPL v2 license.
+
+By Richard Evans (original Vampire author)
 
 Capabilities
 ---------------
@@ -60,7 +62,32 @@ Vampire is designed to be highly flexible to deal with a wide variety of problem
 -Minimal dependence on external libraries for portability
 -Freely available open source code
 
+Installation
+---------------
+
+**Dependencies:**
+- CUDA Toolkit (>= 11.0)
+- cuSPARSE, cuBLAS (provided by CUDA Toolkit)
+- Thrust (provided by CUDA Toolkit)
+- C++17 compatible compiler
+- GNU Make
+
+**Build and Install:**
+```sh
+make cuda
+sudo make install
+```
+
+**Testing:**
+After installation, you can run the basic tests:
+```sh
+cd tests/basic
+./run_basic_tests.sh
+```
+
+This will run a set of three simple smoke tests to verify your installation.
+
 License
 ---------------
-See the license file.
+This project is a fork of Vampire and is distributed under the GNU General Public License v2 (GPL v2), in compliance with the original Vampire license. See the license file for details.
 

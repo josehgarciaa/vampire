@@ -9,10 +9,7 @@
 
 #include <vector>
 
-
-#include "cusp/array2d.h"
-#include "cusp/coo_matrix.h"
-
+#include "cuda_wrappers.hpp"
 
 int calculate_exchange_fields(int, int);
 

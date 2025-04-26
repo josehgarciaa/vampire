@@ -13,6 +13,7 @@
  */
 
 #include "data.hpp"
+#include "cuda_wrappers.hpp"
 
 namespace vcuda{
 

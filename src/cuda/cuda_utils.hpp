@@ -20,8 +20,7 @@
 #ifndef __CUDA_UTILS_HPP__
 #define __CUDA_UTILS_HPP__
 
-#include <stdio.h>
-#include <cub-1.5.2/cub/cub.cuh>
+#include "cuda_wrappers.hpp"
 
 //-----------------------------------------------------------------------------
 // Wrapper function to test for errors in kernels if the debug flag is set

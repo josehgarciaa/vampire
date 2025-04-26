@@ -29,6 +29,7 @@
 
 // Vampire headers
 #include "cuda.hpp"
+#include "cuda_wrappers.hpp"
 
 // Local cuda headers
 

@@ -5,6 +5,7 @@
 
 #include "data.hpp"
 #include "internal.hpp"
+#include "cuda_wrappers.hpp"
 
 #ifdef CUDA
 namespace cu = ::vcuda::internal;

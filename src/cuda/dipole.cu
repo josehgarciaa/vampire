@@ -19,6 +19,7 @@
 #include "data.hpp"
 #include "dipole.hpp"
 #include "internal.hpp"
+#include "cuda_wrappers.hpp"
 
 // Conditional compilation of all cuda code
 #ifdef CUDA

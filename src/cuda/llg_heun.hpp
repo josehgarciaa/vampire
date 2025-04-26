@@ -9,13 +9,23 @@
 #ifndef CUDA_LLG_HEUN_HPP_
 #define CUDA_LLG_HEUN_HPP_
 
-#include "cuda.hpp"
 #include "data.hpp"
 #include "internal.hpp"
+#include "cuda_wrappers.hpp"
 
 #ifdef CUDA
 namespace cu = ::vcuda::internal;
 #endif
+
+// Add official CUDA/Thrust includes:
+#include <cuda_runtime.h>
+#include <thrust/device_vector.h>
+#include <thrust/host_vector.h>
+#include <thrust/copy.h>
+#include <thrust/fill.h>
+#include <cusparse.h>
+#include <curand_kernel.h>
+#include <cublas_v2.h>
 
 namespace vcuda
 {

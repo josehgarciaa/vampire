@@ -16,6 +16,7 @@
 #include "cuda_utils.hpp"
 #include "internal.hpp"
 #include "statistics.hpp"
+#include "cuda_wrappers.hpp"
 
 #ifdef CUDA
 namespace cu = vcuda::internal;

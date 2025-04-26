@@ -16,6 +16,7 @@
 // Local cuda headers
 #include "cuda_utils.hpp"
 #include "data.hpp"
+#include "cuda_wrappers.hpp"
 
 #ifdef CUDA
 namespace vcuda{

@@ -31,6 +31,8 @@
 #include "exchange_fields.hpp"
 #include "statistics.hpp"
 
+#include "cuda_wrappers.hpp"
+
 #ifdef CUDA
 namespace cu = ::vcuda::internal;
 #endif

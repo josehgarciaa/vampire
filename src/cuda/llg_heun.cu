@@ -18,6 +18,7 @@
 #include "exchange_fields.hpp"
 #include "internal.hpp"
 #include "llg_heun.hpp"
+#include "cuda_wrappers.hpp"
 
 // Namespace aliasing for brevity
 #ifdef CUDA
